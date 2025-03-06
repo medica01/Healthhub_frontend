@@ -92,6 +92,7 @@ class _doctor_idState extends State<doctor_id> {
           doctor_detail = jsonResponse
               .map((data) => doctor_details.fromJson(data))
               .toList();
+          print("$doctor_detail");
           isLoading = false;
         });
       } else {

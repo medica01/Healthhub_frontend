@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,14 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // await FirebaseAppCheck.instance.activate(
+  //   androidProvider: AndroidProvider.debug, // Use 'playIntegrity' for production
+  //   appleProvider: AppleProvider.appAttest, // Use 'deviceCheck' if App Attest is unavailable
+  // );
   runApp(first_screen());
 }
 
-String ip = "192.168.232.17";
+String ip = "192.168.8.17";
 
 class first_screen extends StatefulWidget {
   const first_screen({super.key});

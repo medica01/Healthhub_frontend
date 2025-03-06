@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
@@ -37,18 +36,15 @@ class _booking_history_pageState extends State<booking_history_page> {
     try {
       final response = await http.get(Uri.parse(
           "http://$ip:8000/booking_doctor/spec_user_booking/$phone_number/"),
-        headers: {
-          "Content-Type": "application/json",
-        },
       );
       if (response.statusCode == 200) {
         List<dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
-          booking_doc =
-              jsonResponse.map((data) => booking_doctor.fromJson(data)).toList();
+          booking_doc = jsonResponse
+              .map((data) => booking_doctor.fromJson(data))
+              .toList();
           isloading = false;
         });
-
       } else {
         setState(() {
           errormessage = "failed to load doctor details";
@@ -110,6 +106,7 @@ class _booking_history_pageState extends State<booking_history_page> {
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   var show_doc = booking_doc[index];
+                  print("doctor name :${show_doc.doctorName}");
                   return Padding(
                     padding:  EdgeInsets.only(bottom: 10.0),
                     child: Card(
@@ -123,6 +120,7 @@ class _booking_history_pageState extends State<booking_history_page> {
                           show_doc.doctorName ?? "No Name",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
+
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

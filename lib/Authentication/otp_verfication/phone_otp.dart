@@ -326,6 +326,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                       if (_form.currentState!.validate()) {
                         String phoneNumber =
                             '+91${_phoneController.text.trim()}';
+                        print("$phoneNumber");
                         await _auth.verifyPhoneNumber(
                           phoneNumber: phoneNumber,
                           verificationCompleted:
@@ -347,6 +348,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                                 builder: (context) => OtpPage(
                                   verificationId: verificationId,
                                   data: '$phoneNumber',
+
                                 ),
                               ),
                             );

@@ -22,7 +22,7 @@ class booking_doctor {
   int? docPhoneNumber;
   String? email;
   String? location;
-  File? userPhoto;
+  String? userPhoto;
   int? patient;
   int? doctor;
 

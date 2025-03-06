@@ -434,8 +434,10 @@ class _SaveDetailsState extends State<SaveDetails> {
           }));
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => profile_page()));
+        Navigator.pushAndRemoveUntil(
+            context, MaterialPageRoute(builder: (context) => profile_page()),
+            (route)=>false,
+        );
       } else {
         print('update user details failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -747,7 +749,13 @@ class _SaveDetailsState extends State<SaveDetails> {
                     children: [
                       OutlinedButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            firstnamecontroller.clear();
+                            lastnamecontroller.clear();
+                            agecontroller.clear();
+                            emailcontroller.clear();
+                            setState(() {
+                              selectedGenderIndex = -1;
+                            });
                           },
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(

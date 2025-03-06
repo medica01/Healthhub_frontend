@@ -55,7 +55,7 @@ dependencies:
   sim_card_info: ^1.0.2
   firebase_messaging: ^15.2.1
   flutter_local_notifications: ^18.0.1
-
+  firebase_app_check: ^0.3.2+4
   fluttertoast: ^8.2.11
   image_picker: ^1.1.2
   firebase_storage: ^12.4.2

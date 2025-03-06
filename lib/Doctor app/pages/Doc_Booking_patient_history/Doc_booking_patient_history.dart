@@ -97,6 +97,7 @@ class _Doc_see_userState extends State<Doc_see_user> {
         List<dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
           booking_doc_user = jsonResponse.map((data) => booking_doctor.fromJson(data)).toList();
+          print("${booking_doc_user.length}");
           isloading =false;
         });
 
