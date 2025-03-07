@@ -151,7 +151,8 @@ class _doc_det_collectState extends State<doc_det_collect> {
           "doctor_location": location.text,
         })
       );
-      if(response.statusCode == 200 || response.statusCode == 204){
+      if(response.statusCode==200 || response.statusCode == 201 || response.statusCode == 204){
+        print("${response.body}");
         Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_bio_photo()));
       }else{
         showDialog(context: context, builder: (context)=>AlertDialog(

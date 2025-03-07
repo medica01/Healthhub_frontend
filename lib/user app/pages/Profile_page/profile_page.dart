@@ -181,14 +181,18 @@ class _profileState extends State<profile> {
         final bytes = await pickedFile.readAsBytes();
         setState(() {
           webImage = bytes;
+
         });
+        _saveimg(webImage as String);
         await _updateuserphoto();
       } else {
         // For Mobile
         setState(() {
           img = io.File(pickedFile.path);
-          // _saveimg(img);
+
         });
+        _saveimg(img as String);
+        await _updateuserphoto();
       }
     } else {
       print('No image selected.');
