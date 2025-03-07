@@ -183,7 +183,7 @@ class _profileState extends State<profile> {
           webImage = bytes;
 
         });
-        _saveimg(webImage as String);
+        // _saveimg(webImage as String);
         await _updateuserphoto();
       } else {
         // For Mobile
@@ -191,7 +191,7 @@ class _profileState extends State<profile> {
           img = io.File(pickedFile.path);
 
         });
-        _saveimg(img as String);
+        // _saveimg(img as String);
         await _updateuserphoto();
       }
     } else {
@@ -388,7 +388,7 @@ class _profileState extends State<profile> {
                                 ? FileImage(img!) // For Mobile (File)
                                 : webImage != null
                                 ? MemoryImage(webImage!) // For Web (Uint8List)
-                                : AssetImage('assets/placeholder.png') as ImageProvider, // Placeholder
+                                : AssetImage("assetName"),
                             fit: BoxFit.cover,
                           ),
                         ),

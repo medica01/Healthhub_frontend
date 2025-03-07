@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -60,6 +59,7 @@ class _doc_det_collectState extends State<doc_det_collect> {
   final List<String> gender = ["male", "female", "other"];
   int selectgender = -1;
   String doc_phone_no ="";
+  String? errormessage ;
 
   @override
   void initState() {
@@ -165,7 +165,10 @@ class _doc_det_collectState extends State<doc_det_collect> {
           ],
         ));
       }
-    }catch(e){}
+    }catch(e){
+      errormessage = e.toString();
+      print("$errormessage");
+    }
   }
 
   @override

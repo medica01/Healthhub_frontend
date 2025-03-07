@@ -9,6 +9,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
 
+import '../../allfun.dart';
+import 'doctor_details_collect_3.dart';
+
 class doc_bio_photo extends StatefulWidget {
   const doc_bio_photo({super.key});
 
@@ -199,27 +202,4 @@ class _doc_bio_photoState extends State<doc_bio_photo> {
   }
 }
 
-
-class doc_bio extends StatefulWidget {
-  const doc_bio({super.key});
-
-  @override
-  State<doc_bio> createState() => _doc_bioState();
-}
-
-class _doc_bioState extends State<doc_bio> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Container(
-          color: Colors.red,
-          height: 200,
-          width: 200,
-        ),
-      ),
-    );
-  }
-}
 

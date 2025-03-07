@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Authentication/doc_otp_verfication/doc_otp_verify.dart';
 import 'Authentication/doc_otp_verfication/doctor_details_collect.dart';
 import 'Authentication/doc_otp_verfication/doctor_details_collect_2.dart';
+import 'Authentication/doc_otp_verfication/doctor_details_collect_3.dart';
 import 'Authentication/otp_verfication/phone_otp.dart';
 import 'choose_user_or_doc.dart';
 import 'firebase_options.dart';

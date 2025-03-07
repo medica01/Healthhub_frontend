@@ -6,6 +6,7 @@ import 'package:health_hub/Backend_information/chat_history_backend.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../main.dart';
 
@@ -46,6 +47,22 @@ class _doc_userState extends State<doc_user> {
     _chatRefreshTime?.cancel(); // Stop the timer when widget is disposed
     super.dispose();
   }
+
+  Future<void> _launchPhoneDialer() async {
+    String phone_number = user_phone_number;
+    phone_number = phone_number.replaceFirst("91", "");
+    print("$phone_number");
+    final Uri launchUri = Uri(
+      scheme: 'tel',
+      path: phone_number,
+    );
+    if (await canLaunchUrl(launchUri)) {
+      await launchUrl(launchUri);
+    } else {
+      throw 'Could not launch $launchUri';
+    }
+  }
+
 
   Future<void> _get_user_doctor_chat_history() async {
     SharedPreferences perf = await SharedPreferences.getInstance();
@@ -173,7 +190,9 @@ class _doc_userState extends State<doc_user> {
               IconButton(
                   onPressed: () {},
                   icon: Icon(Icons.video_camera_back_outlined)),
-              IconButton(onPressed: () {}, icon: Icon(Icons.call)),
+              IconButton(onPressed: () {
+                _launchPhoneDialer();
+              }, icon: Icon(Icons.call)),
               IconButton(
                   onPressed: () {},
                   icon: Icon(Icons.assistant_direction_rounded))
