@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/personal_details_2.dart';
 import 'package:image_picker/image_picker.dart';
@@ -12,14 +13,12 @@ import 'package:health_hub/main.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:path/path.dart';
 import '../../../Authentication/otp_verfication/phone_otp.dart';
 import '../../../Backend_information/user_details_backend.dart';
 import '../../../allfun.dart';
 
-
-
-
+import 'dart:typed_data';
 
 class profile_page extends StatefulWidget {
   const profile_page({super.key});
@@ -29,7 +28,6 @@ class profile_page extends StatefulWidget {
 }
 
 class _profile_pageState extends State<profile_page> {
-
   // Future<bool> signOutFromGoogleAnd() async {
   //   try {
   //     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -83,9 +81,9 @@ class _profile_pageState extends State<profile_page> {
       await prefs.remove('login');
 
       Navigator.pushAndRemoveUntil(
-        context,
+        context as BuildContext,
         MaterialPageRoute(builder: (context) => PhoneEntryPage()),
-            (route) => false,
+        (route) => false,
       );
 
       return true;
@@ -94,6 +92,7 @@ class _profile_pageState extends State<profile_page> {
       return false;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -111,7 +110,7 @@ class _profile_pageState extends State<profile_page> {
                 //     signOutFromGoogleAnd();
                 //   }
                 // },
-                onPressed: ()=>signOutFromphone(),
+                onPressed: () => signOutFromphone(),
                 icon: Icon(
                   Icons.logout,
                   color: Color(0xff1f8acc),
@@ -137,7 +136,8 @@ class _profileState extends State<profile> {
   update_profile? userprofile;
   bool isloading = true;
   String? errormessage;
-  File? img;
+  Uint8List? webImage; // For storing image on Web
+  io.File? img;
   final ImagePicker _picker = ImagePicker();
 
   @override
@@ -145,17 +145,53 @@ class _profileState extends State<profile> {
     // TODO: implement initState
     super.initState();
     user();
-    // _updateuserphoto();
+
     _loadimg();
   }
 
+  // Future<void> _pickImage() async {
+  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //
+  //   if (image != null) {
+  //     if (kIsWeb) {
+  //       // Web: Convert XFile to Uint8List
+  //       final bytes = await image.readAsBytes();
+  //       setState(() {
+  //         webImage = bytes;
+  //         // print("$webImage");// Save bytes instead of File
+  //       });
+  //       await _updateuserphoto();
+  //       // _saveimg(webImage.path);
+  //     } else {
+  //       // Mobile: Use File
+  //       setState(() {
+  //         img = File(image.path);
+  //       });
+  //       _saveimg(image.path); // Save path only for mobile
+  //     }
+  //   }
+  // }
+
   Future<void> _pickImage() async {
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-    if (image != null) {
-      setState(() {
-        img = File(image.path);
-      });
-      _saveimg(image.path);
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      if (kIsWeb) {
+        // For Web
+        final bytes = await pickedFile.readAsBytes();
+        setState(() {
+          webImage = bytes;
+        });
+        await _updateuserphoto();
+      } else {
+        // For Mobile
+        setState(() {
+          img = io.File(pickedFile.path);
+          // _saveimg(img);
+        });
+      }
+    } else {
+      print('No image selected.');
     }
   }
 
@@ -175,26 +211,47 @@ class _profileState extends State<profile> {
   }
 
   Future<void> _updateuserphoto() async {
-    File? immg = img;
-    try {
-      final response = await http.put(
-          Uri.parse('http://$ip:8000/user_profile/user_edit/5/'),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({'user_photo': immg}));
+    // String? web_img = webImage as String?;
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    final String uploadUrl = 'http://$ip:8000/user_profile/user_edit/$phone_number/';
+    if (kIsWeb && webImage != null) {
+      // Web upload
+      var request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+      request.files.add(http.MultipartFile.fromBytes(
+        'user_photo',
+        webImage!,
+        filename: 'upload.png', // Adjust the filename as needed
+      ));
 
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        Navigator.pop(context);
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully.');
       } else {
-        print('update user photo failed:${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Update user photo failed: ${response.body}")),
-        );
+        print('Image upload failed with status: ${response.statusCode}.');
       }
-    } catch (e) {
-      print('Error occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("An error occurred: $e")),
-      );
+    } else if (!kIsWeb && img != null) {
+      // Mobile upload
+      var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+      request.files.add(await http.MultipartFile.fromPath(
+        'user_photo',
+        img!.path,
+        filename: basename(img!.path),
+      ));
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        print('Image uploaded successfully.');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}.');
+      }
+    } else {
+      print('No image to upload.');
     }
   }
 
@@ -304,18 +361,16 @@ class _profileState extends State<profile> {
                   padding: EdgeInsets.only(
                       left: 20.0, right: 20, top: 10, bottom: 20),
                   child: GestureDetector(
-                    onTap: () {
-                      // Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //         builder: (context) => photo()));
-                    },
-                    child: Container(
-                      clipBehavior: Clip.hardEdge,
-                      height: 130,
-                      width: 130,
-                      decoration: BoxDecoration(
-                          // color: Colors.red,
+                      onTap: () {
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => photo()));
+                      },
+                      child: Container(
+                        width: 130,
+                        height: 130,
+                        decoration: BoxDecoration(
                           boxShadow: [
                             BoxShadow(
                                 color: Colors.grey,
@@ -324,15 +379,18 @@ class _profileState extends State<profile> {
                           ],
                           shape: BoxShape.circle,
                           image: DecorationImage(
-                              fit: BoxFit.cover,
-                              image: img != null
-                                  ? FileImage(img!)
-                                  : NetworkImage(
-                                      '') // Provide a default image here
-                              )),
-                    ),
+
+                            image: img != null
+                                ? FileImage(img!) // For Mobile (File)
+                                : webImage != null
+                                ? MemoryImage(webImage!) // For Web (Uint8List)
+                                : AssetImage('assets/placeholder.png') as ImageProvider, // Placeholder
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      )
+                  )
                   ),
-                ),
               ),
               Positioned(
                 right: 13,
@@ -353,7 +411,6 @@ class _profileState extends State<profile> {
             ],
           ),
         ),
-
         isloading
             ? Center(child: Text("guest"))
             : userprofile != null
@@ -370,7 +427,6 @@ class _profileState extends State<profile> {
                       style: TextStyle(fontSize: 18, color: Colors.red),
                     ),
                   ),
-
         const SizedBox(height: 10),
         // Menu Items with Navigation
         menu_item('Personal details', CupertinoIcons.profile_circled, () {
@@ -435,19 +491,20 @@ class _SaveDetailsState extends State<SaveDetails> {
 
       if (response.statusCode == 200 || response.statusCode == 204) {
         Navigator.pushAndRemoveUntil(
-            context, MaterialPageRoute(builder: (context) => profile_page()),
-            (route)=>false,
+          context as BuildContext,
+          MaterialPageRoute(builder: (context) => profile_page()),
+          (route) => false,
         );
       } else {
         print('update user details failed:${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
+        ScaffoldMessenger.of(context as BuildContext).showSnackBar(
           SnackBar(
               content: Text("Update user details failed: ${response.body}")),
         );
       }
     } catch (e) {
       print('Error occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
+      ScaffoldMessenger.of(context as BuildContext).showSnackBar(
         SnackBar(content: Text("An error occurred: $e")),
       );
     }
@@ -467,13 +524,13 @@ class _SaveDetailsState extends State<SaveDetails> {
     if (emailcontroller.text.isEmpty) {
       missingfields.add("enter email id");
     }
-    if (selectedGenderIndex == -1){
+    if (selectedGenderIndex == -1) {
       missingfields.add("select the gender");
     }
 
     if (missingfields.isNotEmpty) {
       showDialog(
-          context: context,
+          context: context as BuildContext,
           builder: (context) => AlertDialog(
                 title: const Text(
                   "Missing Fields",
