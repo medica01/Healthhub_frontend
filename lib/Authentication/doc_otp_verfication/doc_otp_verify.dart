@@ -1,5 +1,5 @@
-import 'dart:convert';
 
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -212,7 +212,7 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content:
-                                    Text('Verification failed: ${e.message}'),
+                                Text('Verification failed: ${e.message}'),
                               ),
                             );
                           },
@@ -347,29 +347,13 @@ class _DocOtpPageState extends State<DocOtpPage> {
 
   Future<void> _doc_profile() async {
     String save_phone_number = widget.data;
-
-    try {
-      final response = await http.post(
-        Uri.parse('http://$ip:8000/doctor_details/doctor_addetails/'),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          'doctor_phone_no': save_phone_number,
-        }),
-      );
-      if (response.statusCode == 201) {
-        SharedPreferences perf = await SharedPreferences.getInstance();
-        await perf.setBool('doc_login', true);
-        await perf.setString('doctor_phone_no', save_phone_number);
-        ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("phone number add successfully")));
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => doc_details_col()));
-      } else {
-        print('add phone number failed:${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text("add phone number failed: ${response.body}")));
-      }
-    } catch (e) {}
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    // await perf.setBool('doc_login', true);
+    await perf.setString('doctor_phone_no', save_phone_number);
+    ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("phone number add successfully")));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => doc_details_col()));
   }
 
   @override

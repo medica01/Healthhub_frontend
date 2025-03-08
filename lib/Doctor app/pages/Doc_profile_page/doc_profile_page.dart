@@ -7,6 +7,7 @@ import 'package:health_hub/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../Authentication/doc_otp_verfication/doc_otp_verify.dart';
+import '../../../Authentication/doc_otp_verfication/doctor_details_collect_2.dart';
 import '../../../allfun.dart';
 
 class doc_profiles extends StatefulWidget {
@@ -164,10 +165,10 @@ class _doc_profile_pageState extends State<doc_profile_page> {
         const SizedBox(height: 10),
         // Menu Items with Navigation
         menu_item('Personal details', CupertinoIcons.profile_circled, () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => personal_details()),
-          // );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => doc_bio_photo()),
+          );
         }),
         menu_item('Settings', Icons.settings, () {
           // Navigator.push(

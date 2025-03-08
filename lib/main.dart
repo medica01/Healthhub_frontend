@@ -16,10 +16,6 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // await FirebaseAppCheck.instance.activate(
-  //   androidProvider: AndroidProvider.debug, // Use 'playIntegrity' for production
-  //   appleProvider: AppleProvider.appAttest, // Use 'deviceCheck' if App Attest is unavailable
-  // );
   runApp(first_screen());
 }
 

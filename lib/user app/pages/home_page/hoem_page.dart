@@ -54,7 +54,7 @@ class _home_pageState extends State<home_page> {
 
   Future<void> _showdoctor() async {
     final url = Uri.parse(
-        "http://$ip:8000/doctor_details/doctor_editdetails/3/"); // Specific doctor's details
+        "http://$ip:8000/doctor_details/doctor_editdetails/1/"); // Specific doctor's details
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {

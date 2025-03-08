@@ -73,7 +73,7 @@ class _profile_pageState extends State<profile_page> {
   //   }
   // }
 
-  Future<bool> signOutFromphone() async {
+  Future<bool> signOutFromphone(BuildContext context) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
@@ -81,7 +81,7 @@ class _profile_pageState extends State<profile_page> {
       await prefs.remove('login');
 
       Navigator.pushAndRemoveUntil(
-        context as BuildContext,
+        context,
         MaterialPageRoute(builder: (context) => PhoneEntryPage()),
         (route) => false,
       );
@@ -110,7 +110,7 @@ class _profile_pageState extends State<profile_page> {
                 //     signOutFromGoogleAnd();
                 //   }
                 // },
-                onPressed: () => signOutFromphone(),
+                onPressed: () => signOutFromphone(context),
                 icon: Icon(
                   Icons.logout,
                   color: Color(0xff1f8acc),

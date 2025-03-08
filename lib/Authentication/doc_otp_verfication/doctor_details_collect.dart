@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../allfun.dart';
 import '../../main.dart';
 import 'doctor_details_collect_2.dart';
+import 'doctor_details_collect_3.dart';
 
 class doc_details_col extends StatefulWidget {
   const doc_details_col({super.key});
@@ -107,25 +108,25 @@ class _doc_det_collectState extends State<doc_det_collect> {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                title: const Text(
-                  "Missing field",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.red,
-                      fontSize: 25),
-                ),
-                content: Text("${missingfield.join("\n")}"),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text(
-                        "Ok",
-                        style: TextStyle(color: Color(0xff1f8acc)),
-                      ))
-                ],
-              ));
+            title: const Text(
+              "Missing field",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.red,
+                  fontSize: 25),
+            ),
+            content: Text("${missingfield.join("\n")}"),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Ok",
+                    style: TextStyle(color: Color(0xff1f8acc)),
+                  ))
+            ],
+          ));
     } else {
       if (missingfield.isEmpty) {
         _update_doc();
@@ -135,40 +136,14 @@ class _doc_det_collectState extends State<doc_det_collect> {
 
   Future<void> _update_doc() async{
     SharedPreferences perf = await SharedPreferences.getInstance();
-    setState(() {
-      doc_phone_no= perf.getString("doctor_phone_no") ?? "";
-      doc_phone_no = doc_phone_no.replaceFirst("+", "");
-    });
-    try{
-      final response  = await http.put(Uri.parse("http://$ip:8000/doctor_details/doc_editdetails_phone/$doc_phone_no/"),
-        headers: {"Content-Type":"application/json"},
-        body: jsonEncode({
-          "doctor_name": "${first_name.text} ${last_name.text}",
-          "doctor_email": email.text,
-          "age": age.text,
-          "gender": gender[selectgender],
-          "language": language.text,
-          "doctor_location": location.text,
-        })
-      );
-      if(response.statusCode==200 || response.statusCode == 201 || response.statusCode == 204){
-        print("${response.body}");
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_bio_photo()));
-      }else{
-        showDialog(context: context, builder: (context)=>AlertDialog(
-          title: Text("Update error",style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold),),
-          content: Text("Could not reach the server",style: TextStyle(fontWeight: FontWeight.bold),),
-          actions: [
-            TextButton(onPressed: (){
-              Navigator.pop(context);
-            }, child: Text("ok"))
-          ],
-        ));
-      }
-    }catch(e){
-      errormessage = e.toString();
-      print("$errormessage");
-    }
+    await perf.setString("doc_first_name", first_name.text);
+    await perf.setString("doc_last_name", last_name.text);
+    await perf.setString("doc_age", age.text);
+    await perf.setString("doc_email", email.text);
+    await perf.setString("doc_language", language.text);
+    await perf.setString("doc_location", location.text);
+    await perf.setString("doc_gender", gender[selectgender]);
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_bio()));
   }
 
   @override
@@ -226,44 +201,44 @@ class _doc_det_collectState extends State<doc_det_collect> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: List.generate(
                                 gender.length,
-                                (index) => GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectgender = index;
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: EdgeInsets.only(bottom: 8.0),
-                                        child: Container(
-                                          height: 50,
-                                          width: 75,
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 8),
-                                          decoration: BoxDecoration(
+                                    (index) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectgender = index;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Container(
+                                      height: 50,
+                                      width: 75,
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 8),
+                                      decoration: BoxDecoration(
+                                          color: selectgender == index
+                                              ? Color(0xff1f8acc)
+                                              : Colors.transparent,
+                                          border: Border.all(
+                                              color: Color(0xff1f8acc),
+                                              width: 1.5),
+                                          borderRadius:
+                                          BorderRadius.circular(8)),
+                                      child: Center(
+                                        child: Text(
+                                          gender[index],
+                                          style: TextStyle(
                                               color: selectgender == index
-                                                  ? Color(0xff1f8acc)
-                                                  : Colors.transparent,
-                                              border: Border.all(
-                                                  color: Color(0xff1f8acc),
-                                                  width: 1.5),
-                                              borderRadius:
-                                                  BorderRadius.circular(8)),
-                                          child: Center(
-                                            child: Text(
-                                              gender[index],
-                                              style: TextStyle(
-                                                  color: selectgender == index
-                                                      ? Colors.white
-                                                      : Color(0xff1f8acc),
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 11),
-                                            ),
-                                          ),
+                                                  ? Colors.white
+                                                  : Color(0xff1f8acc),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 11),
                                         ),
                                       ),
-                                    )),
+                                    ),
+                                  ),
+                                )),
                           ),
                           doc_form_field("Known Language", language,TextInputType.text),
                           Padding(
@@ -336,7 +311,7 @@ class _doc_det_collectState extends State<doc_det_collect> {
                                 )),
                             OutlinedButton(
                                 onPressed: ()=>
-                                  _validateandsave(),
+                                    _validateandsave(),
 
                                 style: OutlinedButton.styleFrom(
                                   backgroundColor: Color(0xff1f8acc),

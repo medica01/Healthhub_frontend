@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
 
+import '../../Doctor app/pages/Doc_profile_page/doc_profile_page.dart';
 import '../../allfun.dart';
 import 'doctor_details_collect_3.dart';
 
@@ -171,28 +172,28 @@ class _doc_bio_photoState extends State<doc_bio_photo> {
           Container(
             width: 200,
             child: OutlinedButton(
-              style: OutlinedButton.styleFrom(
-              ),
+                style: OutlinedButton.styleFrom(
+                ),
                 onPressed: (){
-                if(webImage !=null  || img !=null) {
-                  _updatedocphoto();
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_bio()));
-                }else{
-                  showDialog(context: context, builder: (context)=>AlertDialog(
-                    title: Text("Error",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25),),
-                    content: Text("Must must set the photo",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                    actions: [
-                      TextButton(onPressed: (){
-                        Navigator.pop(context);
-                        _pickImage();
-                      }, child: Text("Ok"))
-                    ],
-                  ));
-                }
-          },
+                  if(webImage !=null  || img !=null) {
+                    _updatedocphoto();
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>doc_profiles()), (route)=>false);
+                  }else{
+                    showDialog(context: context, builder: (context)=>AlertDialog(
+                      title: Text("Error",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25),),
+                      content: Text("Must must set the photo",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      actions: [
+                        TextButton(onPressed: (){
+                          Navigator.pop(context);
+                          _pickImage();
+                        }, child: Text("Ok"))
+                      ],
+                    ));
+                  }
+                },
                 child: const Center(
                   child:  Text("Set as Profile photo",style: TextStyle(
-                    color: Color(0xff1f8acc)
+                      color: Color(0xff1f8acc)
                   ),),
                 )),
           )
@@ -201,5 +202,3 @@ class _doc_bio_photoState extends State<doc_bio_photo> {
     );
   }
 }
-
-

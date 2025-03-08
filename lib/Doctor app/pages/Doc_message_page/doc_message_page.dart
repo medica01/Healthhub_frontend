@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Backend_information/chat_doc_only_user_chat_backend.dart';
 import 'chatting_doc_to_user_2.dart';
 
 class doc_message extends StatefulWidget {
@@ -67,25 +69,31 @@ class patient_chat_show extends StatefulWidget {
 }
 
 class _patient_chat_showState extends State<patient_chat_show> {
-  List<update_profile> chattting_pati =[];
+  List<chat_doc_only_user_chat> chat_user_only_doc_chat =[];
   String errormessage = "";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _chatting_patii();
+    _chats_user_only_doc_chat();
   }
 
-  Future<void> _chatting_patii() async{
+  Future<void> _chats_user_only_doc_chat() async{
+    String doc_phone_no = "";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      doc_phone_no = perf.getString("doctor_phone_no")??"";
+      doc_phone_no = doc_phone_no.replaceFirst("+", "");
+    });
     try{
-      final response = await http.get(Uri.parse("http://$ip:8000/user_profile/user_create/"),
+      final response = await http.get(Uri.parse("http://$ip:8000/booking_doctor/get_chat_doc_only_user_chat/$doc_phone_no/"),
         headers: {"Content-Type":"application/json"}
       );
       if(response.statusCode==200){
         List<dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
-          chattting_pati = jsonResponse.map((data)=>update_profile.fromJson(data)).toList();
+          chat_user_only_doc_chat = jsonResponse.map((data)=>chat_doc_only_user_chat.fromJson(data)).toList();
         });
       }else{
         setState(() {
@@ -113,7 +121,7 @@ class _patient_chat_showState extends State<patient_chat_show> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal, // ✅ Allow horizontal scrolling
             child: Row(
-              children: chattting_pati.map((show_patii) {
+              children: chat_user_only_doc_chat.map((show_patii) {
                 return show_patii.id != null
                     ? Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -146,9 +154,9 @@ class _patient_chat_showState extends State<patient_chat_show> {
         ),
         ListView.builder(
             shrinkWrap: true,
-            itemCount: chattting_pati.length,
+            itemCount: chat_user_only_doc_chat.length,
             itemBuilder: (context, index) {
-              var show_patiii = chattting_pati[index];
+              var show_patiii = chat_user_only_doc_chat[index];
               return show_patiii.id != null
                   ? Padding(
                 padding: const EdgeInsets.all(8.0),

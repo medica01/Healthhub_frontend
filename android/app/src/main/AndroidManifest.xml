@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.READ_PHONE_NUMBERS"/>
     <uses-feature android:name="android.hardware.telephony"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <queries>
         <intent>

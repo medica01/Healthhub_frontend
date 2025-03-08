@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../../Backend_information/Backend_doctor_details.dart';
 import '../home.dart';
@@ -81,7 +82,7 @@ class _doc_profileState extends State<doc_profile> {
       //     SnackBar(content: Text("your booking failed${response.body}")),);
         showDialog(context: context, builder: (context)=>AlertDialog(
           title: Text("Booking failed",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 20),),
-          content: Text("Your booking faild please re-book this doctor"),
+          content: Text("this slot already booked"),
           actions: [
             TextButton(onPressed: (){
               Navigator.pop(context);
@@ -157,6 +158,12 @@ class _doc_profileState extends State<doc_profile> {
         errorMessage = e.toString();
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> _vibrate() async{
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.vibrate(duration: 500);
     }
   }
 
@@ -476,6 +483,7 @@ class _doc_profileState extends State<doc_profile> {
               margin: const EdgeInsets.all(16.0),
               child: GestureDetector(
                 onTap: () {
+                  _vibrate();
                   _booking_doc();
                 },
                 child: Container(
