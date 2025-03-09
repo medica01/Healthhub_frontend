@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Backend_information/Backend_doctor_details.dart';
-
+import 'all_doctor_search.dart';
 
 class all_doctor extends StatefulWidget {
   const all_doctor({super.key});
@@ -30,31 +30,15 @@ class _all_doctorState extends State<all_doctor> {
           style:
               TextStyle(color: Color(0xff0a8eac), fontWeight: FontWeight.bold),
         ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 10.0,
-            ),
-            child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Container(
-                  width: 360,
-                  child: SearchBar(
-                    leading: Icon(Icons.search),
-                    hintText: 'Search a Doctor',
-
-                    backgroundColor: WidgetStatePropertyAll(Colors.white),
-                    // shadowColor: WidgetStatePropertyAll(Colors.grey),
-                    elevation: WidgetStatePropertyAll(6.0),
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
-                    padding: WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 16.0)),
-                  ),
-                )),
-          ),
-        ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchDoctorPage()));
+            },
+            icon: Icon(Icons.search_rounded),
+            color: Color(0xff0a8eac),
+          )
+        ],
       ),
       body: doctor_id(),
     );
@@ -73,7 +57,7 @@ class _doctor_idState extends State<doctor_id> {
   List<doctor_details> doctor_detail = [];
   bool isLoading = true;
   String? errorMessage;
-  String doc_id="";
+  String doc_id = "";
 
   @override
   void initState() {
@@ -126,53 +110,86 @@ class _doctor_idState extends State<doctor_id> {
   //   }
   // }
 
-
-  Future<void> _favorite_doctor () async{
+  Future<void> _favorite_doctor() async {
     String phone_number = "";
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString('phone_number') ?? "917845711277";
       phone_number = phone_number.replaceFirst('+', '');
     });
-    try{
-      final response = await http.post(Uri.parse("http://$ip:8000/booking_doctor/create_favorite_doc/"),
-        headers: {"Content-Type":"application/json"},
-        body: jsonEncode({
-          "id":doc_id,
-          "like":set_fav,
-          "phone_number":phone_number
-        })
-      );
+    try {
+      final response = await http.post(
+          Uri.parse("http://$ip:8000/booking_doctor/create_favorite_doc/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode(
+              {"id": doc_id, "like": set_fav, "phone_number": phone_number}));
       if (response.statusCode == 201) {
-        showDialog(context: context, builder: (context)=>AlertDialog(
-          title: Text("your like add",style: TextStyle(color: Colors.green,fontSize: 25,fontWeight: FontWeight.bold),),
-          content: Text("this doctor is like by you."),
-
-        ));
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(
+                    "your like add",
+                    style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  content: Text("this doctor is like by you."),
+                ));
       } else {
-        showDialog(context: context, builder: (context)=>AlertDialog(
-          title: Text("Alert",style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold),),
-          content: Text("This Doctor already marked as a favorite",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
-          actions: [
-            TextButton(onPressed: (){
-              Navigator.pop(context);
-            }, child: Text("OK",style: TextStyle(color: Colors.red,fontSize: 25,fontWeight: FontWeight.bold),))
-          ],
-        ));
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(
+                    "Alert",
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  content: Text(
+                    "This Doctor already marked as a favorite",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "OK",
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 25,
+                              fontWeight: FontWeight.bold),
+                        ))
+                  ],
+                ));
       }
-    }catch(e){
-      showDialog(context: context, builder: (context)=>AlertDialog(
-        title: Text("Alert",style: TextStyle(color: Colors.green,fontSize: 25,fontWeight: FontWeight.bold),),
-        content: Text("$e"),
-        actions: [
-          TextButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("ok"))
-        ],
-      ));
+    } catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(
+                  "Alert",
+                  style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold),
+                ),
+                content: Text("$e"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("ok"))
+                ],
+              ));
     }
-
-
   }
 
   @override
@@ -187,11 +204,13 @@ class _doctor_idState extends State<doctor_id> {
               itemCount: doctor_detail.length,
               itemBuilder: (context, index) {
                 var doctor = doctor_detail[index];
-                return doctor !=null || doctor.id != "null" || doctor.doctorName != "null" || doctor.language != "null" || doctor.service != "null" || doctor.specialty!="null" || doctor.language!="null" || doctor.regNo!="null" || doctor.bio!="null" || doctor.qualification!="null" ||doctor.doctorImage!="null" || doctor.doctorPhoneNo!= "null" || doctor.like!="null"
+                return doctor.id != null
                     ? Padding(
-                        padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
+                        padding:
+                            EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
                         child: Card(
-                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           elevation: 5,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
@@ -205,8 +224,8 @@ class _doctor_idState extends State<doctor_id> {
                             ),
                             height: 190,
                             child: Padding(
-                              padding:
-                                  EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
+                              padding: EdgeInsets.only(
+                                  left: 10.0, top: 15, bottom: 15),
                               child: Center(
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -223,8 +242,10 @@ class _doctor_idState extends State<doctor_id> {
                                     Padding(
                                       padding: EdgeInsets.only(left: 18.0),
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             mainAxisAlignment:
@@ -237,31 +258,49 @@ class _doctor_idState extends State<doctor_id> {
                                                     fontSize: 20),
                                               ),
                                               Padding(
-                                                padding:
-                                                    const EdgeInsets.only(left: 28.0),
+                                                padding: const EdgeInsets.only(
+                                                    left: 28.0),
                                                 child: IconButton(
                                                   onPressed: () {
                                                     setState(() {
-                                                      doc_id = doctor_detail[index].id?.toString() ?? '';
-                                                      doctor_detail[index].like = !(doctor_detail[index].like ?? false);
-                                                      set_fav=doctor_detail[index].like!;
-                                                      print("${doctor_detail[index].id}");
+                                                      doc_id = doctor_detail[
+                                                                  index]
+                                                              .id
+                                                              ?.toString() ??
+                                                          '';
+                                                      doctor_detail[index]
+                                                              .like =
+                                                          !(doctor_detail[index]
+                                                                  .like ??
+                                                              false);
+                                                      set_fav =
+                                                          doctor_detail[index]
+                                                              .like!;
+                                                      print(
+                                                          "${doctor_detail[index].id}");
                                                       _favorite_doctor();
                                                       // _add_like_doctor_details();
                                                     });
                                                   },
                                                   icon: Icon(
                                                     (set_fav ?? false)
-                                                        ? FontAwesomeIcons.solidHeart
-                                                        : FontAwesomeIcons.heart,
-                                                    color: (doctor_detail[index].like ?? false) ? Colors.red : Colors.grey,
+                                                        ? FontAwesomeIcons
+                                                            .solidHeart
+                                                        : FontAwesomeIcons
+                                                            .heart,
+                                                    color: (doctor_detail[index]
+                                                                .like ??
+                                                            false)
+                                                        ? Colors.red
+                                                        : Colors.grey,
                                                   ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            padding:
+                                                EdgeInsets.only(bottom: 5.0),
                                             child: Text(
                                               "${doctor.specialty}",
                                               style: TextStyle(
@@ -270,7 +309,8 @@ class _doctor_idState extends State<doctor_id> {
                                             ),
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            padding:
+                                                EdgeInsets.only(bottom: 5.0),
                                             child: Text(
                                               "${doctor.service} years of exp",
                                               style: TextStyle(
@@ -309,24 +349,28 @@ class _doctor_idState extends State<doctor_id> {
                                                       Navigator.push(
                                                           context,
                                                           MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  doc_profile(
-                                                                    data:
-                                                                        "${doctor.id}",
-                                                                  )));
+                                                              builder:
+                                                                  (context) =>
+                                                                      doc_profile(
+                                                                        data:
+                                                                            "${doctor.id}",
+                                                                      )));
                                                     },
-                                                    style: OutlinedButton.styleFrom(
-                                                        backgroundColor:
-                                                            Colors.blueAccent,
-                                                        shadowColor: Colors.grey),
+                                                    style: OutlinedButton
+                                                        .styleFrom(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .blueAccent,
+                                                            shadowColor:
+                                                                Colors.grey),
                                                     child: Text(
                                                       "Book",
                                                       style: TextStyle(
                                                           color: Colors.white),
                                                     )),
                                                 Padding(
-                                                  padding:
-                                                      EdgeInsets.only(left: 38.0),
+                                                  padding: EdgeInsets.only(
+                                                      left: 38.0),
                                                   child: Row(
                                                     children: [
                                                       Icon(
@@ -338,8 +382,8 @@ class _doctor_idState extends State<doctor_id> {
                                                 ),
                                                 Container(
                                                     width: 60,
-                                                    child:
-                                                        Text("${doctor.regNo ?? 0}")),
+                                                    child: Text(
+                                                        "${doctor.regNo ?? 0}")),
                                               ],
                                             ),
                                           )
@@ -354,7 +398,6 @@ class _doctor_idState extends State<doctor_id> {
                         ),
                       )
                     : Text("data");
-
               }),
         ),
         Container(
@@ -364,8 +407,6 @@ class _doctor_idState extends State<doctor_id> {
     );
   }
 }
-
-
 
 // import 'dart:convert';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';

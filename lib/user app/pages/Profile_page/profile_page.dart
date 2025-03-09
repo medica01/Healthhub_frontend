@@ -181,7 +181,6 @@ class _profileState extends State<profile> {
         final bytes = await pickedFile.readAsBytes();
         setState(() {
           webImage = bytes;
-
         });
         // _saveimg(webImage as String);
         await _updateuserphoto();
@@ -189,7 +188,6 @@ class _profileState extends State<profile> {
         // For Mobile
         setState(() {
           img = io.File(pickedFile.path);
-
         });
         // _saveimg(img as String);
         await _updateuserphoto();
@@ -221,7 +219,8 @@ class _profileState extends State<profile> {
       phone_number = pref.getString('phone_number') ?? "917845711277";
       phone_number = phone_number.replaceFirst('+', '');
     });
-    final String uploadUrl = 'http://$ip:8000/user_profile/user_edit/$phone_number/';
+    final String uploadUrl =
+        'http://$ip:8000/user_profile/user_edit/$phone_number/';
     if (kIsWeb && webImage != null) {
       // Web upload
       var request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
@@ -308,148 +307,149 @@ class _profileState extends State<profile> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      children: [
-        userprofile == null ||
-                userprofile!.firstName == null ||
-                userprofile!.lastName == null ||
-                userprofile!.age == null ||
-                userprofile!.email == null ||
-                userprofile!.gender == null
-            ? Container(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 18.0, right: 18, bottom: 10),
-                  child: OutlinedButton(
-                    onPressed: () {
-                      showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return SaveDetails();
-                          });
-                    },
-                    child: Text(
-                      "Create Profile",
-                      style: TextStyle(color: Color(0xff1f8acc), fontSize: 20),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      minimumSize: Size(100, 50),
-                      // Ensures the button is at least this size
-                      padding: EdgeInsets.zero,
-                      // Ensures no extra padding affects width
-                      side: BorderSide(color: Color(0xff1f8acc)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40),
-                      ),
-                    ),
-                  ),
-                ),
-              )
-            : SizedBox(
-                height: 2,
-              ),
-        Divider(
-          color: Colors.grey,
-          thickness: 1,
-          indent: 5,
-          endIndent: 5,
-        ),
-        Center(
-          child: Stack(
+    return userprofile != null
+        ? ListView(
             children: [
-              Container(
-                // width: scc.width * 1,
-                // color: Colors.red,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: 20.0, right: 20, top: 10, bottom: 20),
-                  child: GestureDetector(
-                      onTap: () {
-                        // Navigator.push(
-                        //     context,
-                        //     MaterialPageRoute(
-                        //         builder: (context) => photo()));
-                      },
-                      child: Container(
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.grey,
-                                offset: Offset(0, 2),
-                                blurRadius: 12)
-                          ],
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-
-                            image: img != null
-                                ? FileImage(img!) // For Mobile (File)
-                                : webImage != null
-                                ? MemoryImage(webImage!) // For Web (Uint8List)
-                                : AssetImage("assetName"),
-                            fit: BoxFit.cover,
+              userprofile == null ||
+                      userprofile!.firstName == null ||
+                      userprofile!.lastName == null ||
+                      userprofile!.age == null ||
+                      userprofile!.email == null ||
+                      userprofile!.gender == null
+                  ? Container(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                            left: 18.0, right: 18, bottom: 10),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (context) {
+                                  return SaveDetails();
+                                });
+                          },
+                          child: Text(
+                            "Create Profile",
+                            style: TextStyle(
+                                color: Color(0xff1f8acc), fontSize: 20),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: Size(100, 50),
+                            // Ensures the button is at least this size
+                            padding: EdgeInsets.zero,
+                            // Ensures no extra padding affects width
+                            side: BorderSide(color: Color(0xff1f8acc)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(40),
+                            ),
                           ),
                         ),
-                      )
-                  )
-                  ),
+                      ),
+                    )
+                  : SizedBox(
+                      height: 2,
+                    ),
+              Divider(
+                color: Colors.grey,
+                thickness: 1,
+                indent: 5,
+                endIndent: 5,
               ),
-              Positioned(
-                right: 13,
-                bottom: 20,
-                child: Container(
-                  height: 40,
-                  width: 40,
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.65),
-                      shape: BoxShape.circle),
-                  child: IconButton(
-                      onPressed: _pickImage,
-                      icon: Icon(
-                        Icons.camera_alt,
-                      )),
+              Center(
+                child: Stack(
+                  children: [
+                    Container(
+                      // width: scc.width * 1,
+                      // color: Colors.red,
+                      child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 20.0, right: 20, top: 10, bottom: 20),
+                          child: GestureDetector(
+                              onTap: () {
+                                // Navigator.push(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //         builder: (context) => photo()));
+                              },
+                              child: Container(
+                                width: 130,
+                                height: 130,
+                                decoration: BoxDecoration(
+                                  boxShadow: [
+                                    BoxShadow(
+                                        color: Colors.grey,
+                                        offset: Offset(0, 2),
+                                        blurRadius: 12)
+                                  ],
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: img != null
+                                        ? FileImage(img!) // For Mobile (File)
+                                        : webImage != null
+                                            ? MemoryImage(
+                                                webImage!) // For Web (Uint8List)
+                                            : AssetImage("assetName"),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ))),
+                    ),
+                    Positioned(
+                      right: 13,
+                      bottom: 20,
+                      child: Container(
+                        height: 40,
+                        width: 40,
+                        decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.65),
+                            shape: BoxShape.circle),
+                        child: IconButton(
+                            onPressed: _pickImage,
+                            icon: Icon(
+                              Icons.camera_alt,
+                            )),
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              isloading
+                  ? Center(child: Text("guest"))
+                  : userprofile != null
+                      ? Center(
+                          child: Text(
+                            "${userprofile!.firstName ?? ''} ${userprofile!.lastName ?? ''}",
+                            style: TextStyle(
+                                fontSize: 23, fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      : Center(
+                          child: Text(
+                            errormessage ?? "Guest",
+                            style: TextStyle(fontSize: 18, color: Colors.red),
+                          ),
+                        ),
+              const SizedBox(height: 10),
+              // Menu Items with Navigation
+              menu_item('Personal details', CupertinoIcons.profile_circled, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => personal_details()),
+                );
+              }),
+              menu_item('Settings', Icons.settings, () {
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //       builder: (context) => const ProfileDetailsPage()),
+                // );
+              }),
+              menu_item('About', CupertinoIcons.info, () {}),
+              menu_item('Help', Icons.help_outline, () {}),
             ],
-          ),
-        ),
-        isloading
-            ? Center(child: Text("guest"))
-            : userprofile != null
-                ? Center(
-                    child: Text(
-                      "${userprofile!.firstName ?? ''} ${userprofile!.lastName ?? ''}",
-                      style:
-                          TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
-                    ),
-                  )
-                : Center(
-                    child: Text(
-                      errormessage ?? "Guest",
-                      style: TextStyle(fontSize: 18, color: Colors.red),
-                    ),
-                  ),
-        const SizedBox(height: 10),
-        // Menu Items with Navigation
-        menu_item('Personal details', CupertinoIcons.profile_circled, () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => personal_details()),
-          );
-        }),
-        menu_item('Settings', Icons.settings, () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) => const ProfileDetailsPage()),
-          // );
-        }),
-        menu_item('About', CupertinoIcons.info, () {}),
-        menu_item('Help', Icons.help_outline, () {}),
-      ],
-    );
+          )
+        : Center(child: CircularProgressIndicator());
   }
 }
 

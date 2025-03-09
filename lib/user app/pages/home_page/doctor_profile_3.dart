@@ -1,15 +1,11 @@
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
-
-
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
-
 import '../../../Backend_information/Backend_doctor_details.dart';
 import '../home.dart';
 
