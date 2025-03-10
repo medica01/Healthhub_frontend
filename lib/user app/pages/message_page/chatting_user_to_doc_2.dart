@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:health_hub/user%20app/pages/message_page/search_chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,18 +29,21 @@ class _user_docState extends State<user_doc> {
   bool isloading = true;
   String sender_type = "user";
   TextEditingController messageController = TextEditingController();
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    doc_phone_number = widget.data ?? "917845711277";
+    doc_phone_number = widget.data ?? "";
     doc_phone_number = doc_phone_number.replaceFirst('+', '');
     _get_doc_phone_no();
     _chatsRefreshtime = Timer.periodic(Duration(seconds: 1), (timer) {
       _get_user_doctor_chat_history();
     });
   }
+
+
 
   @override
   void dispose() {
@@ -138,7 +142,6 @@ class _user_docState extends State<user_doc> {
         body: jsonEncode({
           "sender_phone": phone_number,
           "receiver_phone": get_doc_number!.doctorPhoneNo,
-          // Ensure doctor number is correct
           "message": messageController.text,
           "sender_type": sender_type
           // 'user' or 'doctor' based on role
@@ -207,8 +210,8 @@ class _user_docState extends State<user_doc> {
                   style: TextStyle(fontWeight: FontWeight.bold))
                   : CircularProgressIndicator(), // Show a loader until data is loaded
             ),
-            Text("Online", style: TextStyle(
-                color: Colors.green, fontWeight: FontWeight.bold),)
+            // Text("Online", style: TextStyle(
+            //     color: Colors.green, fontWeight: FontWeight.bold),)
           ],
         ),
 
@@ -229,6 +232,39 @@ class _user_docState extends State<user_doc> {
             ],
           )
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 10.0,
+            ),
+            child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>search_chat(
+                      data: "${widget.data}",
+                    )));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatSearchScreen(
+                    // )));
+                  },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.black,width: 1)
+                      ),
+                      width: 350,
+                      height: 43,
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding:  EdgeInsets.only(left: 18.0),
+                            child: Text("Search Chats ....",style: TextStyle(color: Color(0xff1f8acc)),),
+                          ))
+                  ),
+                )),
+          ),
+        ),
       ),
       body: Column(
         children: [

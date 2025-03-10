@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/chat_history_backend.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
+import 'package:health_hub/Doctor%20app/pages/Doc_message_page/search_chat_doc.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -199,6 +200,37 @@ class _doc_userState extends State<doc_user> {
             ],
           )
         ],
+        bottom: PreferredSize(
+          preferredSize: Size.fromHeight(60),
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 10.0,
+            ),
+            child: Padding(
+                padding: EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>search_chat_doc(
+                      data: "${widget.data}",
+                    )));
+                    },
+                  child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.black,width: 1)
+                      ),
+                      width: 350,
+                      height: 43,
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding:  EdgeInsets.only(left: 18.0),
+                            child: Text("Search Chats ....",style: TextStyle(color: Color(0xff1f8acc)),),
+                          ))
+                  ),
+                )),
+          ),
+        ),
       ),
       body: Column(
         children: [

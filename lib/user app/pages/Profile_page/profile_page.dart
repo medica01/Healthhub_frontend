@@ -358,7 +358,7 @@ class _profileState extends State<profile> {
               ),
               Center(
                 child: Stack(
-                  children: [
+                  children: [ 
                     Container(
                       // width: scc.width * 1,
                       // color: Colors.red,
