@@ -302,6 +302,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
   }
 }
 
+
 class BottomNavigationBarPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {

@@ -24,40 +24,18 @@ class _message_pageState extends State<message_page> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white,
+          backgroundColor: Colors.white,
           appBar: AppBar(
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.white, 
             centerTitle: true,
             title: const Text(
               "Message",
               style: TextStyle(
                   color: Color(0xff0a8eac), fontWeight: FontWeight.bold),
             ),
-            bottom: PreferredSize(
-              preferredSize: Size.fromHeight(60),
-              child: Padding(
-                padding: EdgeInsets.only(
-                  left: 10.0,
-                ),
-                child: Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Container(
-                      width: 360,
-                      child: SearchBar(
-                        leading: Icon(Icons.search),
-                        hintText: 'Search a Doctor',
-
-                        backgroundColor: WidgetStatePropertyAll(Colors.white),
-                        // shadowColor: WidgetStatePropertyAll(Colors.grey),
-                        elevation: WidgetStatePropertyAll(6.0),
-                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20))),
-                        padding: WidgetStatePropertyAll(
-                            EdgeInsets.symmetric(horizontal: 16.0)),
-                      ),
-                    )),
-              ),
-            ),
+            actions: [IconButton(onPressed: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>search_chat_name()));
+            }, icon: Icon(Icons.search,color: Color(0xff1f8acc),))],
           ),
           body: show_all_doctor()),
     );
@@ -81,6 +59,7 @@ class _show_all_doctorState extends State<show_all_doctor> {
     super.initState();
     _chatting_doc();
   }
+
   Future<void> _chatting_doc() async {
     try {
       final response = await http.get(
@@ -127,25 +106,25 @@ class _show_all_doctorState extends State<show_all_doctor> {
               children: chattting_doc.map((show_docc) {
                 return show_docc.id != null
                     ? Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(
-                          show_docc.doctorImage != null
-                              ? "http://$ip:8000${show_docc.doctorImage}"
-                              : "no data ",
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(
+                                show_docc.doctorImage != null
+                                    ? "http://$ip:8000${show_docc.doctorImage}"
+                                    : "no data ",
+                              ),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              show_docc.doctorName ?? "Unknown",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(height: 5),
-                      Text(
-                        show_docc.doctorName ?? "Unknown",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                )
+                      )
                     : SizedBox();
               }).toList(),
             ),
@@ -153,66 +132,250 @@ class _show_all_doctorState extends State<show_all_doctor> {
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Text("Messages",style: TextStyle(fontSize: 20,fontWeight: FontWeight.bold),),
+          child: Text(
+            "Messages",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
         ListView.builder(
-          shrinkWrap: true,
+            shrinkWrap: true,
             itemCount: chattting_doc.length,
             itemBuilder: (context, index) {
               var show_docc = chattting_doc[index];
               return show_docc.id != null
                   ? Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: GestureDetector(
-                      onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (context)=>user_doc(data:"${show_docc.doctorPhoneNo}")));
-                      },
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        shadowColor: Colors.grey,
-                        child: Container(
-                          height: 100,
-                          // color: Colors.red,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                CircleAvatar(
-                                  radius: 40,
-                                  backgroundImage: NetworkImage(
-                                    // scale: 10,
-                                    show_docc.doctorImage != null
-                                        ? "http://$ip:8000${show_docc.doctorImage}"
-                                        : "no data ",
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => user_doc(
+                                      data: "${show_docc.doctorPhoneNo}")));
+                        },
+                        child: Card(
+                          margin:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          shadowColor: Colors.grey,
+                          child: Container(
+                            height: 100,
+                            // color: Colors.red,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: NetworkImage(
+                                      // scale: 10,
+                                      show_docc.doctorImage != null
+                                          ? "http://$ip:8000${show_docc.doctorImage}"
+                                          : "no data ",
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding:  EdgeInsets.only(left: 15.0),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text("${show_docc.doctorName}",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                                      Text("${show_docc.specialty}",style: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.bold),)
-                                    ],
-                                  ),
-                                )
-                              ],
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 15.0),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "${show_docc.doctorName}",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20),
+                                        ),
+                                        Text(
+                                          "${show_docc.specialty}",
+                                          style: TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        )
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  )
+                    )
                   : Text("data");
             })
       ],
+    );
+  }
+}
+
+class search_chat_name extends StatefulWidget {
+  const search_chat_name({super.key});
+
+  @override
+  State<search_chat_name> createState() => _search_chat_nameState();
+}
+
+class _search_chat_nameState extends State<search_chat_name> {
+  TextEditingController searchController = TextEditingController();
+  List<doctor_details> search_doctor = [];
+  bool isLoading = false;
+
+  Future<void> _search_doc_name(String query) async {
+    if (query.isEmpty) return;
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      String get_name = Uri.encodeQueryComponent(query);
+      final response = await http.get(Uri.parse(
+          "http://$ip:8000/doctor_details/doctor_search/?q=$get_name"));
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        print("jsonResponse: $jsonResponse");
+        if (jsonResponse is Map && jsonResponse.containsKey('result')) {
+          var resultList = jsonResponse['result'];
+          if (resultList is List) {
+            setState(() {
+              search_doctor = resultList
+                  .map((data) => doctor_details.fromJson(data))
+                  .toList();
+              isLoading = false;
+            });
+          } else {
+            setState(() {
+              search_doctor = [];
+              isLoading = false;
+            });
+          }
+        } else {
+          setState(() {
+            search_doctor = [];
+            isLoading = false;
+          });
+        }
+      } else {
+        setState(() {
+          search_doctor = [];
+          isLoading = false;
+        });
+      }
+    } catch (e) {}
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: TextField(
+          autofocus: true,
+          controller: searchController,
+          cursorColor: Color(0xff1f8acc),
+          style:
+              TextStyle(color: Color(0xff1f8acc), fontWeight: FontWeight.bold),
+          decoration: InputDecoration(
+            focusColor: Colors.black,
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide(
+                  color: Colors.black, width: 2.0), // Focused border color
+            ),
+            hintText: "Search chats...",
+            prefixIcon: Icon(Icons.search),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          onChanged: (query) {
+            if (query.length > 1) {
+              _search_doc_name(query);
+            }
+          },
+        ),
+      ),
+      body: ListView.builder(
+          shrinkWrap: true,
+          itemCount: search_doctor.length,
+          itemBuilder: (context, index) {
+            var show_docc = search_doctor[index];
+            return show_docc.id != null
+                ? Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => user_doc(
+                              data: "${show_docc.doctorPhoneNo}")));
+                },
+                child: Card(
+                  margin:
+                  EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  clipBehavior: Clip.hardEdge,
+                  shadowColor: Colors.grey,
+                  child: Container(
+                    height: 100,
+                    // color: Colors.red,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 40,
+                            backgroundImage: NetworkImage(
+                              // scale: 10,
+                              show_docc.doctorImage != null
+                                  ? "http://$ip:8000/media/${show_docc.doctorImage}"
+                                  : "no data ",
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 15.0),
+                            child: Column(
+                              mainAxisAlignment:
+                              MainAxisAlignment.center,
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "${show_docc.doctorName}",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                                Text(
+                                  "${show_docc.specialty}",
+                                  style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold),
+                                )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            )
+                : Text("data");
+          }),
     );
   }
 }

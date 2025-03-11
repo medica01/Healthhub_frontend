@@ -68,17 +68,17 @@ class _doc_det_collectState extends State<doc_det_collect> {
     super.initState();
   }
 
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    super.dispose();
-    first_name.dispose();
-    last_name.dispose();
-    age.dispose();
-    email.dispose();
-    language.dispose();
-    location.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   // TODO: implement dispose
+  //   super.dispose();
+  //   first_name.dispose();
+  //   last_name.dispose();
+  //   age.dispose();
+  //   email.dispose();
+  //   language.dispose();
+  //   location.dispose();
+  // }
 
   void _validateandsave() {
     List<String> missingfield = [];

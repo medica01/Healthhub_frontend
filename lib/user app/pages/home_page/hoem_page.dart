@@ -176,30 +176,30 @@ class _home_pageState extends State<home_page> {
                 size: 30,
               )),
         ],
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 10.0,
-            ),
-            child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Container(
-                  width: 320,
-                  child: SearchBar(
-                    leading: Icon(Icons.search),
-                    hintText: 'Search',
-                    backgroundColor: WidgetStatePropertyAll(Colors.white),
-                    shadowColor: WidgetStatePropertyAll(Colors.grey),
-                    elevation: WidgetStatePropertyAll(6.0),
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(40))),
-                    padding: WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 16.0)),
-                  ),
-                )),
-          ),
-        ),
+        // bottom: PreferredSize(
+        //   preferredSize: Size.fromHeight(60),
+        //   child: Padding(
+        //     padding: EdgeInsets.only(
+        //       left: 10.0,
+        //     ),
+        //     child: Padding(
+        //         padding: EdgeInsets.all(8.0),
+        //         child: Container(
+        //           width: 320,
+        //           child: SearchBar(
+        //             leading: Icon(Icons.search),
+        //             hintText: 'Search',
+        //             backgroundColor: WidgetStatePropertyAll(Colors.white),
+        //             shadowColor: WidgetStatePropertyAll(Colors.grey),
+        //             elevation: WidgetStatePropertyAll(6.0),
+        //             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+        //                 borderRadius: BorderRadius.circular(40))),
+        //             padding: WidgetStatePropertyAll(
+        //                 EdgeInsets.symmetric(horizontal: 16.0)),
+        //           ),
+        //         )),
+        //   ),
+        // ),
       ),
       body: ListView(
         children: [

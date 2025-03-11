@@ -157,6 +157,8 @@ class _doc_profileState extends State<doc_profile> {
     }
   }
 
+
+
   Future<void> _vibrate() async{
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: 500);
