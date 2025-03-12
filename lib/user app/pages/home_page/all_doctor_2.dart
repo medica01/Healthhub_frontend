@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Backend_information/Backend_doctor_details.dart';
+import '../../../Backend_information/user_details_backend.dart';
+import '../Profile_page/profile_page.dart';
 import 'all_doctor_search.dart';
 
 class all_doctor extends StatefulWidget {
@@ -53,6 +55,7 @@ class doctor_id extends StatefulWidget {
 }
 
 class _doctor_idState extends State<doctor_id> {
+  update_profile? userprofile;
   bool set_fav = false;
   List<doctor_details> doctor_detail = [];
   bool isLoading = true;
@@ -63,6 +66,7 @@ class _doctor_idState extends State<doctor_id> {
   void initState() {
     super.initState();
     _showdoctor1();
+    userpro();
   }
 
   //  request for retrieve the all the json using get
@@ -90,6 +94,61 @@ class _doctor_idState extends State<doctor_id> {
         errorMessage = e.toString();
         isLoading = false;
       });
+    }
+  }
+
+  Future<void> userpro()async{
+    String phone_number="";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try{
+      final response = await http.get(Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+          headers: {"Content-Type":"application/json"}
+      );
+      if(response.statusCode==200){
+        Map<String,dynamic>jsonResponse = jsonDecode(response.body);
+        setState(() {
+          userprofile=update_profile.fromJson(jsonResponse);
+          isLoading=false;
+        });
+      }else{
+        setState(() {
+          errorMessage = response.body.toString();
+          isLoading=false;
+        });
+      }
+    }catch(e){
+      errorMessage=e.toString();
+      isLoading=false;
+    }
+  }
+
+  void valid_user(){
+    if(userprofile!.firstName == null) {
+      print("${userprofile!.firstName}");
+      if (userprofile!.lastName == null) {
+        if(userprofile!.age==null){
+          if(userprofile!.gender==null){
+            if(userprofile!.email==null){
+              showDialog(context: context, builder: (context)=>AlertDialog(
+                title: Text("Invalid User",style: TextStyle(color: Colors.red,fontSize: 25),),
+                content: Text("you must create the account for make favorite!",style: TextStyle(fontSize: 20),),
+                actions: [
+                  TextButton(onPressed: (){
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                  }, child: Text("Ok"))
+                ],
+              ));
+            }
+          }
+        }
+      }
+    }else{
+      _favorite_doctor();
     }
   }
 
@@ -278,7 +337,7 @@ class _doctor_idState extends State<doctor_id> {
                                                               .like!;
                                                       print(
                                                           "${doctor_detail[index].id}");
-                                                      _favorite_doctor();
+                                                      valid_user();
                                                       // _add_like_doctor_details();
                                                     });
                                                   },

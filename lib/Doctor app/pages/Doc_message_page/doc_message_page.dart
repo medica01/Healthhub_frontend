@@ -2,11 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
+import 'package:health_hub/Doctor%20app/pages/Doc_message_page/search_chat_doc_only_user_chat.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Backend_information/chat_doc_only_user_chat_backend.dart';
+import '../../../user app/pages/Profile_page/profile_page.dart';
 import 'chatting_doc_to_user_2.dart';
 
 class doc_message extends StatefulWidget {
@@ -30,30 +32,35 @@ class _doc_messageState extends State<doc_message> {
             style: TextStyle(
                 color: Color(0xff0a8eac), fontWeight: FontWeight.bold),
           ),
-          bottom: PreferredSize(
-            preferredSize: Size.fromHeight(60),
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: 10.0,
-              ),
-              child: Padding(
-                  padding: EdgeInsets.all(8.0),
-                  child: Container(
-                    width: 360,
-                    child: SearchBar(
-                      leading: Icon(Icons.search),
-                      hintText: 'Search a patient',
-                      backgroundColor: WidgetStatePropertyAll(Colors.white),
-                      // shadowColor: WidgetStatePropertyAll(Colors.grey),
-                      elevation: WidgetStatePropertyAll(6.0),
-                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20))),
-                      padding: WidgetStatePropertyAll(
-                          EdgeInsets.symmetric(horizontal: 16.0)),
-                    ),
-                  )),
-            ),
-          ),
+          // bottom: PreferredSize(
+          //   preferredSize: Size.fromHeight(60),
+          //   child: Padding(
+          //     padding: EdgeInsets.only(
+          //       left: 10.0,
+          //     ),
+          //     child: Padding(
+          //         padding: EdgeInsets.all(8.0),
+          //         child: Container(
+          //           width: 360,
+          //           child: SearchBar(
+          //             leading: Icon(Icons.search),
+          //             hintText: 'Search a patient',
+          //             backgroundColor: WidgetStatePropertyAll(Colors.white),
+          //             // shadowColor: WidgetStatePropertyAll(Colors.grey),
+          //             elevation: WidgetStatePropertyAll(6.0),
+          //             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+          //                 borderRadius: BorderRadius.circular(20))),
+          //             padding: WidgetStatePropertyAll(
+          //                 EdgeInsets.symmetric(horizontal: 16.0)),
+          //           ),
+          //         )),
+          //   ),
+          // ),
+          actions: [
+            IconButton(onPressed: (){
+               Navigator.push(context, MaterialPageRoute(builder: (context)=>search_doc_message()));
+            }, icon: Icon(Icons.search,color: Color(0xff1f8acc),))
+          ],
         ),
         body: patient_chat_show(),
       ),
@@ -71,13 +78,73 @@ class patient_chat_show extends StatefulWidget {
 class _patient_chat_showState extends State<patient_chat_show> {
   List<chat_doc_only_user_chat> chat_user_only_doc_chat =[];
   String errormessage = "";
+  update_profile? userprofile;
+  bool isLoading = true;
+  String? errorMessage;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _chats_user_only_doc_chat();
+    userpro();
   }
+
+  Future<void> userpro()async{
+    String phone_number="";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try{
+      final response = await http.get(Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+          headers: {"Content-Type":"application/json"}
+      );
+      if(response.statusCode==200){
+        Map<String,dynamic>jsonResponse = jsonDecode(response.body);
+        setState(() {
+          userprofile=update_profile.fromJson(jsonResponse);
+          isLoading=false;
+        });
+      }else{
+        setState(() {
+          errorMessage = response.body.toString();
+          isLoading=false;
+        });
+      }
+    }catch(e){
+      errorMessage=e.toString();
+      isLoading=false;
+    }
+  }
+
+  void valid_user(){
+    if(userprofile!.firstName == null) {
+      print("${userprofile!.firstName}");
+      if (userprofile!.lastName == null) {
+        if(userprofile!.age==null){
+          if(userprofile!.gender==null){
+            if(userprofile!.email==null){
+              showDialog(context: context, builder: (context)=>AlertDialog(
+                title: Text("Invalid User",style: TextStyle(color: Colors.red,fontSize: 25),),
+                content: Text("you must create the account for booking!",style: TextStyle(fontSize: 20),),
+                actions: [
+                  TextButton(onPressed: (){
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                  }, child: Text("Ok"))
+                ],
+              ));
+            }
+          }
+        }
+      }
+    }else{
+       Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_user(data:"${userprofile!.phoneNumber}")));
+    }
+  }
+
 
   Future<void> _chats_user_only_doc_chat() async{
     String doc_phone_no = "";
@@ -162,7 +229,7 @@ class _patient_chat_showState extends State<patient_chat_show> {
                 padding: const EdgeInsets.all(8.0),
                 child: GestureDetector(
                   onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_user(data:"${show_patiii.phoneNumber}")));
+                    valid_user();
                   },
                   child: Card(
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -213,6 +280,8 @@ class _patient_chat_showState extends State<patient_chat_show> {
     );
   }
 }
+
+
 
 
 

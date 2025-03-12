@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_hub/Backend_information/user_details_backend.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import '../../../Backend_information/Backend_doctor_details.dart';
+import '../Profile_page/profile_page.dart';
 import '../home.dart';
 
 
@@ -21,6 +23,7 @@ class doc_profile extends StatefulWidget {
 }
 
 class _doc_profileState extends State<doc_profile> {
+  update_profile? userprofile;
   bool heart = false;
   List<doctor_details> doctor_detail = [];
   bool isLoading = true;
@@ -121,12 +124,42 @@ class _doc_profileState extends State<doc_profile> {
     });
   }
 
+  Future<void> userpro()async{
+    String phone_number="";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try{
+      final response = await http.get(Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+        headers: {"Content-Type":"application/json"}
+      );
+      if(response.statusCode==200){
+        Map<String,dynamic>jsonResponse = jsonDecode(response.body);
+        setState(() {
+          userprofile=update_profile.fromJson(jsonResponse);
+          isLoading=false;
+        });
+      }else{
+        setState(() {
+          errorMessage = response.body.toString();
+          isLoading=false;
+        });
+      }
+    }catch(e){
+      errorMessage=e.toString();
+      isLoading=false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     pk = widget.data;
     _showdoctor();
     next7Days = getNext7Days();
+    userpro();
   }
 
   // request for retrieve the partcular json in list to send a one data
@@ -165,6 +198,32 @@ class _doc_profileState extends State<doc_profile> {
     }
   }
 
+  void valid_user(){
+    if(userprofile!.firstName == null) {
+      print("${userprofile!.firstName}");
+      if (userprofile!.lastName == null) {
+        if(userprofile!.age==null){
+          if(userprofile!.gender==null){
+            if(userprofile!.email==null){
+              showDialog(context: context, builder: (context)=>AlertDialog(
+                title: Text("Invalid User",style: TextStyle(color: Colors.red,fontSize: 25),),
+                content: Text("you must create the account for booking!",style: TextStyle(fontSize: 20),),
+                actions: [
+                  TextButton(onPressed: (){
+                    Navigator.pop(context);
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                    }, child: Text("Ok"))
+                ],
+              ));
+            }
+          }
+        }
+      }
+    }else{
+      _booking_doc();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isToday =
@@ -182,6 +241,7 @@ class _doc_profileState extends State<doc_profile> {
           ListView.builder(
             physics: const BouncingScrollPhysics(),
             itemCount: doctor_detail.length,
+            // shrinkWrap: true,
             itemBuilder: (context, index) {
               var doctor = doctor_detail[index];
               return doctor.id != null
@@ -482,7 +542,8 @@ class _doc_profileState extends State<doc_profile> {
               child: GestureDetector(
                 onTap: () {
                   _vibrate();
-                  _booking_doc();
+
+                  valid_user();
                 },
                 child: Container(
                   height: 50,
