@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/profile_page.dart';
+import 'package:health_hub/user%20app/pages/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,8 +51,7 @@ class _SaveDetailsState extends State<SaveDetails> {
           }));
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        Navigator.popUntil(
-          context,(route)=>false);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
       } else {
         print('update user details failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -75,7 +75,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     if (lastnamecontroller.text.isEmpty) {
       missingfields.add("enter last name");
     }
-    if (agecontroller.text.isEmpty) {
+    if (agecontroller.text.isEmpty|| int.parse(agecontroller.text)<3|| int.parse(agecontroller.text) > 100) {
       missingfields.add("enter age correctly");
     }
     if (emailcontroller.text.isEmpty) {

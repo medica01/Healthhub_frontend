@@ -266,7 +266,6 @@ class _search_booking_historyState extends State<search_booking_history> {
                         show_doc.doctorName ?? "No Name",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 import '../../../Backend_information/Backend_doctor_details.dart';
+import '../../../Backend_information/user_details_backend.dart';
 import '../../../allfun.dart';
 import '../../Other_feature/show_favorite_doc.dart';
 
@@ -43,13 +44,15 @@ class _home_pageState extends State<home_page> {
   bool heart = false;
   List<doctor_details> doctor_detail = [];
   bool isLoading = true;
-  String? errorMessage;
+  String? errormessage;
+  update_profile? userprofile;
 
   @override
   void initState() {
     super.initState();
     _name();
     _showdoctor();
+    userpro();
   }
 
   Future<void> _showdoctor() async {
@@ -66,13 +69,13 @@ class _home_pageState extends State<home_page> {
         print(jsonResponse); // Log raw JSON response
       } else {
         setState(() {
-          errorMessage = "Failed to load doctor details.";
+          errormessage = "Failed to load doctor details.";
           isLoading = false;
         });
       }
     } catch (e) {
       setState(() {
-        errorMessage = e.toString();
+        errormessage = e.toString();
         isLoading = false;
       });
     }
@@ -124,17 +127,50 @@ class _home_pageState extends State<home_page> {
     );
   }
 
+  Future<void> userpro() async {
+    String phone_number = "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try {
+      final response = await http.get(
+          Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          userprofile = update_profile.fromJson(jsonResponse);
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errormessage = response.body.toString();
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      errormessage = e.toString();
+      isLoading = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return userprofile!=null
+      ?Scaffold(
+      appBar:
+      AppBar(
         title: Row(
           children: [
             Padding(
               padding: EdgeInsets.only(left: 8.0),
               child: CircleAvatar(
                 radius: 22.0,
-                backgroundImage: NetworkImage("$photourl"),
+                backgroundImage: userprofile!.userPhoto!=null
+                ? NetworkImage("http://$ip:8000${userprofile!.userPhoto}"):
+                NetworkImage("$photourl"),
               ),
             ),
             Padding(
@@ -149,11 +185,13 @@ class _home_pageState extends State<home_page> {
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
                   ),
-                  Text(
-                    "$name",
+                  userprofile!.firstName != null || userprofile!.lastName !=null
+                  ?Text(
+                    "${userprofile!.firstName ?? ""} ${userprofile!.lastName ?? ""}",
                     style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.bold),
-                  ),
+                  ):Text("Guest",style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.bold))
                 ],
               ),
             )
@@ -201,7 +239,7 @@ class _home_pageState extends State<home_page> {
         //   ),
         // ),
       ),
-      body: ListView(
+      body:ListView(
         children: [
           Padding(
             padding: EdgeInsets.only(top: 8.0),
@@ -507,6 +545,6 @@ class _home_pageState extends State<home_page> {
           )
         ],
       ),
-    );
+    ):Center(child: Container(child: CircularProgressIndicator()));
   }
 }
