@@ -78,6 +78,21 @@ class _show_all_doctorState extends State<show_all_doctor> {
     }
   }
 
+  Future<void> _online() async {
+    try {
+      final response = await http.put(
+          Uri.parse("http://$ip:8000/chats/put_on_off/1/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({"on_off": true}));
+      if (response.statusCode == 200) {
+        print("change successfully");
+      }
+    } catch (e) {
+      String e1 = e.toString();
+      print("online:$e1");
+    }
+  }
+
   Future<void> _chatting_doc() async {
     try {
       final response = await http.get(
@@ -128,41 +143,37 @@ class _show_all_doctorState extends State<show_all_doctor> {
                             showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text(
-                                    "Invalid User",
-                                    style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 25),
-                                  ),
-                                  content: Text(
-                                    "you must create the account for chatting!",
-                                    style:
-                                    TextStyle(fontSize: 20),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () {
-                                          Navigator.pop(
-                                              context);
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (context) =>
-                                                      profile_page()));
-                                        },
-                                        child: Text("Ok"))
-                                  ],
-                                ));
+                                      title: Text(
+                                        "Invalid User",
+                                        style: TextStyle(
+                                            color: Colors.red, fontSize: 25),
+                                      ),
+                                      content: Text(
+                                        "you must create the account for chatting!",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          profile_page()));
+                                            },
+                                            child: Text("Ok"))
+                                      ],
+                                    ));
                           }
                         }
                       }
                     }
-                  }else{
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => search_chat_name()));
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => search_chat_name()));
                   }
                 },
                 icon: Icon(
@@ -278,6 +289,7 @@ class _show_all_doctorState extends State<show_all_doctor> {
                                         builder: (context) => user_doc(
                                             data:
                                                 "${show_docc.doctorPhoneNo}")));
+                                _online();
                               }
                             },
                             child: Card(

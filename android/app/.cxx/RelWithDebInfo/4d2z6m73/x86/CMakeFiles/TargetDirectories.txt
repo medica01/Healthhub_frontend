@@ -1,0 +1,2 @@
+P:/android_project/healthhub/android/app/.cxx/RelWithDebInfo/4d2z6m73/x86/CMakeFiles/edit_cache.dir
+P:/android_project/healthhub/android/app/.cxx/RelWithDebInfo/4d2z6m73/x86/CMakeFiles/rebuild_cache.dir

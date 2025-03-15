@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../Backend_information/chat_history_backend.dart';
+import '../../../Backend_information/on_off_backend.dart';
 import '../../../main.dart';
 
 Timer? _chatsRefreshtime;
@@ -20,7 +21,7 @@ class user_doc extends StatefulWidget {
   State<user_doc> createState() => _user_docState();
 }
 
-class _user_docState extends State<user_doc> {
+class _user_docState extends State<user_doc> with WidgetsBindingObserver {
   String doc_phone_number = "";
   String phone_number = "";
   doctor_details? get_doc_number;
@@ -28,6 +29,7 @@ class _user_docState extends State<user_doc> {
   String errormessage = "";
   bool isloading = true;
   String sender_type = "user";
+  on_off? doc_on_off;
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
@@ -38,9 +40,12 @@ class _user_docState extends State<user_doc> {
     doc_phone_number = widget.data ?? "";
     doc_phone_number = doc_phone_number.replaceFirst('+', '');
     _get_doc_phone_no();
+    _get_doc_on_off();
     _chatsRefreshtime = Timer.periodic(Duration(seconds: 1), (timer) {
       _get_user_doctor_chat_history();
+      _get_doc_on_off();
     });
+    WidgetsBinding.instance.addObserver(this);
   }
 
 
@@ -48,7 +53,19 @@ class _user_docState extends State<user_doc> {
   @override
   void dispose() {
     _chatsRefreshtime?.cancel(); // Stop the timer when widget is disposed
+    WidgetsBinding.instance.removeObserver(this); // Remove observer
     super.dispose();
+    _user_offline();
+
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
+      // Call _doc_offline when the app is minimized or closed
+      _user_offline();
+    }
   }
 
   Future<void> _create_chat_doc_only_user_chat() async {
@@ -186,6 +203,45 @@ class _user_docState extends State<user_doc> {
     }
   }
 
+  Future<void> _get_doc_on_off() async{
+    try{
+      final response = await http.get(Uri.parse("http://$ip:8000/chats/put_on_off/2/"),
+          headers: {"Content-Type":"application/json"}
+      );
+      if(response.statusCode==200){
+        Map<String,dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          doc_on_off = on_off.fromJson(jsonResponse);
+
+        });
+
+      }else{
+        print("error on online and offline");
+      }
+    }catch(e){
+      errormessage=e.toString();
+      print("$errormessage");
+    }
+  }
+
+  Future<void> _user_offline()async{
+    try{
+      final response = await http.put(Uri.parse("http://$ip:8000/chats/put_on_off/1/"),
+          headers: {"Content-Type":"application/json"},
+          body: jsonEncode(
+              {
+                "on_off":false
+              })
+      );
+      if(response.statusCode==200){
+        print("change successfully");
+      }
+    }catch(e){
+      String e1= e.toString();
+      print("offline:$e1");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,12 +259,22 @@ class _user_docState extends State<user_doc> {
                   : AssetImage('assets/default_avatar.png')
               as ImageProvider, // Use a default image
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 10.0),
-              child: get_doc_number != null
-                  ? Text("${get_doc_number!.doctorName ?? "No name"}",
-                  style: TextStyle(fontWeight: FontWeight.bold))
-                  : CircularProgressIndicator(), // Show a loader until data is loaded
+            Column(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 10.0),
+                  child: get_doc_number != null
+                      ? Text("${get_doc_number!.doctorName ?? "No name"}",
+                      style: TextStyle(fontWeight: FontWeight.bold))
+                      : CircularProgressIndicator(), // Show a loader until data is loaded
+                ),
+                Center(
+                  child: doc_on_off != null && doc_on_off!.onOff != false
+                      ? Text("Online", style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold))
+                      : Text("Offline", style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold)),
+
+                )
+              ],
             ),
             // Text("Online", style: TextStyle(
             //     color: Colors.green, fontWeight: FontWeight.bold),)
