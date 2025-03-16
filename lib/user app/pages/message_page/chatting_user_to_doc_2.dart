@@ -29,7 +29,6 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
   String errormessage = "";
   bool isloading = true;
   String sender_type = "user";
-  on_off? doc_on_off;
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
@@ -40,10 +39,9 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
     doc_phone_number = widget.data ?? "";
     doc_phone_number = doc_phone_number.replaceFirst('+', '');
     _get_doc_phone_no();
-    _get_doc_on_off();
     _chatsRefreshtime = Timer.periodic(Duration(seconds: 1), (timer) {
       _get_user_doctor_chat_history();
-      _get_doc_on_off();
+      _get_doc_phone_no();
     });
     WidgetsBinding.instance.addObserver(this);
   }
@@ -52,11 +50,10 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _user_offline();
     _chatsRefreshtime?.cancel(); // Stop the timer when widget is disposed
     WidgetsBinding.instance.removeObserver(this); // Remove observer
     super.dispose();
-    _user_offline();
-
   }
 
   @override
@@ -203,36 +200,23 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _get_doc_on_off() async{
-    try{
-      final response = await http.get(Uri.parse("http://$ip:8000/chats/put_on_off/2/"),
-          headers: {"Content-Type":"application/json"}
-      );
-      if(response.statusCode==200){
-        Map<String,dynamic> jsonResponse = jsonDecode(response.body);
-        setState(() {
-          doc_on_off = on_off.fromJson(jsonResponse);
-
-        });
-
-      }else{
-        print("error on online and offline");
-      }
-    }catch(e){
-      errormessage=e.toString();
-      print("$errormessage");
-    }
-  }
 
   Future<void> _user_offline()async{
-    try{
-      final response = await http.put(Uri.parse("http://$ip:8000/chats/put_on_off/1/"),
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    final url =
+    Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
+    try {
+      final response = await http.put(url,
           headers: {"Content-Type":"application/json"},
           body: jsonEncode(
               {
-                "on_off":false
+                "user_status":false
               })
-      );
+          );
       if(response.statusCode==200){
         print("change successfully");
       }
@@ -269,9 +253,9 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                       : CircularProgressIndicator(), // Show a loader until data is loaded
                 ),
                 Center(
-                  child: doc_on_off != null && doc_on_off!.onOff != false
-                      ? Text("Online", style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold))
-                      : Text("Offline", style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold)),
+                  child: get_doc_number != null && get_doc_number!.docStatus == false
+                      ? Text("Offline", style: TextStyle(color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold))
+                      : Text("Online", style: TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
 
                 )
               ],

@@ -40,6 +40,7 @@ class _show_all_doctorState extends State<show_all_doctor> {
   String errormessage = "";
   update_profile? userprofile;
   bool isLoading = true;
+  String phone_number ="";
 
   @override
   void initState() {
@@ -79,13 +80,19 @@ class _show_all_doctorState extends State<show_all_doctor> {
   }
 
   Future<void> _online() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    final url =
+    Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
     try {
-      final response = await http.put(
-          Uri.parse("http://$ip:8000/chats/put_on_off/1/"),
+      final response = await http.put(url,
           headers: {"Content-Type": "application/json"},
-          body: jsonEncode({"on_off": true}));
+          body: jsonEncode({"user_status": true}));
       if (response.statusCode == 200) {
-        print("change successfully");
+        print("change user online successfully");
       }
     } catch (e) {
       String e1 = e.toString();

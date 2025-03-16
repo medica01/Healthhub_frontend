@@ -14,6 +14,7 @@ class doctor_details {
   int? regNo;
   String? doctorLocation;
   bool? like;
+  bool? docStatus;
 
   doctor_details(
       {this.id,
@@ -30,7 +31,8 @@ class doctor_details {
         this.bio,
         this.regNo,
         this.doctorLocation,
-        this.like});
+        this.like,
+        this.docStatus});
 
   doctor_details.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -48,6 +50,7 @@ class doctor_details {
     regNo = json['reg_no'];
     doctorLocation = json['doctor_location'];
     like = json['like'];
+    docStatus = json['doc_status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +70,7 @@ class doctor_details {
     data['reg_no'] = this.regNo;
     data['doctor_location'] = this.doctorLocation;
     data['like'] = this.like;
+    data['doc_status'] = this.docStatus;
     return data;
   }
 }

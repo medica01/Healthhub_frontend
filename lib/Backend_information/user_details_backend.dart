@@ -9,6 +9,7 @@ class update_profile {
   String? email;
   String? location;
   String? userPhoto;
+  bool? userStatus;
 
   update_profile(
       {this.id,
@@ -20,7 +21,8 @@ class update_profile {
         this.phoneNumber,
         this.email,
         this.location,
-        this.userPhoto});
+        this.userPhoto,
+        this.userStatus});
 
   update_profile.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -33,6 +35,7 @@ class update_profile {
     email = json['email'];
     location = json['location'];
     userPhoto = json['user_photo'];
+    userStatus = json['user_status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -47,6 +50,7 @@ class update_profile {
     data['email'] = this.email;
     data['location'] = this.location;
     data['user_photo'] = this.userPhoto;
+    data['user_status'] = this.userStatus;
     return data;
   }
 }

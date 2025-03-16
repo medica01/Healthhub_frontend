@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../Doctor app/doctor_homepage.dart';
 import '../../allfun.dart';
 import '../../main.dart';
+import 'doctor_details_collect_2.dart';
 
 class doc_bio extends StatefulWidget {
   const doc_bio({super.key});
@@ -143,7 +144,7 @@ class _doc_bioState extends State<doc_bio> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => HomePage()));
+                                      builder: (context) => doc_bio_photo()));
                             },
                             child: Text(
                               "Ok",

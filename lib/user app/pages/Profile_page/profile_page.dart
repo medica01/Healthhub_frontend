@@ -374,45 +374,56 @@ class _profileState extends State<profile> {
                                 //     MaterialPageRoute(
                                 //         builder: (context) => photo()));
                               },
-                              child: Container(
-                                width: 130,
-                                height: 130,
-                                decoration: BoxDecoration(
-                                  boxShadow: [
-                                    BoxShadow(
-                                        color: Colors.grey,
-                                        offset: Offset(0, 2),
-                                        blurRadius: 12)
-                                  ],
-                                  shape: BoxShape.circle,
-                                  image: DecorationImage(
-                                    image: img != null
-                                        ? FileImage(img!) // For Mobile (File)
-                                        : webImage != null
-                                            ? MemoryImage(
-                                                webImage!) // For Web (Uint8List)
-                                            : AssetImage("assetName"),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ))),
+                              child:
+                              // Container(
+                              //   width: 130,
+                              //   height: 130,
+                              //   decoration: BoxDecoration(
+                              //     boxShadow: [
+                              //       BoxShadow(
+                              //           color: Colors.grey,
+                              //           offset: Offset(0, 2),
+                              //           blurRadius: 12)
+                              //     ],
+                              //     shape: BoxShape.circle,
+                              //     image: DecorationImage(
+                              //       image: img != null
+                              //           ? FileImage(img!) // For Mobile (File)
+                              //           : webImage != null
+                              //               ? MemoryImage(
+                              //                   webImage!) // For Web (Uint8List)
+                              //               : AssetImage("assetName"),
+                              //       fit: BoxFit.cover,
+                              //     ),
+                              //   ),
+                              // ),
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage:
+                                userprofile != null && userprofile!.userPhoto != null
+                                    ? NetworkImage(
+                                    "http://$ip:8000${userprofile!.userPhoto}")
+                                    : AssetImage('assets/default_avatar.png')
+                                as ImageProvider, // Use a default image
+                              ) ,
+                          )),
                     ),
-                    Positioned(
-                      right: 13,
-                      bottom: 20,
-                      child: Container(
-                        height: 40,
-                        width: 40,
-                        decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.65),
-                            shape: BoxShape.circle),
-                        child: IconButton(
-                            onPressed: _pickImage,
-                            icon: Icon(
-                              Icons.camera_alt,
-                            )),
-                      ),
-                    ),
+                    // Positioned(
+                    //   right: 13,
+                    //   bottom: 20,
+                    //   child: Container(
+                    //     height: 40,
+                    //     width: 40,
+                    //     decoration: BoxDecoration(
+                    //         color: Colors.white.withOpacity(0.65),
+                    //         shape: BoxShape.circle),
+                    //     child: IconButton(
+                    //         onPressed: _pickImage,
+                    //         icon: Icon(
+                    //           Icons.camera_alt,
+                    //         )),
+                    //   ),
+                    // ),
                   ],
                 ),
               ),

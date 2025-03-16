@@ -414,6 +414,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:health_hub/Backend_information/Backend_doctor_details.dart';
 import 'package:health_hub/Backend_information/chat_history_backend.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_message_page/search_chat_doc.dart';
@@ -441,8 +442,9 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
   String errormessage = "";
   bool isloading = true;
   String sender_type = "doctor";
-  on_off? user_on_off;
+  // doctor_details? user_on_off;
   TextEditingController messageController = TextEditingController();
+  String doc_phone_no ="";
 
   @override
   void initState() {
@@ -450,10 +452,9 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
     user_phone_number = widget.data ?? "";
     user_phone_number = user_phone_number.replaceFirst("+", "");
     _get_user_phone_no();
-    _get_on_off();
     _chatRefreshTime = Timer.periodic(Duration(seconds: 1), (timer) {
       _get_user_doctor_chat_history();
-      _get_on_off();
+      _get_user_phone_no();
     });
     // Add this widget as an observer to listen to lifecycle events
     WidgetsBinding.instance.addObserver(this);
@@ -584,32 +585,18 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _get_on_off() async {
-    try {
-      final response = await http.get(
-        Uri.parse("http://$ip:8000/chats/put_on_off/1/"),
-        headers: {"Content-Type": "application/json"},
-      );
-      if (response.statusCode == 200) {
-        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        setState(() {
-          user_on_off = on_off.fromJson(jsonResponse);
-        });
-      } else {
-        print("error on online and offline");
-      }
-    } catch (e) {
-      errormessage = e.toString();
-      print("$errormessage");
-    }
-  }
 
   Future<void> _doc_offline() async {
-    try {
-      final response = await http.put(
-        Uri.parse("http://$ip:8000/chats/put_on_off/2/"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"on_off": false}),
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      doc_phone_no = perf.getString("doctor_phone_no")??"";
+      doc_phone_no=doc_phone_no.replaceFirst("+", "");
+      print("$doc_phone_no");
+    });
+    try{
+      final response = await http.put(Uri.parse("http://$ip:8000/doctor_details/doc_editdetails_phone/$doc_phone_no/"),
+        headers: {"Content-Type":"application/json"},
+        body: jsonEncode({"doc_status": false}),
       );
       if (response.statusCode == 200) {
         print("change successfully");
@@ -645,13 +632,13 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
                       : CircularProgressIndicator(),
                 ),
                 Center(
-                  child: user_on_off != null && user_on_off!.onOff != false
-                      ? Text("Online",
+                  child: get_user_number != null && get_user_number!.userStatus== false
+                      ? Text("Offline",
                       style: TextStyle(
-                          color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold))
-                      : Text("Offline",
+                          color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold))
+                      : Text("Online",
                       style: TextStyle(
-                          color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold)),
+                          color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
                 ),
               ],
             ),

@@ -9,6 +9,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
 
+import '../../Doctor app/doctor_homepage.dart';
 import '../../Doctor app/pages/Doc_profile_page/doc_profile_page.dart';
 import '../../allfun.dart';
 import 'doctor_details_collect_3.dart';
@@ -177,7 +178,7 @@ class _doc_bio_photoState extends State<doc_bio_photo> {
                 onPressed: (){
                   if(webImage !=null  || img !=null) {
                     _updatedocphoto();
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>doc_profiles()), (route)=>false);
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
                   }else{
                     showDialog(context: context, builder: (context)=>AlertDialog(
                       title: Text("Error",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25),),
