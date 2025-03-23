@@ -124,3 +124,61 @@ Widget doc_form_field (String text,TextEditingController tec,TextInputType type)
   );
 }
 
+
+Widget form(
+    String head,
+    double a,
+    int maxlng,
+    String hint,
+    TextInputType numstr,
+    TextEditingController control,
+    ) {
+  return Padding(
+    padding: EdgeInsets.only(bottom: 19.0),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding:  EdgeInsets.only(bottom: 10.0),
+          child: Text(head, style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
+        Container(
+          width: a,
+          child: TextFormField(
+            maxLength: maxlng,
+            keyboardType: numstr,
+            controller: control,
+            autofocus: true,
+            clipBehavior: Clip.hardEdge,
+            cursorColor: Color(0xff1f8acc),
+            style: TextStyle(
+              color: Color(0xff1f8acc),
+              fontWeight: FontWeight.bold,
+            ),
+            decoration: InputDecoration(
+              counterText: "",
+              focusColor: Colors.black,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                  color: Colors.black,
+                  width: 2.0,
+                ), // Focused border color
+              ),
+              contentPadding: EdgeInsets.only(left: 20),
+              hintText: hint,
+              hintStyle: TextStyle(color: Colors.grey),
+              border: OutlineInputBorder(
+                borderSide: BorderSide.merge(
+                  BorderSide(color: Colors.black),
+                  BorderSide.none,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+

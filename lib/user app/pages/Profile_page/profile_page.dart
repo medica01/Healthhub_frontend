@@ -75,6 +75,25 @@ class _profile_pageState extends State<profile_page> {
   //   }
   // }
 
+  Future<void> logout(BuildContext context)async{
+    showDialog(context: context, builder: (context)=>AlertDialog(
+      content: Text("You want to logout ?",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 20),),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(onPressed: (){
+              Navigator.pop(context);
+            }, child: Text("Cancel",style: TextStyle(color: Colors.green),)),
+            TextButton(onPressed: (){
+              signOutFromphone(context);
+            }, child: Text("Ok",style: TextStyle(color: Colors.red),))
+          ],
+        )
+      ],
+    ));
+  }
+
   Future<bool> signOutFromphone(BuildContext context) async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -97,10 +116,15 @@ class _profile_pageState extends State<profile_page> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home:Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xfffdfdfd),
         title: text("Profile", Colors.black, 30, FontWeight.bold),
+        leading: IconButton(onPressed: (){
+          Navigator.pop(context);
+        }, icon: Icon(Icons.arrow_back,color: Colors.black,)),
         actions: [
           Padding(
               padding: const EdgeInsets.all(8.0),
@@ -112,7 +136,7 @@ class _profile_pageState extends State<profile_page> {
                 //     signOutFromGoogleAnd();
                 //   }
                 // },
-                onPressed: () => signOutFromphone(context),
+                onPressed: () => logout(context),
                 icon: Icon(
                   Icons.logout,
                   color: Color(0xff1f8acc),
@@ -122,7 +146,7 @@ class _profile_pageState extends State<profile_page> {
         ],
       ),
       body: profile(),
-    );
+    ));
   }
 }
 

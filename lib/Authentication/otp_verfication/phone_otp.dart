@@ -288,6 +288,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                   Padding(
                     padding: EdgeInsets.only(left: 18.0, right: 18, top: 18),
                     child: TextFormField(
+                      autofocus: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return "no phone number";

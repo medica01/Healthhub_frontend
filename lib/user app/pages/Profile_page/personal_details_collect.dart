@@ -139,7 +139,6 @@ class _SaveDetailsState extends State<SaveDetails> {
   @override
   Widget build(BuildContext context) {
     final scr = MediaQuery.of(context).size;
-
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Container(

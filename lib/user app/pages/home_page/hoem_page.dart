@@ -15,6 +15,7 @@ import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../Backend_information/user_details_backend.dart';
 import '../../../allfun.dart';
 import '../../Other_feature/show_favorite_doc.dart';
+import '../Profile_page/profile_page.dart';
 
 class main_home extends StatefulWidget {
   const main_home({super.key});
@@ -86,8 +87,8 @@ class _home_pageState extends State<home_page> {
 
   final List<String> images = [
     "https://static.vecteezy.com/system/resources/previews/016/699/936/non_2x/book-doctor-appointment-online-flat-banner-template-making-visit-poster-leaflet-printable-color-designs-editable-flyer-page-with-text-space-vector.jpg",
-    "https://img.freepik.com/free-psd/medical-business-social-media-promo-template_23-2149488299.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_incoming",
-    "https://img.freepik.com/free-psd/medical-business-horizontal-banner-template_23-2149488295.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_incoming"
+    // "https://img.freepik.com/free-psd/medical-business-social-media-promo-template_23-2149488299.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_incoming",
+    // "https://img.freepik.com/free-psd/medical-business-horizontal-banner-template_23-2149488295.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_incoming"
   ];
 
   Future<void> _name() async {
@@ -166,11 +167,16 @@ class _home_pageState extends State<home_page> {
           children: [
             Padding(
               padding: EdgeInsets.only(left: 8.0),
-              child: CircleAvatar(
-                radius: 22.0,
-                backgroundImage: userprofile!.userPhoto!=null
-                ? NetworkImage("http://$ip:8000${userprofile!.userPhoto}"):
-                NetworkImage("$photourl"),
+              child: GestureDetector(
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                },
+                child: CircleAvatar(
+                  radius: 22.0,
+                  backgroundImage: userprofile!.userPhoto!=null
+                  ? NetworkImage("http://$ip:8000${userprofile!.userPhoto}"):
+                  NetworkImage("$photourl"),
+                ),
               ),
             ),
             Padding(

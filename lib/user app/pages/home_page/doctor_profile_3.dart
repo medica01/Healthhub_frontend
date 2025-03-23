@@ -101,7 +101,7 @@ class _doc_profileState extends State<doc_profile> {
     List<String> workingHours = [];
     int currentHour = now.hour;
     int startHour = isToday
-        ? (currentHour + 1)
+        ? (currentHour + 2)
         : 5; // Next available hour if today, otherwise 5 AM
     int endHour = 22; // 10 PM
 
@@ -153,12 +153,44 @@ class _doc_profileState extends State<doc_profile> {
     }
   }
 
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   selectedDateIndex = 0; // Already set, but explicitly for clarity
+  //   selectedTimeIndex = 0;
+  //   selectedDate =
+  //       "${next7Days[0]['year']}-${next7Days[0]['date']}-${next7Days[0]['day']}"
+  //           .replaceFirst(" ", "-"); // e.g., "2025-Mar 17-Mon"
+  //   bool isToday = selectedDateIndex == 0;
+  //   List<String> workingHours = getWorkingHours(isToday);
+  //   selectedTime = workingHours[0]; // e.g., "6:00 AM" (if current hour is before 5 AM)
+  //   pk = widget.data;
+  //   _showdoctor();
+  //   next7Days = getNext7Days();
+  //   userpro();
+  // }
+
   @override
   void initState() {
     super.initState();
     pk = widget.data;
-    _showdoctor();
+
+    // Populate next7Days first
     next7Days = getNext7Days();
+
+    // Set default date and time
+    selectedDateIndex = 0;
+    selectedDate =
+        "${next7Days[0]['year']}-${next7Days[0]['date']}-${next7Days[0]['day']}"
+            .replaceFirst(" ", "-"); // e.g., "2025-Mar 17-Mon"
+
+    bool isToday = selectedDateIndex == 0;
+    List<String> workingHours = getWorkingHours(isToday);
+    selectedTimeIndex = 0;
+    selectedTime = workingHours[0]; // e.g., "6:00 AM" (if current hour is before 5 AM)
+
+    // Proceed with other initialization
+    _showdoctor();
     userpro();
   }
 
@@ -404,14 +436,14 @@ class _doc_profileState extends State<doc_profile> {
                                     //    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                                     //  ),
                                     Text(
-                                      "Select ",
+                                      "Select time",
                                       style: TextStyle(
                                           color: Colors.grey,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 20),
                                     ),
                                     // if (selectedDateIndex != -1)
-                                    selectedDateIndex == 0
+                                    selectedDateIndex == -1
                                         ? Center(
                                             child: Text(
                                             "Working hour only 5 am to 10 pm",
@@ -537,25 +569,27 @@ class _doc_profileState extends State<doc_profile> {
           ),
           Positioned(
             bottom: 80,
-            child: Container(
-              margin: const EdgeInsets.all(16.0),
-              child: GestureDetector(
-                onTap: () {
-                  _vibrate();
-
-                  valid_user();
-                },
-                child: Container(
-                  height: 50,
-                  width: MediaQuery.of(context).size.width * 0.92,
-                  decoration: BoxDecoration(
-                    color: Colors.blueAccent,
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "Book Free Consult",
-                      style: TextStyle(color: Colors.white, fontSize: 16),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                // margin: const EdgeInsets.all(16.0),
+                child: GestureDetector(
+                  onTap: () {
+                    _vibrate();
+                    valid_user();
+                  },
+                  child: Container(
+                    height: 50,
+                    width: MediaQuery.of(context).size.width * 0.92,
+                    decoration: BoxDecoration(
+                      color: Colors.blueAccent,
+                      borderRadius: BorderRadius.circular(40),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Book Free Consult",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
                     ),
                   ),
                 ),
