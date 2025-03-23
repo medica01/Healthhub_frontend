@@ -22,6 +22,7 @@ class _place_orderState extends State<place_order> {
   String phone_number ="";
   patient_address? patients_address;
   int a=0;
+  String selectedPaymentMethod = "Cash on delivery";
 
   @override
   void initState() {
@@ -29,6 +30,31 @@ class _place_orderState extends State<place_order> {
     super.initState();
     _get_patients_address();
     _get_product_number();
+  }
+
+
+  void _onCashOnDelivery() {
+    setState(() {
+      selectedPaymentMethod = "Cash on delivery";
+    });
+    print("Selected: Cash on delivery");
+    // Your Cash on Delivery function here
+  }
+
+  void _onVisaPayment() {
+    setState(() {
+      selectedPaymentMethod = "VISA ....6766";
+    });
+    print("Selected: VISA ....6766");
+    // Your VISA Payment function here
+  }
+
+  void _onGPay() {
+    setState(() {
+      selectedPaymentMethod = "G Pay kgokulraj.developer@gmail.com";
+    });
+    print("Selected: G Pay");
+    // Your GPay function here
   }
 
   Future<void> _create_order_details_patient() async{
@@ -160,7 +186,7 @@ class _place_orderState extends State<place_order> {
                     Container(
                       width: 400,
                       height: 400,
-                      color: Colors.red,
+                      // color: Colors.red,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -169,7 +195,14 @@ class _place_orderState extends State<place_order> {
                             style: TextStyle(
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold),
-                          )
+                          ),
+                          _buildPaymentOption("Cash on dhkfvhvhelivery", selectedPaymentMethod == "Cash on delivery", _onCashOnDelivery),
+                          _buildPaymentOption("VISA ....6766", selectedPaymentMethod == "VISA ....6766", _onVisaPayment),
+                          _buildPaymentOption("G Pay kgokulraj.developer@gmail.com", selectedPaymentMethod == "G Pay kgokulraj.developer@gmail.com", _onGPay),
+
+                          SizedBox(height: 20),
+
+                          Text("Selected: $selectedPaymentMethod", style: TextStyle(fontSize: 16, color: Colors.blue)),
                         ],
                       ),
                     ),
@@ -250,3 +283,28 @@ class _place_orderState extends State<place_order> {
     );
   }
 }
+
+Widget _buildPaymentOption(String method, bool isSelected, VoidCallback onTap) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
+      margin: EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        // color: isSelected ? Colors.blue.shade100 : Colors.,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: Colors.black,width: 1)
+      ),
+      child: Row(
+        children: [
+          Expanded(child: Text(method, style: TextStyle(fontSize: 16))),
+          Icon(
+            isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+            color: Colors.blueAccent,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
