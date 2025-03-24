@@ -1,6 +1,8 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
@@ -27,7 +29,9 @@ class _specific_productState extends State<specific_product> {
   bool isChecked = false;
   String phone_number = "";
   patient_address? patients_address;
-  int a = 0;
+  int a = 1;
+  int amount = 0;
+  int totalau = 0;
 
   @override
   void initState() {
@@ -36,6 +40,27 @@ class _specific_productState extends State<specific_product> {
     _specific_products();
     _get_patients_address();
   }
+  void addition() {
+    if (specific_product == null) return; // Prevent null access
+    setState(() {
+      if (a < 10) {
+        a++;
+        totalau = totalau + amount;
+      }
+    });
+  }
+
+  void minus() {
+    if (specific_product == null) return; // Prevent null access
+    setState(() {
+      if (a > 1) {
+        a--;
+        totalau = totalau - amount;
+      }
+    });
+  }
+
+
 
   Future<void> _get_patients_address() async {
     String phone_number = "";
@@ -75,6 +100,8 @@ class _specific_productState extends State<specific_product> {
         setState(() {
           specific_product = medicine_purchase.fromJson(jsonResponse);
           isloading = true;
+          amount = specific_product!.price as int;
+          totalau= specific_product!.price as int;
         });
         SharedPreferences pref = await SharedPreferences.getInstance();
         pref.setInt("product_number", specific_product!.productNumber as int);
@@ -98,17 +125,15 @@ class _specific_productState extends State<specific_product> {
       phone_number = perf.getString("phone_number") ?? "";
       phone_number = phone_number.replaceFirst("+", "");
     });
-    try{
-      final response = await http.post(Uri.parse("http://$ip:8000/medicine_pur/create_add_to_cart/"),
-          headers: {"Content-Type":"application/json"},
-          body: jsonEncode(
-              {
-                "pry_phone_number":"${phone_number}",
-                "product_number":product_number
-              }
-          )
-      );
-      if(response.statusCode==201){
+    try {
+      final response = await http.post(
+          Uri.parse("http://$ip:8000/medicine_pur/create_add_to_cart/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "pry_phone_number": "${phone_number}",
+            "product_number": product_number
+          }));
+      if (response.statusCode == 201) {
         showModalBottomSheet(
             context: context,
             // isScrollControlled: true,
@@ -117,15 +142,13 @@ class _specific_productState extends State<specific_product> {
                   product_img: "${specific_product!.productImage}",
                   product_name: "${specific_product!.productName}");
             });
-      }
-      else{
+      } else {
         errs = "the error to added to cart";
         Text("${errs}");
       }
-    }catch(e){
+    } catch (e) {
       print("${e.toString()}");
     }
-
   }
 
   @override
@@ -160,73 +183,350 @@ class _specific_productState extends State<specific_product> {
                       Text("${specific_product!.productName}"),
                       Text("${specific_product!.aboutProduct}"),
                       Text("${specific_product!.cureDisases}"),
-                      Text("₹ ${specific_product!.price}")
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            "₹ ${specific_product!.price}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 40),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: Container(
+                              height: 40,
+                              width: 60,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.red,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  "-63%",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 5.0, top: 15),
+                            child: Container(
+                              height: 90,
+                              width: 190,
+                              // color:Colors.red,
+                              child: Column(
+                                children: [
+                                  Text("Quantity"),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                          width: 60,
+                                          child: OutlinedButton(
+                                              onPressed: () {
+                                                minus();
+                                              },
+                                              child: Text("-"))),
+                                      Flexible(
+                                        child: Container(
+                                            width: 65,
+                                            child: OutlinedButton(
+                                                onPressed: () {},
+                                                child: Text("$a"))),
+                                      ),
+                                      Container(
+                                          width: 60,
+                                          child: OutlinedButton(
+                                              onPressed: () {
+                                                addition();
+                                              },
+                                              child: Text("+"))),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                      Text(
+                        " total quantity :$a",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 40),
+                      ),
+                      Text(
+                        " total price :₹ $totalau",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 40),
+                      ),
+                      Text(
+                        "inclusive of all taxes",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18),
+                      ),
                     ],
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            patients_address == null||
-                                    patients_address!.fullName == null ||
-                                    patients_address!.areaBuildingName == null ||
-                                    patients_address!.flatHouseName == null ||
-                                    patients_address!.landmark == null ||
-                                    patients_address!.pincode == null ||
-                                    patients_address!.pryPhoneNumber == null ||
-                                    patients_address!.secPhoneNumber == null ||
-                                    patients_address!.townCity == null ||
-                                    patients_address!.stateName == null
-                                ? Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            add_pati_address()))
-                                : Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => place_order()));
-                          },
-                          child: Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width * 0.52,
+                  padding: EdgeInsets.only(top: 18.0, left: 5),
+                  child: Text(
+                    "FREE delivery Monday,31 March, Order within 19hrs 56 mins.",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.location_on_sharp,
+                        color: Colors.blue,
+                      ),
+                      patients_address== null ||
+                      patients_address!.fullName == null ||
+                              patients_address!.townCity == null ||
+                              patients_address!.pincode == null
+                          ? Text("No address")
+                          : Text(
+                              " Deliver to ${patients_address!.fullName} - ${patients_address!.townCity} ${patients_address!.pincode}"),
+                    ],
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding:
+                        EdgeInsets.only(top: 8.0, bottom: 8, right: 5, left: 5),
+                    child: Container(
+                      width: 420,
+                      height: 70,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            height: 60,
+                            width: 115,
+                            clipBehavior: Clip.hardEdge,
                             decoration: BoxDecoration(
-                              color: Colors.blueAccent,
-                              borderRadius: BorderRadius.circular(40),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                "Order",
-                                style: TextStyle(
-                                    color: Colors.white, fontSize: 16),
-                              ),
+                                border:
+                                    Border.all(color: Colors.black, width: 0.3),
+                                // color: Colors.red,
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Icon(FontAwesomeIcons.cashRegister),
+                                Text(
+                                  "Lowest Price",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: OutlinedButton(
-                              style: OutlinedButton.styleFrom(
-                                  fixedSize: Size(270, 50),
-                                  animationDuration: Duration(seconds: 2),
-                                  side: BorderSide(
-                                      color: Colors.blueAccent, width: 2)),
-                              onPressed: () {
-                                _create_add_to_carts();
-                                // Navigator.push(context, MaterialPageRoute(builder: (context)=>order_success()));
-                              },
-                              child: Text(
-                                "Add to cart",
-                                style: TextStyle(color: Colors.blueAccent),
-                              )),
-                        )
-                      ],
+                          Container(
+                            height: 60,
+                            width: 115,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black, width: 0.3),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(Icons.money),
+                                Text(
+                                  "Cash on Delivery",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            height: 60,
+                            width: 115,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black, width: 0.3),
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Icon(FontAwesomeIcons.boxOpen),
+                                Text(
+                                  "Non Returnable",
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
+                ),
+                Center(
+                  child:
+                      // kIsWeb !=true
+                      // ?Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: Center(
+                      //     child: Column(
+                      //       children: [
+                      //         GestureDetector(
+                      //           onTap: () {
+                      //             patients_address == null||
+                      //                     patients_address!.fullName == null ||
+                      //                     patients_address!.areaBuildingName == null ||
+                      //                     patients_address!.flatHouseName == null ||
+                      //                     patients_address!.landmark == null ||
+                      //                     patients_address!.pincode == null ||
+                      //                     patients_address!.pryPhoneNumber == null ||
+                      //                     patients_address!.secPhoneNumber == null ||
+                      //                     patients_address!.townCity == null ||
+                      //                     patients_address!.stateName == null
+                      //                 ? Navigator.push(
+                      //                     context,
+                      //                     MaterialPageRoute(
+                      //                         builder: (context) =>
+                      //                             add_pati_address()))
+                      //                 : Navigator.push(
+                      //                     context,
+                      //                     MaterialPageRoute(
+                      //                         builder: (context) => place_order()));
+                      //           },
+                      //           child: Container(
+                      //             height: 50,
+                      //             width: MediaQuery.of(context).size.width * 0.52,
+                      //             decoration: BoxDecoration(
+                      //               color: Colors.blueAccent,
+                      //               borderRadius: BorderRadius.circular(40),
+                      //             ),
+                      //             child:
+                      //             Center(
+                      //               child: Text(
+                      //                 "Order",
+                      //                 style: TextStyle(
+                      //                     color: Colors.white, fontSize: 16),
+                      //               ),
+                      //             ),
+                      //           ),
+                      //         ),
+                      //         Padding(
+                      //           padding: const EdgeInsets.all(8.0),
+                      //           child: OutlinedButton(
+                      //               style: OutlinedButton.styleFrom(
+                      //                   fixedSize: Size(270, 50),
+                      //                   animationDuration: Duration(seconds: 2),
+                      //                   side: BorderSide(
+                      //                       color: Colors.blueAccent, width: 2)),
+                      //               onPressed: () {
+                      //                 _create_add_to_carts();
+                      //                 // Navigator.push(context, MaterialPageRoute(builder: (context)=>order_success()));
+                      //               },
+                      //               child: Text(
+                      //                 "Add to cart",
+                      //                 style: TextStyle(color: Colors.blueAccent),
+                      //               )),
+                      //         )
+                      //       ],
+                      //     ),
+                      //   ),
+                      // ):
+                      Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      width: 350,
+                      // color: Colors.red,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            height: 50,
+                            width: 170,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                    side: BorderSide(
+                                        color: Colors.blue, width: 1),
+                                    shape: RoundedRectangleBorder()),
+                                onPressed: () {
+                                  _create_add_to_carts();
+                                },
+                                child: Text(
+                                  "Add to cart",
+                                  style: TextStyle(color: Colors.blue),
+                                )),
+                          ),
+                          Container(
+                            height: 50,
+                            width: 170,
+                            clipBehavior: Clip.hardEdge,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                    side: BorderSide(
+                                        color: Colors.blue, width: 1),
+                                    backgroundColor: Colors.blue,
+                                    shape: RoundedRectangleBorder()),
+                                onPressed: () {
+                                  patients_address == null ||
+                                          patients_address!.fullName == null ||
+                                          patients_address!.areaBuildingName ==
+                                              null ||
+                                          patients_address!.flatHouseName ==
+                                              null ||
+                                          patients_address!.landmark == null ||
+                                          patients_address!.pincode == null ||
+                                          patients_address!.pryPhoneNumber ==
+                                              null ||
+                                          patients_address!.secPhoneNumber ==
+                                              null ||
+                                          patients_address!.townCity == null ||
+                                          patients_address!.stateName == null
+                                      ? Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  add_pati_address(
+                                                    quantity : a,total_amount : totalau
+                                                  )))
+                                      : Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  place_order(
+                                                      quantity : a,total_amount : totalau
+                                                  )));
+                                },
+                                child: Text(
+                                  "Buy Now",
+                                  style: TextStyle(color: Colors.white),
+                                )),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 100,
                 )
               ],
             )
@@ -272,8 +572,7 @@ class _bottom_add_to_showState extends State<bottom_add_to_show> {
               width: 150,
               height: 150,
               child: Image(
-                  image: NetworkImage(
-                      "http://$ip:8000${widget.product_img}")),
+                  image: NetworkImage("http://$ip:8000${widget.product_img}")),
             ),
             Text("${widget.product_name}"),
             Padding(
@@ -281,10 +580,20 @@ class _bottom_add_to_showState extends State<bottom_add_to_show> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.check_circle,color: Colors.green,size: 20,),
+                  Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 20,
+                  ),
                   Padding(
-                    padding:  EdgeInsets.only(left: 8.0),
-                    child: Text("Added to Cart",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 25),),
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Text(
+                      "Added to Cart",
+                      style: TextStyle(
+                          color: Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25),
+                    ),
                   )
                 ],
               ),

@@ -10,7 +10,9 @@ import '../../../../main.dart';
 import 'order_successfully.dart';
 
 class place_order extends StatefulWidget {
-  const place_order({super.key});
+  final dynamic quantity;
+  final dynamic total_amount;
+   place_order({super.key,required this.quantity,required this.total_amount});
 
   @override
   State<place_order> createState() => _place_orderState();
@@ -23,6 +25,7 @@ class _place_orderState extends State<place_order> {
   patient_address? patients_address;
   int a=0;
   String selectedPaymentMethod = "Cash on delivery";
+
 
   @override
   void initState() {
@@ -68,7 +71,10 @@ class _place_orderState extends State<place_order> {
         headers: {"Content-Type":"application/json"},
         body: jsonEncode({
           "pry_phone_number":"${phone_number}",
-          "product_number":"${specific_product!.productNumber}"
+          "product_number":"${specific_product!.productNumber}",
+          "purchase_quantity":"${widget.quantity}",
+          "purchase_total_price":"${widget.total_amount}",
+          "purchase_pay_type":"${selectedPaymentMethod}"
         }));
       if(response.statusCode==201){
         showBottomSheet(context: context, builder: (context)=>order_success());
@@ -185,7 +191,7 @@ class _place_orderState extends State<place_order> {
                     ),
                     Container(
                       width: 400,
-                      height: 400,
+                      height: 300,
                       // color: Colors.red,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,6 +247,53 @@ class _place_orderState extends State<place_order> {
                                 Text("${specific_product!.aboutProduct}"),
                                 Text("${specific_product!.cureDisases}"),
                                 Text("₹ ${specific_product!.price}")
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding:  EdgeInsets.only(top: 15.0),
+                      child: Container(
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Quantity"),
+                                Text("${widget.quantity}")
+                              ],
+                            ),Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Total price"),
+                                Text("₹ ${widget.total_amount}")
+                              ],
+                            ),Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Devlivery Cost"),
+                                Text("- ₹ 0.00")
+                              ],
+                            ),Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Discount"),
+                                Text("- ₹ 0.00")
+                              ],
+                            ),
+                            Divider(
+                              color: Colors.grey,
+                              thickness: 1,
+                              indent: 5,
+                              endIndent: 5,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Total"),
+                                Text("₹ ${widget.total_amount}")
                               ],
                             ),
                           ],

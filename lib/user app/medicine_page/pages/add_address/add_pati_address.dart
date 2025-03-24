@@ -10,7 +10,9 @@ import '../../../../allfun.dart';
 import '../Med_home_page/Place_order.dart';
 
 class add_pati_address extends StatefulWidget {
-   add_pati_address({super.key,});
+  final dynamic quantity;
+  final dynamic total_amount;
+   add_pati_address({super.key,required this.quantity,required this.total_amount});
 
   @override
   State<add_pati_address> createState() => _add_pati_addressState();
@@ -104,7 +106,9 @@ class _add_pati_addressState extends State<add_pati_address> {
         })
       );
       if(response.statusCode==201){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>place_order()));
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>place_order(
+        quantity: widget.quantity,total_amount: widget.total_amount,
+      )));
         print("${response.body}");
       }
     }catch(e){

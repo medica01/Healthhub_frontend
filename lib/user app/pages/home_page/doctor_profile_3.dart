@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import '../../../Backend_information/Backend_doctor_details.dart';
+import '../Profile_page/personal_details_collect.dart';
 import '../Profile_page/profile_page.dart';
 import '../home.dart';
 
@@ -105,6 +106,10 @@ class _doc_profileState extends State<doc_profile> {
         : 5; // Next available hour if today, otherwise 5 AM
     int endHour = 22; // 10 PM
 
+    if (startHour > endHour) {
+      startHour = endHour;
+    }
+
     for (int hour = startHour; hour <= endHour; hour++) {
       DateTime time = DateTime(now.year, now.month, now.day, hour, 0);
       workingHours.add(DateFormat('h:mm a').format(time));
@@ -114,7 +119,6 @@ class _doc_profileState extends State<doc_profile> {
 
   List<Map<String, String>> getNext7Days() {
     return List.generate(7, (index) {
-      // DateTime nextDay = now.add(Duration(days: index + 1));
       DateTime nextDay = now.add(Duration(days: index));
       return {
         'date': DateFormat('MMM dd').format(nextDay),
@@ -243,7 +247,8 @@ class _doc_profileState extends State<doc_profile> {
                 actions: [
                   TextButton(onPressed: (){
                     Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                    showModalBottomSheet(context: context, builder: (context)=>SaveDetails());
                     }, child: Text("Ok"))
                 ],
               ));
