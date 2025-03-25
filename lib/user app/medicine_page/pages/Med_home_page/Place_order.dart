@@ -10,9 +10,8 @@ import '../../../../main.dart';
 import 'order_successfully.dart';
 
 class place_order extends StatefulWidget {
-  final dynamic quantity;
-  final dynamic total_amount;
-   place_order({super.key,required this.quantity,required this.total_amount});
+
+   place_order({super.key,});
 
   @override
   State<place_order> createState() => _place_orderState();
@@ -25,14 +24,27 @@ class _place_orderState extends State<place_order> {
   patient_address? patients_address;
   int a=0;
   String selectedPaymentMethod = "Cash on delivery";
+  int quantity = 0;
+  int total_price =0;
+  String delivery_date="";
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    show_quantity_price();
     _get_patients_address();
     _get_product_number();
+  }
+
+  void show_quantity_price()async{
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      quantity=perf.getInt("quantity")??0;
+      total_price=perf.getInt("total_price")??0;
+      delivery_date=perf.getString("delivery_date")??"";
+    });
   }
 
 
@@ -63,6 +75,7 @@ class _place_orderState extends State<place_order> {
   Future<void> _create_order_details_patient() async{
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
+
       phone_number = perf.getString("phone_number") ?? "";
       phone_number=phone_number.replaceFirst("+", "");
     });
@@ -72,9 +85,10 @@ class _place_orderState extends State<place_order> {
         body: jsonEncode({
           "pry_phone_number":"${phone_number}",
           "product_number":"${specific_product!.productNumber}",
-          "purchase_quantity":"${widget.quantity}",
-          "purchase_total_price":"${widget.total_amount}",
-          "purchase_pay_type":"${selectedPaymentMethod}"
+          "purchase_quantity":"${quantity}",
+          "purchase_total_price":"${total_price}",
+          "purchase_pay_type":"${selectedPaymentMethod}",
+          "order_date":"${delivery_date}"
         }));
       if(response.statusCode==201){
         showBottomSheet(context: context, builder: (context)=>order_success());
@@ -207,8 +221,7 @@ class _place_orderState extends State<place_order> {
                           _buildPaymentOption("G Pay kgokulraj.developer@gmail.com", selectedPaymentMethod == "G Pay kgokulraj.developer@gmail.com", _onGPay),
 
                           SizedBox(height: 20),
-
-                          Text("Selected: $selectedPaymentMethod", style: TextStyle(fontSize: 16, color: Colors.blue)),
+                          Text("Arriving $delivery_date", style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -262,13 +275,13 @@ class _place_orderState extends State<place_order> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Quantity"),
-                                Text("${widget.quantity}")
+                                Text("${quantity}")
                               ],
                             ),Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Total price"),
-                                Text("₹ ${widget.total_amount}")
+                                Text("₹ ${total_price}")
                               ],
                             ),Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -293,7 +306,7 @@ class _place_orderState extends State<place_order> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Total"),
-                                Text("₹ ${widget.total_amount}")
+                                Text("₹ ${total_price}")
                               ],
                             ),
                           ],

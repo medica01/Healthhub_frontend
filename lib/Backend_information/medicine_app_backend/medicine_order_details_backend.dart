@@ -11,6 +11,7 @@ class order_placed_details {
   String? productImage;
   String? aboutProduct;
   String? productType;
+  String? orderDate;
   String? fullName;
   int? pryPhoneNumber;
   int? secPhoneNumber;
@@ -37,6 +38,7 @@ class order_placed_details {
         this.productImage,
         this.aboutProduct,
         this.productType,
+        this.orderDate,
         this.fullName,
         this.pryPhoneNumber,
         this.secPhoneNumber,
@@ -59,6 +61,7 @@ class order_placed_details {
     purchaseQuantity = json['purchase_quantity'];
     purchaseTotalPrice = json['purchase_total_price'];
     purchasePayType = json['purchase_pay_type'];
+    orderDate=json['order_date'];
     cureDisases = json['cure_disases'];
     productImage = json['product_image'];
     aboutProduct = json['about_product'];
@@ -87,6 +90,7 @@ class order_placed_details {
     data['purchase_quantity'] = this.purchaseQuantity;
     data['purchase_total_price'] = this.purchaseTotalPrice;
     data['purchase_pay_type'] = this.purchasePayType;
+    data['order_date']=this.orderDate;
     data['cure_disases'] = this.cureDisases;
     data['product_image'] = this.productImage;
     data['about_product'] = this.aboutProduct;

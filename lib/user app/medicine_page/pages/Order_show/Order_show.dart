@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:health_hub/main.dart';
+import 'package:health_hub/user%20app/medicine_page/pages/Order_show/show_order_specific_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../../Backend_information/medicine_app_backend/medicine_order_details_backend.dart';
@@ -89,7 +90,9 @@ class _medicine_home_pageState extends State<show_order_placed> {
                         padding: const EdgeInsets.all(15.0),
                         child: GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>show_spe_order_pro(
+                              product_number: "${order_detials.productNumber}",
+                            )));
                           },
                           child: Container(
                             color: Colors.transparent,
@@ -119,7 +122,7 @@ class _medicine_home_pageState extends State<show_order_placed> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text("${order_detials.productName}"),
                                     ),
-                                    Text("Delivery 12 march",style: TextStyle(color: Colors.grey),)
+                                    Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 12),)
                                   ],
                                 ),
                                  Divider(

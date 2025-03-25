@@ -60,7 +60,7 @@ class _HomePageState extends State<Medical_main_page>
                 labelType: NavigationRailLabelType.all,
                 destinations: [
                   NavigationRailDestination(
-                    icon: Icon(Icons.home),
+                    icon: Icon(Icons.arrow_back),
                     label: Text('back'),
                   ),
                   NavigationRailDestination(

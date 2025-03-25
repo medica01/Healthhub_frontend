@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
@@ -32,11 +33,16 @@ class _specific_productState extends State<specific_product> {
   int a = 1;
   int amount = 0;
   int totalau = 0;
+  DateTime now = DateTime.now();
+  String formattedseven="";
+
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    show_date();
     _specific_products();
     _get_patients_address();
   }
@@ -58,6 +64,19 @@ class _specific_productState extends State<specific_product> {
         totalau = totalau - amount;
       }
     });
+  }
+
+  void show_date(){
+    DateTime seven= now.add(Duration(days: 7));
+    formattedseven = DateFormat('EEEE d MMM yyyy').format(seven);
+  }
+
+  void show_quantity_price()async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    pref.setInt("quantity", a);
+    pref.setInt("total_price", totalau);
+    pref.setString("delivery_date", formattedseven);
+
   }
 
 
@@ -153,6 +172,7 @@ class _specific_productState extends State<specific_product> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -255,16 +275,6 @@ class _specific_productState extends State<specific_product> {
                         ],
                       ),
                       Text(
-                        " total quantity :$a",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 40),
-                      ),
-                      Text(
-                        " total price :₹ $totalau",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 40),
-                      ),
-                      Text(
                         "inclusive of all taxes",
                         style: TextStyle(
                             color: Colors.black,
@@ -277,7 +287,7 @@ class _specific_productState extends State<specific_product> {
                 Padding(
                   padding: EdgeInsets.only(top: 18.0, left: 5),
                   child: Text(
-                    "FREE delivery Monday,31 March, Order within 19hrs 56 mins.",
+                    "FREE delivery $formattedseven, \nOrder within 19hrs 56 mins.",
                     style: TextStyle(
                         color: Colors.black,
                         fontSize: 18,
@@ -486,6 +496,7 @@ class _specific_productState extends State<specific_product> {
                                     backgroundColor: Colors.blue,
                                     shape: RoundedRectangleBorder()),
                                 onPressed: () {
+                                  show_quantity_price();
                                   patients_address == null ||
                                           patients_address!.fullName == null ||
                                           patients_address!.areaBuildingName ==
@@ -505,14 +516,12 @@ class _specific_productState extends State<specific_product> {
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   add_pati_address(
-                                                    quantity : a,total_amount : totalau
                                                   )))
                                       : Navigator.push(
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
                                                   place_order(
-                                                      quantity : a,total_amount : totalau
                                                   )));
                                 },
                                 child: Text(

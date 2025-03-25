@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:health_hub/main.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../../Backend_information/medicine_app_backend/add_to_cart_backend.dart';
@@ -17,12 +18,20 @@ class show_to_cart extends StatefulWidget {
 class _show_to_cartState extends State<show_to_cart> {
   List<add_to_carts> show_add_to_cart_user = [];
   bool loading = false;
+  DateTime now = DateTime.now();
+  String formattedseven ="";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    show_date();
     _get_user_add_to_cart();
+  }
+
+  void show_date(){
+    DateTime seven= now.add(Duration(days: 7));
+    formattedseven = DateFormat('EEEE').format(seven);
   }
 
   Future<void> _get_user_add_to_cart() async {
@@ -145,6 +154,10 @@ class _show_to_cartState extends State<show_to_cart> {
                                                     image: NetworkImage(
                                                         scale: 3,
                                                         "http://$ip:8000${carts.productImage}")),
+                                              ),
+                                              Padding(
+                                                padding:  EdgeInsets.all(10.0),
+                                                child: Text("delivery time: $formattedseven"),
                                               ),
                                             ],
                                           ),

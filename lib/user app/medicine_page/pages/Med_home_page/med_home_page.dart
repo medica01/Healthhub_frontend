@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:health_hub/allfun.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import 'about_specific_product.dart';
 
@@ -15,12 +16,20 @@ class medi_home_page extends StatefulWidget {
 
 class _medi_home_pageState extends State<medi_home_page> {
   List<medicine_purchase> medical_details = [];
+  DateTime now = DateTime.now();
+  String formattedseven ="";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    show_date();
     _get_medicine_detials();
+  }
+
+  void show_date(){
+    DateTime seven= now.add(Duration(days: 7));
+    formattedseven = DateFormat('EEEE').format(seven);
   }
 
   Future<void> _get_medicine_detials() async {
@@ -90,7 +99,7 @@ class _medi_home_pageState extends State<medi_home_page> {
                                             ),
                                             Padding(
                                               padding:  EdgeInsets.all(8.0),
-                                              child: Text("delivery time: wednesday"),
+                                              child: Text("delivery time: $formattedseven"),
                                             ),
                                           ],
                                         ),
