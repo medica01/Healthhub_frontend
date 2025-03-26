@@ -14,10 +14,10 @@ class Medical_main_page extends StatefulWidget {
   const Medical_main_page({super.key});
 
   @override
-  State<Medical_main_page> createState() => _HomePageState();
+  State<Medical_main_page> createState() => _Medical_main_pageState();
 }
 
-class _HomePageState extends State<Medical_main_page>
+class _Medical_main_pageState extends State<Medical_main_page>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   int _selectedIndex = 2;
@@ -48,9 +48,9 @@ class _HomePageState extends State<Medical_main_page>
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home:Scaffold(
-        backgroundColor: Colors.white10,
+      debugShowCheckedModeBanner: false,
+      home:Scaffold(
+        // backgroundColor: Colors.white10,
         body: Row(
           children: [
             if (kIsWeb) // Show NavigationRail for Web
@@ -100,7 +100,7 @@ class _HomePageState extends State<Medical_main_page>
             ? BottomNavigationBarWidget(controller: _tabController)
             : null,
 
-    ),);
+      ),);
   }
 }
 
@@ -117,7 +117,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
         children: [
           CustomPaint(
             size: Size(MediaQuery.of(context).size.width, 80),
-            painter: BottomNavigationBarPainter(),
+            painter: BottomNavigationBarPainters(),
           ),
           Center(
             heightFactor: 0.1,
@@ -126,7 +126,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
                 controller.animateTo(2);
               },
               backgroundColor: Color(0xff1f8acc),
-              child: Icon(Icons.home, color: Colors.white),
+              child: Icon(FontAwesomeIcons.houseMedical, color: Colors.white),
               elevation: 1.5,
             ),
           ),
@@ -137,11 +137,16 @@ class BottomNavigationBarWidget extends StatelessWidget {
               unselectedLabelColor: Colors.black,
               indicatorColor: Colors.transparent,
               tabs: [
-                Tab(icon: Icon(FontAwesomeIcons.location)),
-                Tab(icon: Icon(Icons.message_outlined)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
+                  },
+                  child: const Icon(Icons.arrow_back),
+                ),
+                Tab(icon: Icon(Icons.account_circle_outlined)),
                 Container(width: 40),
-                Tab(icon: Icon(Icons.person)),
-                Tab(icon: Icon(Icons.history)),
+                Tab(icon: Icon(Icons.shopping_cart)),
+                Tab(icon: Icon(Icons.local_shipping_outlined)),
               ],
             ),
           ),
@@ -152,7 +157,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
 }
 
 
-class BottomNavigationBarPainter extends CustomPainter {
+class BottomNavigationBarPainters extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()

@@ -166,7 +166,7 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
                     child: TextFormField(
                       autofocus: true,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.isEmpty || value!=10) {
                           return "no phone number";
                         }
                         return null;

@@ -26,15 +26,11 @@ class _add_pati_addressState extends State<add_pati_address> {
   TextEditingController town_name = TextEditingController();
   TextEditingController state_name = TextEditingController();
   bool isChecked = false;
-
-
-
-
   void valid_address(){
     List missingfield =[];
     if(full_name.text.isEmpty){
       missingfield.add("please enter the name");
-    }if(sec_phone_number.text.isEmpty){
+    }if(sec_phone_number.text.isEmpty || sec_phone_number.text.length!=10){
       missingfield.add("please enter the phone_number");
     }if(flat_name.text.isEmpty){
       missingfield.add("please enter the Flat,House no, Building, Company, Apartment name");
@@ -42,7 +38,7 @@ class _add_pati_addressState extends State<add_pati_address> {
       missingfield.add("please enter the Area / Building name");
     }if(land_mark.text.isEmpty){
       missingfield.add("please enter any land mark");
-    }if(pin_code.text.isEmpty){
+    }if(pin_code.text.isEmpty|| pin_code.text.length!=6){
       missingfield.add("please enter the pincode");
     }if(town_name.text.isEmpty){
       missingfield.add("please enter the Town or City name");
@@ -151,7 +147,7 @@ class _add_pati_addressState extends State<add_pati_address> {
                         1000,
                         "",
                         TextInputType.text,
-                        full_name,
+                        full_name
                       ),
                       form(
                         "Mobile number",

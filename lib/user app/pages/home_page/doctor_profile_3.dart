@@ -248,7 +248,7 @@ class _doc_profileState extends State<doc_profile> {
                   TextButton(onPressed: (){
                     Navigator.pop(context);
                     // Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
-                    showModalBottomSheet(context: context, builder: (context)=>SaveDetails());
+                    showDialog(context: context, builder: (context)=>SaveDetails());
                     }, child: Text("Ok"))
                 ],
               ));

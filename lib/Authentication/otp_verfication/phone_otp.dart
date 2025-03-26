@@ -290,7 +290,7 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
                     child: TextFormField(
                       autofocus: true,
                       validator: (value) {
-                        if (value == null || value.isEmpty) {
+                        if (value == null || value.isEmpty || value.length!=10) {
                           return "no phone number";
                         }
                         return null;

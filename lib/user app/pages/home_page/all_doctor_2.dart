@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_hub/Backend_information/get_fav_doc_backend.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/pages/home_page/doctor_profile_3.dart';
 
@@ -35,7 +36,8 @@ class _all_doctorState extends State<all_doctor> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchDoctorPage()));
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => SearchDoctorPage()));
             },
             icon: Icon(Icons.search_rounded),
             color: Color(0xff0a8eac),
@@ -58,15 +60,76 @@ class _doctor_idState extends State<doctor_id> {
   update_profile? userprofile;
   bool set_fav = false;
   List<doctor_details> doctor_detail = [];
+  List<get_fav_doc> get_fav_doctor = [];
   bool isLoading = true;
   String? errorMessage;
   String doc_id = "";
+
+  // bool like = false;
+  String errormessage = "";
 
   @override
   void initState() {
     super.initState();
     _showdoctor1();
+    _show_favorite_doc();
     userpro();
+  }
+
+  Future<void> _show_favorite_doc() async {
+    String phone_number = "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst("+", "");
+    });
+    try {
+      final response = await http.get(
+        Uri.parse("http://$ip:8000/booking_doctor/get_fav_doc/$phone_number/"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          get_fav_doctor =
+              jsonResponse.map((data) => get_fav_doc.fromJson(data)).toList();
+          print("${response.body}");
+        });
+      } else {
+        setState(() {
+          errormessage = "failed to load favorite doctor details";
+        });
+      }
+    } catch (e) {
+      errormessage = e.toString();
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+                title: Text(
+                  "Alert Message",
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25),
+                ),
+                content: Text(
+                  "$errormessage",
+                  style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold),
+                ),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("Ok"))
+                ],
+              ));
+    }
   }
 
   //  request for retrieve the all the json using get
@@ -97,77 +160,73 @@ class _doctor_idState extends State<doctor_id> {
     }
   }
 
-  Future<void> userpro()async{
-    String phone_number="";
+  Future<void> userpro() async {
+    String phone_number = "";
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
       phone_number = pref.getString('phone_number') ?? "";
       phone_number = phone_number.replaceFirst('+', '');
     });
-    try{
-      final response = await http.get(Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
-          headers: {"Content-Type":"application/json"}
-      );
-      if(response.statusCode==200){
-        Map<String,dynamic>jsonResponse = jsonDecode(response.body);
+    try {
+      final response = await http.get(
+          Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
-          userprofile=update_profile.fromJson(jsonResponse);
-          isLoading=false;
+          userprofile = update_profile.fromJson(jsonResponse);
+          isLoading = false;
         });
-      }else{
+      } else {
         setState(() {
           errorMessage = response.body.toString();
-          isLoading=false;
+          isLoading = false;
         });
       }
-    }catch(e){
-      errorMessage=e.toString();
-      isLoading=false;
+    } catch (e) {
+      errorMessage = e.toString();
+      isLoading = false;
     }
   }
 
-  void valid_user(){
-    if(userprofile!.firstName == null) {
+  void valid_user() {
+    if (userprofile!.firstName == null) {
       print("${userprofile!.firstName}");
       if (userprofile!.lastName == null) {
-        if(userprofile!.age==null){
-          if(userprofile!.gender==null){
-            if(userprofile!.email==null){
-              showDialog(context: context, builder: (context)=>AlertDialog(
-                title: Text("Invalid User",style: TextStyle(color: Colors.red,fontSize: 25),),
-                content: Text("you must create the account for make favorite!",style: TextStyle(fontSize: 20),),
-                actions: [
-                  TextButton(onPressed: (){
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
-                  }, child: Text("Ok"))
-                ],
-              ));
+        if (userprofile!.age == null) {
+          if (userprofile!.gender == null) {
+            if (userprofile!.email == null) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text(
+                          "Invalid User",
+                          style: TextStyle(color: Colors.red, fontSize: 25),
+                        ),
+                        content: Text(
+                          "you must create the account for make favorite!",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => profile_page()));
+                              },
+                              child: Text("Ok"))
+                        ],
+                      ));
             }
           }
         }
       }
-    }else{
+    } else {
       _favorite_doctor();
     }
   }
-
-  // Future<void> _add_like_doctor_details() async{
-  //   print("$set_fav");
-  //   try{
-  //     final response = await http.post(Uri.parse("http://$ip:8000/doctor_details/doctor_addetails/"),
-  //     headers: {"Content-Type":"application/json"},
-  //       body: jsonEncode({
-  //         "like":set_fav
-  //       })
-  //     );
-  //     if(response.statusCode==201){
-  //       print("like added");
-  //     }
-  //   }catch(e){
-  //
-  //   }
-  // }
 
   Future<void> _favorite_doctor() async {
     String phone_number = "";
@@ -263,6 +322,9 @@ class _doctor_idState extends State<doctor_id> {
               itemCount: doctor_detail.length,
               itemBuilder: (context, index) {
                 var doctor = doctor_detail[index];
+                var show_fav_doctor = index < get_fav_doctor.length
+                    ? get_fav_doctor[index]
+                    : null;
                 return doctor.id != null
                     ? Padding(
                         padding:
@@ -342,14 +404,25 @@ class _doctor_idState extends State<doctor_id> {
                                                     });
                                                   },
                                                   icon: Icon(
-                                                    (set_fav ?? false)
+                                                    show_fav_doctor != null &&
+                                                            show_fav_doctor
+                                                                    .id !=
+                                                                null &&
+                                                            show_fav_doctor
+                                                                    .like ==
+                                                                true
                                                         ? FontAwesomeIcons
                                                             .solidHeart
                                                         : FontAwesomeIcons
                                                             .heart,
-                                                    color: (doctor_detail[index]
-                                                                .like ??
-                                                            false)
+                                                    color: show_fav_doctor !=
+                                                                null &&
+                                                            show_fav_doctor
+                                                                    .id !=
+                                                                null &&
+                                                            show_fav_doctor
+                                                                    .like ==
+                                                                true
                                                         ? Colors.red
                                                         : Colors.grey,
                                                   ),

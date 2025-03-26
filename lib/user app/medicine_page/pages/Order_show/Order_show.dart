@@ -122,7 +122,7 @@ class _medicine_home_pageState extends State<show_order_placed> {
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text("${order_detials.productName}"),
                                     ),
-                                    Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 12),)
+                                    Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 8),)
                                   ],
                                 ),
                                  Divider(

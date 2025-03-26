@@ -231,7 +231,7 @@ class _HomePageState extends State<HomePage>
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white10,
+        // backgroundColor: Colors.white10,
         body: Row(
           children: [
             if (kIsWeb)
@@ -278,17 +278,17 @@ class _HomePageState extends State<HomePage>
           ],
         ),
         bottomNavigationBar: !kIsWeb
-            ? BottomNavigationBarWidget(controller: _tabController)
+            ? BottomNavigationBarWidgets(controller: _tabController)
             : null,
       ),
     );
   }
 }
 
-class BottomNavigationBarWidget extends StatelessWidget {
+class BottomNavigationBarWidgets extends StatelessWidget {
   final TabController controller;
 
-  const BottomNavigationBarWidget({required this.controller, Key? key})
+  const BottomNavigationBarWidgets({required this.controller, Key? key})
       : super(key: key);
 
   @override
@@ -326,10 +326,10 @@ class BottomNavigationBarWidget extends StatelessWidget {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => medi_home_page()),
+                      MaterialPageRoute(builder: (context) => Medical_main_page()),
                     );
                   },
-                  child: const Icon(Icons.person),
+                  child: const Icon(FontAwesomeIcons.kitMedical),
                 ),
                 const Tab(icon: Icon(Icons.history)),
               ],
