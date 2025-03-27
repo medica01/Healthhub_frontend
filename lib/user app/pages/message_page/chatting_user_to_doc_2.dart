@@ -341,7 +341,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 8, top: 8, bottom: 100),
+            padding: EdgeInsets.only(left: 8.0, right: 8, top: 8, bottom: 50),
             child: Row(
               children: [
                 Expanded(
