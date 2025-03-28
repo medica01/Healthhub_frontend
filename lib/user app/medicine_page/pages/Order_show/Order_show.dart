@@ -91,7 +91,7 @@ class _medicine_home_pageState extends State<show_order_placed> {
                         child: GestureDetector(
                           onTap: (){
                             Navigator.push(context, MaterialPageRoute(builder: (context)=>show_spe_order_pro(
-                              product_number: "${order_detials.productNumber}",
+                              id: "${order_detials.id}",
                             )));
                           },
                           child: Container(
