@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Med_home_page/about_specific_product.dart';
+import 'order_product_more_info.dart';
 
 class show_spe_order_pro extends StatefulWidget {
   final dynamic id;
@@ -84,14 +85,11 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
         title: Text(""),
       ),
       body: isloading
-          ? ListView(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(
-                    left: 15.0,
-                    right: 10,
-                  ),
-                  child: Container(
+          ? Padding(
+        padding: EdgeInsets.only(left: 15.0, right: 10, bottom: 10),
+            child: ListView(
+                children: [
+                  Container(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -156,7 +154,6 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                         Padding(
                           padding: EdgeInsets.only(bottom: 10.0),
                           child: Container(
-                            height: 180,
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 border:
@@ -193,57 +190,66 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
-                            subtitle: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                  indent: 5,
-                                  endIndent: 5,
-                                ),
-                                ListTile(
-                                  title: Text("View order details"),
-                                  trailing: Icon(Icons.arrow_forward_ios),
-                                ),
-                                Divider(
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                  indent: 3,
-                                  endIndent: 3,
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.only(top: 10.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Items from your Wish List",
-                                        style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      IconButton(
-                                          onPressed: () {},
-                                          icon: Icon(Icons.more_vert))
-                                    ],
+                            subtitle: GestureDetector(
+                              onTap: (){
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>view_order_details(
+                                  id : "${get_spec_pro!.id}"
+                                )));
+                              },
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Divider(
+                                    color: Colors.grey,
+                                    thickness: 1,
+                                    indent: 5,
+                                    endIndent: 5,
                                   ),
-                                )
-                              ],
+                                  ListTile(
+                                    title: Text("View order details"),
+                                    trailing: Icon(Icons.arrow_forward_ios),
+                                  ),
+                                  Divider(
+                                    color: Colors.grey,
+                                    thickness: 1,
+                                    indent: 3,
+                                    endIndent: 3,
+                                  ),
+
+                                ],
+                              ),
                             ),
+
                           ),
                         )
                       ],
                     ),
                   ),
-                ),
-                Container(
-                  height: 100,
-                )
-              ],
-            )
+                  Padding(
+                    padding: EdgeInsets.only(top: 10.0),
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Items from your Wish List",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black),
+                        ),
+                        IconButton(
+                            onPressed: () {},
+                            icon: Icon(Icons.more_vert))
+                      ],
+                    ),
+                  ),
+                  Container(
+                    height: 100,
+                  )
+                ],
+              ),
+          )
           : Center(
               child: CircularProgressIndicator(),
             ),
