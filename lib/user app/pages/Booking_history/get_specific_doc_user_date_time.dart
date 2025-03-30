@@ -61,7 +61,7 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
               }, child: Text("Cancel",style: TextStyle(color: Colors.red),)),
               TextButton(onPressed: (){
                 _specc_doc_user_date_time();
-                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
+                Navigator.pop(context);
               }, child: Text("Ok",style: TextStyle(color: Colors.green),))
             ],
           )
@@ -93,16 +93,16 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
     try{
       String encodedTime = Uri.encodeComponent(booking_time);
       final response = await http.delete(Uri.parse("http://$ip:8000/booking_doctor/delete_specific_user_doctor/$phone_number/$doc_phone_number/$outputDate/$encodedTime/"),
-        headers: {"Content-Type":"application/json"}
       );
       if(response.statusCode==200){
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>booking_history_page()), (route)=>false);
       }
       else{
         print("${response.body}");
       }
     }catch(e){}
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

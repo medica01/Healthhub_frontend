@@ -122,7 +122,7 @@ class _view_order_detailsState extends State<view_order_details> {
                   child: Column(
                     children: [
                       order_details("${get_spec_pro!.orderDate}", "Order date"),
-                      order_details("₹ ${get_spec_pro!.purchaseTotalPrice} (${get_spec_pro!.productDetails} item)", "Order Total"),
+                      order_details("₹ ${get_spec_pro!.purchaseTotalPrice} (${get_spec_pro!.purchaseQuantity} item)", "Order Total"),
                       Divider(
                         color: Colors.grey,
                         thickness: 1,

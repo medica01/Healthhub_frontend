@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Med_home_page/about_specific_product.dart';
+import 'Order_show.dart';
 import 'order_product_more_info.dart';
 
 class show_spe_order_pro extends StatefulWidget {
@@ -60,6 +61,23 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
     }
   }
 
+  Future<void> _delete_order_placed() async{
+    String phone_number = "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst("+", "");
+    });
+    try{
+      final response = await http.delete(Uri.parse("http://$ip:8000/medicine_pur/delete_order_product/$phone_number/${widget.id}/"));
+      if(response.statusCode==204){
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>show_order_placed()), (route)=>false);
+      }
+    }catch(e){
+      print("${e.toString()}");
+    }
+  }
+
   Widget option(String name) {
     return Padding(
       padding: EdgeInsets.only(right: 10.0),
@@ -86,8 +104,8 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
       ),
       body: isloading
           ? Padding(
-        padding: EdgeInsets.only(left: 15.0, right: 10, bottom: 10),
-            child: ListView(
+              padding: EdgeInsets.only(left: 15.0, right: 10, bottom: 10),
+              child: ListView(
                 children: [
                   Container(
                     child: Column(
@@ -103,7 +121,9 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                                   fontSize: 25, fontWeight: FontWeight.bold),
                             ),
                             TextButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
                                 child: Text(
                                   "See all orders",
                                   style: TextStyle(
@@ -123,7 +143,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                             alignment: Alignment.centerLeft,
                             child: Image(
                                 image: NetworkImage(
-                                    scale: 2 ,
+                                    scale: 2,
                                     "http://$ip:8000${get_spec_pro!.productImage}")),
                           ),
                         ),
@@ -139,13 +159,40 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                               children: [
                                 Padding(
                                     padding: EdgeInsets.only(left: 10.0),
-                                    child: option("Cancel Order")),
+                                    child: GestureDetector(
+                                      onTap: (){
+                                        showDialog(context: context, builder: (context)=>AlertDialog(
+                                          title: Text("Notice!",style: TextStyle(color: Colors.red),),
+                                          content: Text("did you want to cancel the order?"),
+                                          actions: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                TextButton(onPressed: (){
+                                                  Navigator.pop(context);
+                                                }, child: Text("Cancel",style: TextStyle(color: Colors.green),)),
+                                                TextButton(onPressed: (){
+                                                  _delete_order_placed();
+                                                  Navigator.pop(context);
+                                                }, child: Text("Ok",style: TextStyle(color: Colors.red),)),
+
+                                              ],
+                                            )
+                                          ],
+                                        ));
+                                      },
+                                        child: option("Cancel Order"))),
                                 option("Update delivery \n    Instructions"),
                                 GestureDetector(
-                                  onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
-                                      product_number : "${get_spec_pro!.productNumber}")));
-                                  },
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  specific_product(
+                                                      product_number:
+                                                          "${get_spec_pro!.productNumber}")));
+                                    },
                                     child: option("Buy Again")),
                               ],
                             ),
@@ -176,7 +223,8 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                                     Text(
                                         "${get_spec_pro!.areaBuildingName},${get_spec_pro!.townCity}"),
                                     Text("${get_spec_pro!.pincode}"),
-                                    Text("Phone number: ${get_spec_pro!.secPhoneNumber}")
+                                    Text(
+                                        "Phone number: ${get_spec_pro!.secPhoneNumber}")
                                   ],
                                 ),
                               ),
@@ -191,10 +239,13 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                                   fontWeight: FontWeight.bold, fontSize: 20),
                             ),
                             subtitle: GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>view_order_details(
-                                  id : "${get_spec_pro!.id}"
-                                )));
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            view_order_details(
+                                                id: "${get_spec_pro!.id}")));
                               },
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -215,11 +266,9 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                                     indent: 3,
                                     endIndent: 3,
                                   ),
-
                                 ],
                               ),
                             ),
-
                           ),
                         )
                       ],
@@ -228,8 +277,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                   Padding(
                     padding: EdgeInsets.only(top: 10.0),
                     child: Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           "Items from your Wish List",
@@ -239,8 +287,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                               color: Colors.black),
                         ),
                         IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.more_vert))
+                            onPressed: () {}, icon: Icon(Icons.more_vert))
                       ],
                     ),
                   ),
@@ -249,7 +296,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                   )
                 ],
               ),
-          )
+            )
           : Center(
               child: CircularProgressIndicator(),
             ),

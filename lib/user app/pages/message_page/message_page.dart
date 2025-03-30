@@ -128,7 +128,9 @@ class _show_all_doctorState extends State<show_all_doctor> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return isLoading
+        ? Center(child: CircularProgressIndicator(),)
+    :Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,

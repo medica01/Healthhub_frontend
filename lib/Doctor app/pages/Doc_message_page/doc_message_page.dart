@@ -1,16 +1,13 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_message_page/search_chat_doc_only_user_chat.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../Backend_information/chat_doc_only_user_chat_backend.dart';
-import '../../../user app/pages/Profile_page/profile_page.dart';
 import 'chatting_doc_to_user_2.dart';
-//
+
 class doc_message extends StatefulWidget {
   const doc_message({super.key});
 
@@ -55,8 +52,7 @@ class patient_chat_show extends StatefulWidget {
 class _patient_chat_showState extends State<patient_chat_show> {
   List<chat_doc_only_user_chat> chat_user_only_doc_chat =[];
   String errormessage = "";
-  update_profile? userprofile;
-  bool isLoading = true;
+  bool isLoading = false;
   String? errorMessage;
   String doc_phone_no ="";
 
@@ -81,12 +77,12 @@ class _patient_chat_showState extends State<patient_chat_show> {
         List<dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
           chat_user_only_doc_chat = jsonResponse.map((data)=>chat_doc_only_user_chat.fromJson(data)).toList();
-          isLoading=false;
+          isLoading=true;
         });
       }else{
         setState(() {
-          errormessage ="failed to load user_details" ;
-          isLoading=false;
+          errormessage ="failed to load user_details";
+          isLoading=true;
         });
       }
     }catch(e){
@@ -114,9 +110,9 @@ class _patient_chat_showState extends State<patient_chat_show> {
   }
   @override
   Widget build(BuildContext context) {
-    // var index=0;
-    return  isLoading ==false
-      ?ListView(
+    return  isLoading
+      ?( chat_user_only_doc_chat.isNotEmpty
+        ?ListView(
       // crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
@@ -174,8 +170,7 @@ class _patient_chat_showState extends State<patient_chat_show> {
                   onTap: () async{
                     await _doc_online();
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_user(data:"${show_patiii.phoneNumber}")));
-
-                  },
+                    },
                   child: Card(
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     elevation: 5,
@@ -222,7 +217,7 @@ class _patient_chat_showState extends State<patient_chat_show> {
                   : Text("data");
             })
       ],
-    ):Center(child: Text("No user chat"),);
+    ):Center(child: Text("No User Chat",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),))):Center(child: CircularProgressIndicator(),);
   }
 }
 
