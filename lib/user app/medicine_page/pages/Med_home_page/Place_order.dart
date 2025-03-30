@@ -216,7 +216,7 @@ class _place_orderState extends State<place_order> {
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold),
                           ),
-                          _buildPaymentOption("Cash on dhkfvhvhelivery", selectedPaymentMethod == "Cash on delivery", _onCashOnDelivery),
+                          _buildPaymentOption("Cash on delivery", selectedPaymentMethod == "Cash on delivery", _onCashOnDelivery),
                           _buildPaymentOption("VISA ....6766", selectedPaymentMethod == "VISA ....6766", _onVisaPayment),
                           _buildPaymentOption("G Pay kgokulraj.developer@gmail.com", selectedPaymentMethod == "G Pay kgokulraj.developer@gmail.com", _onGPay),
 

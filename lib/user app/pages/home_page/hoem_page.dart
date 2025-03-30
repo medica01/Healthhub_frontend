@@ -16,6 +16,7 @@ import '../../../Backend_information/user_details_backend.dart';
 import '../../../allfun.dart';
 import '../../Other_feature/show_favorite_doc.dart';
 import '../Profile_page/profile_page.dart';
+import 'category_grid_doc_6.dart';
 
 class main_home extends StatefulWidget {
   const main_home({super.key});
@@ -281,7 +282,11 @@ class _home_pageState extends State<home_page> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 text("Categories", Colors.black, 24, FontWeight.bold),
-                text("See All", Colors.grey, 20, FontWeight.bold),
+                GestureDetector(
+                  onTap: (){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>cate_doc()));
+                  },
+                    child: text("See All", Colors.grey, 20, FontWeight.bold)),
               ],
             ),
           ),

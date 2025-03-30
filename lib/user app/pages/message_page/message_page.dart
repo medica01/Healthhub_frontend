@@ -165,11 +165,11 @@ class _show_all_doctorState extends State<show_all_doctor> {
                                         TextButton(
                                             onPressed: () {
                                               Navigator.pop(context);
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          profile_page()));
+                                              // Navigator.push(
+                                              //     context,
+                                              //     MaterialPageRoute(
+                                              //         builder: (context) =>
+                                              //             profile_page()));
                                             },
                                             child: Text("Ok"))
                                       ],
