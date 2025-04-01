@@ -66,7 +66,7 @@ class _place_orderState extends State<place_order> {
 
   void _onGPay() {
     setState(() {
-      selectedPaymentMethod = "G Pay kgokulraj.developer@gmail.com";
+      selectedPaymentMethod = "G Pay";
     });
     print("Selected: G Pay");
     // Your GPay function here
@@ -218,7 +218,7 @@ class _place_orderState extends State<place_order> {
                           ),
                           _buildPaymentOption("Cash on delivery", selectedPaymentMethod == "Cash on delivery", _onCashOnDelivery),
                           _buildPaymentOption("VISA ....6766", selectedPaymentMethod == "VISA ....6766", _onVisaPayment),
-                          _buildPaymentOption("G Pay kgokulraj.developer@gmail.com", selectedPaymentMethod == "G Pay kgokulraj.developer@gmail.com", _onGPay),
+                          _buildPaymentOption("G Pay", selectedPaymentMethod == "G Pay", _onGPay),
 
                           SizedBox(height: 20),
                           Text("Arriving $delivery_date", style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.bold)),

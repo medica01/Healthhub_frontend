@@ -8,9 +8,8 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import '../../../Backend_information/Backend_doctor_details.dart';
+import '../../medicine_page/pages/Med_home_page/order_successfully.dart';
 import '../Profile_page/personal_details_collect.dart';
-import '../Profile_page/profile_page.dart';
-import '../home.dart';
 
 
 
@@ -61,19 +60,20 @@ class _doc_profileState extends State<doc_profile> {
         })
       );
       if(response.statusCode==201){
-        showDialog(context: context, builder: (context)=>AlertDialog(
-          title: Text("Booking Successfully",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20),),
-          content: Text("Your booking this doctor is successfull"),
-          actions: [
-            TextButton(onPressed: (){
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => HomePage()),
-                    (route) => false,
-              );
-            }, child: Text("Ok",style: TextStyle(color: Color(0xff1f8acc)),))
-          ],
-        ));
+        showBottomSheet(context: context, builder: (context)=>Booking_success());
+        // showDialog(context: context, builder: (context)=>AlertDialog(
+        //   title: Text("Booking Successfully",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20),),
+        //   content: Text("Your booking this doctor is successfull"),
+        //   actions: [
+        //     TextButton(onPressed: (){
+        //       Navigator.pushAndRemoveUntil(
+        //         context,
+        //         MaterialPageRoute(builder: (context) => HomePage()),
+        //             (route) => false,
+        //       );
+        //     }, child: Text("Ok",style: TextStyle(color: Color(0xff1f8acc)),))
+        //   ],
+        // ));
 
       }
       else{

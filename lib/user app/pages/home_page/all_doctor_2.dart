@@ -242,18 +242,7 @@ class _doctor_idState extends State<doctor_id> {
           body: jsonEncode(
               {"id": doc_id, "like": set_fav, "phone_number": phone_number}));
       if (response.statusCode == 201) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text(
-                    "your like add",
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  content: Text("this doctor is like by you."),
-                ));
+        _show_favorite_doc();
       } else {
         showDialog(
             context: context,
@@ -397,9 +386,8 @@ class _doctor_idState extends State<doctor_id> {
                                                       set_fav =
                                                           doctor_detail[index]
                                                               .like!;
-                                                      print(
-                                                          "${doctor_detail[index].id}");
                                                       valid_user();
+
                                                       // _add_like_doctor_details();
                                                     });
                                                   },

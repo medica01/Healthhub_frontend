@@ -8,7 +8,7 @@ import 'doctor_profile_3.dart';
 
 class Specific extends StatefulWidget {
   final dynamic data;
-  const Specific({super.key,required this.data});
+  Specific({super.key,required this.data});
 
   @override
   State<Specific> createState() => _SpecificState();
@@ -40,7 +40,6 @@ class _SpecificState extends State<Specific> {
                   child: SearchBar(
                     leading: Icon(Icons.search),
                     hintText: 'Search a Doctor',
-
                     backgroundColor: WidgetStatePropertyAll(Colors.white),
                     // shadowColor: WidgetStatePropertyAll(Colors.grey),
                     elevation: WidgetStatePropertyAll(6.0),
@@ -77,7 +76,8 @@ class _Specif_docState extends State<Specif_doc> {
   void initState() {
     super.initState();
     Spec = widget.data;
-    _showdoctor1();
+    // _showdoctor1();
+    _get_spec_doc_search(widget.data);
   }
 
   //  request for retrieve the all the json using get
@@ -109,6 +109,49 @@ class _Specif_docState extends State<Specif_doc> {
     }
   }
 
+  Future<void> _get_spec_doc_search(String query) async{
+    if(query.isEmpty) return;
+    setState(() {
+      isLoading = true;
+    });
+    try{
+      String encodedQuery = Uri.encodeQueryComponent(query);
+      final response = await http.get(Uri.parse("http://$ip:8000/doctor_details/doctor_search/?q=$encodedQuery"));
+      if(response.statusCode == 200){
+        var jsonResponse = jsonDecode(response.body);
+        if(jsonResponse is Map && jsonResponse.containsKey('result')){
+          var result = jsonResponse['result'];
+          if(result is List){
+            setState(() {
+              doctor_detail = result.map((data)=>doctor_details.fromJson(data)).toList();
+              isLoading = false;
+            });
+          }else {
+            setState(() {
+              doctor_detail = [];
+              isLoading = false;
+            });
+          }
+        }else {
+          setState(() {
+            doctor_detail = [];
+            isLoading = false;
+          });
+        }
+      }else {
+        setState(() {
+          doctor_detail = [];
+          isLoading = false;
+        });
+      }
+    }catch (e) {
+      print("Error fetching data: $e");
+      setState(() {
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -119,7 +162,7 @@ class _Specif_docState extends State<Specif_doc> {
           itemCount: doctor_detail.length,
           itemBuilder: (context, index) {
             var doctor = doctor_detail[index];
-            return doctor.specialty ==  "${widget.data}"
+            return doctor.specialty !=  null
                 ? Padding(
               padding: EdgeInsets.only(left: 15.0, right: 15, bottom: 15),
               child: Container(
@@ -132,13 +175,14 @@ class _Specif_docState extends State<Specif_doc> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.network(
-                      scale: 5,
-                      doctor.doctorImage != null
-                          ? "http://$ip:8000${doctor.doctorImage}"
-                          : "https://cdn-icons-png.flaticon.com/128/10701/10701484.png",
-                      // Fallback image if null
-                      fit: BoxFit.cover,
+                    CircleAvatar(
+                      radius: 40,
+                      backgroundImage: NetworkImage(
+                        // scale: 10,
+                        doctor.doctorImage != null
+                            ? "http://$ip:8000/media/${doctor.doctorImage}"
+                            : "no data ",
+                      ),
                     ),
                     Padding(
                       padding: EdgeInsets.all(8.0),

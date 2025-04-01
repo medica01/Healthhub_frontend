@@ -160,402 +160,468 @@ class _home_pageState extends State<home_page> {
 
   @override
   Widget build(BuildContext context) {
-    return userprofile!=null
-      ?Scaffold(
-      appBar:
-      AppBar(
-        title: Row(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: GestureDetector(
-                onTap: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
-                },
-                child: CircleAvatar(
-                  radius: 22.0,
-                  backgroundImage: userprofile!.userPhoto!=null
-                  ? NetworkImage("http://$ip:8000${userprofile!.userPhoto}"):
-                  NetworkImage("$photourl"),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return userprofile != null
+        ? Scaffold(
+            appBar: AppBar(
+              title: Row(
                 children: [
-                  Text(
-                    "Hi,Welcome,",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
+                  Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => profile_page()));
+                      },
+                      child: CircleAvatar(
+                        radius: 22.0,
+                        backgroundImage: userprofile!.userPhoto != null
+                            ? NetworkImage(
+                                "http://$ip:8000${userprofile!.userPhoto}")
+                            : NetworkImage("$photourl"),
+                      ),
+                    ),
                   ),
-                  userprofile!.firstName != null || userprofile!.lastName !=null
-                  ?Text(
-                    "${userprofile!.firstName ?? ""} ${userprofile!.lastName ?? ""}",
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.bold),
-                  ):Text("Guest",style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold))
+                  Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Hi,Welcome,",
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        userprofile!.firstName != null ||
+                                userprofile!.lastName != null
+                            ? Text(
+                                "${userprofile!.firstName ?? ""} ${userprofile!.lastName ?? ""}",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            : Text("Guest",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  )
                 ],
               ),
-            )
-          ],
-        ),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>show_fav_doc()));
-              },
-              icon: Icon(
-                CupertinoIcons.heart_fill,
-                color: Colors.red,
-                size: 30,
-              )),
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.notifications_active_outlined,
-                size: 30,
-              )),
-        ],
-        // bottom: PreferredSize(
-        //   preferredSize: Size.fromHeight(60),
-        //   child: Padding(
-        //     padding: EdgeInsets.only(
-        //       left: 10.0,
-        //     ),
-        //     child: Padding(
-        //         padding: EdgeInsets.all(8.0),
-        //         child: Container(
-        //           width: 320,
-        //           child: SearchBar(
-        //             leading: Icon(Icons.search),
-        //             hintText: 'Search',
-        //             backgroundColor: WidgetStatePropertyAll(Colors.white),
-        //             shadowColor: WidgetStatePropertyAll(Colors.grey),
-        //             elevation: WidgetStatePropertyAll(6.0),
-        //             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-        //                 borderRadius: BorderRadius.circular(40))),
-        //             padding: WidgetStatePropertyAll(
-        //                 EdgeInsets.symmetric(horizontal: 16.0)),
-        //           ),
-        //         )),
-        //   ),
-        // ),
-      ),
-      body:ListView(
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 8.0),
-            child: Container(
-              child: CarouselSlider(
-                items: images
-                    .map((imagePath) => ClipRRect(
-                          borderRadius: BorderRadius.circular(8.0),
-                          child: Image.network(
-                            imagePath,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          ),
-                        ))
-                    .toList(),
-                options: CarouselOptions(
-                  height: 200.0,
-                  autoPlay: true,
-                  autoPlayInterval: Duration(seconds: 5),
-                  autoPlayAnimationDuration: Duration(milliseconds: 800),
-                  clipBehavior: Clip.hardEdge,
-                  enlargeCenterPage: true,
-                  viewportFraction: 0.9,
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(left: 15.0, right: 8.0, top: 25, bottom: 25),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                text("Categories", Colors.black, 24, FontWeight.bold),
-                GestureDetector(
-                  onTap: (){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>cate_doc()));
-                  },
-                    child: text("See All", Colors.grey, 20, FontWeight.bold)),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left: 5.0),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  a("Dentist", context, Specific(data: "Dentist")),
-                  a(
-                      "Therapist",
-                      context,
-                      Specific(
-                        data: "Therapist",
-                      )),
-                  a(
-                      "Orthodontist",
-                      context,
-                      Specific(
-                        data: "Orthodontist",
-                      )),
-                  a(
-                      "Periodontist",
-                      context,
-                      Specific(
-                        data: "Periodontist",
-                      )),
-                  a(
-                      "Oral Surgeon",
-                      context,
-                      Specific(
-                        data: "Oral Surgeon",
-                      )),
-                  a(
-                      "General Surgeon",
-                      context,
-                      Specific(
-                        data: "General Surgeon",
-                      )),
-                  a(
-                      "Pediatrician",
-                      context,
-                      Specific(
-                        data: "Pediatrician",
-                      )),
-                  a(
-                      "Ophthalmologist",
-                      context,
-                      Specific(
-                        data: "Ophthalmologist",
-                      )),
-                  a(
-                      "Cardiologist",
-                      context,
-                      Specific(
-                        data: "Cardiologist",
-                      )),
-                  a(
-                      "Physiotherapist",
-                      context,
-                      Specific(
-                        data: "Physiotherapist",
-                      )),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding:
-                EdgeInsets.only(left: 15.0, right: 8.0, top: 25, bottom: 25),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                text("All Doctors", Colors.black, 24, FontWeight.bold),
-                GestureDetector(
-                    onTap: () {
+              actions: [
+                IconButton(
+                    onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => all_doctor()));
+                              builder: (context) => show_fav_doc()));
                     },
-                    child: text("See All", Colors.grey, 20, FontWeight.bold)),
+                    icon: Icon(
+                      CupertinoIcons.heart_fill,
+                      color: Colors.red,
+                      size: 30,
+                    )),
+                IconButton(
+                    onPressed: () {},
+                    icon: Icon(
+                      Icons.notifications_active_outlined,
+                      size: 30,
+                    )),
               ],
+              // bottom: PreferredSize(
+              //   preferredSize: Size.fromHeight(60),
+              //   child: Padding(
+              //     padding: EdgeInsets.only(
+              //       left: 10.0,
+              //     ),
+              //     child: Padding(
+              //         padding: EdgeInsets.all(8.0),
+              //         child: Container(
+              //           width: 320,
+              //           child: SearchBar(
+              //             leading: Icon(Icons.search),
+              //             hintText: 'Search',
+              //             backgroundColor: WidgetStatePropertyAll(Colors.white),
+              //             shadowColor: WidgetStatePropertyAll(Colors.grey),
+              //             elevation: WidgetStatePropertyAll(6.0),
+              //             shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+              //                 borderRadius: BorderRadius.circular(40))),
+              //             padding: WidgetStatePropertyAll(
+              //                 EdgeInsets.symmetric(horizontal: 16.0)),
+              //           ),
+              //         )),
+              //   ),
+              // ),
             ),
-          ),
-          ListView.builder(
-              physics: BouncingScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: doctor_detail.length,
-              itemBuilder: (context, index) {
-                var doctor = doctor_detail[index];
-                return doctor.id != null
+            body: ListView(
+              children: [
+                userprofile!.firstName == null ||
+                        userprofile!.lastName == null ||
+                        userprofile!.email == null ||
+                        userprofile!.gender == null ||
+                        userprofile!.age == null
                     ? Padding(
-                        padding:
-                            EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
-                        child: Card(
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          elevation: 5,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                        padding: const EdgeInsets.only(
+                            left: 15, right: 15, bottom: 10, top: 5),
+                        child: Container(
+                          decoration: BoxDecoration(),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Did you want to Create Account!",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                              OutlinedButton(
+                                  style: OutlinedButton.styleFrom(
+                                      side: BorderSide(
+                                          color: Colors.blueAccent, width: 1)),
+                                  onPressed: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                                  },
+                                  child: Text(
+                                    "Ok",
+                                    style: TextStyle(color: Colors.blueAccent),
+                                  ))
+                            ],
                           ),
-                          clipBehavior: Clip.hardEdge,
-                          shadowColor: Colors.grey,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              // borderRadius: BorderRadius.circular(40),
-                            ),
-                            height: 190,
-                            child: Padding(
+                        ),
+                      )
+                    : SizedBox(),
+                Padding(
+                  padding: EdgeInsets.only(top: 8.0),
+                  child: Container(
+                    child: CarouselSlider(
+                      items: images
+                          .map((imagePath) => ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: Image.network(
+                                  imagePath,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                ),
+                              ))
+                          .toList(),
+                      options: CarouselOptions(
+                        height: 200.0,
+                        autoPlay: true,
+                        autoPlayInterval: Duration(seconds: 5),
+                        autoPlayAnimationDuration: Duration(milliseconds: 800),
+                        clipBehavior: Clip.hardEdge,
+                        enlargeCenterPage: true,
+                        viewportFraction: 0.9,
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 15.0, right: 8.0, top: 25, bottom: 25),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      text("Categories", Colors.black, 24, FontWeight.bold),
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => cate_doc()));
+                          },
+                          child: text(
+                              "See All", Colors.grey, 20, FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(left: 5.0),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        a("Dentist", context, Specific(data: "General")),
+                        a(
+                            "Therapist",
+                            context,
+                            Specific(
+                              data: "Therapist",
+                            )),
+                        a(
+                            "Orthodontist",
+                            context,
+                            Specific(
+                              data: "Orthodontist",
+                            )),
+                        a(
+                            "Periodontist",
+                            context,
+                            Specific(
+                              data: "Periodontist",
+                            )),
+                        a(
+                            "Oral Surgeon",
+                            context,
+                            Specific(
+                              data: "Oral Surgeon",
+                            )),
+                        a(
+                            "General Surgeon",
+                            context,
+                            Specific(
+                              data: "General doctor",
+                            )),
+                        a(
+                            "Pediatrician",
+                            context,
+                            Specific(
+                              data: "Pediatrician",
+                            )),
+                        a(
+                            "Ophthalmologist",
+                            context,
+                            Specific(
+                              data: "Ophthalmologist",
+                            )),
+                        a(
+                            "Cardiologist",
+                            context,
+                            Specific(
+                              data: "Cardiologist",
+                            )),
+                        a(
+                            "Physiotherapist",
+                            context,
+                            Specific(
+                              data: "Physiotherapist",
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      left: 15.0, right: 8.0, top: 25, bottom: 25),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      text("All Doctors", Colors.black, 24, FontWeight.bold),
+                      GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => all_doctor()));
+                          },
+                          child: text(
+                              "See All", Colors.grey, 20, FontWeight.bold)),
+                    ],
+                  ),
+                ),
+                ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: doctor_detail.length,
+                    itemBuilder: (context, index) {
+                      var doctor = doctor_detail[index];
+                      return doctor.id != null
+                          ? Padding(
                               padding: EdgeInsets.only(
-                                  left: 10.0, top: 15, bottom: 15),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: NetworkImage(
-                                      // scale: 10,
-                                      doctor.doctorImage != null
-                                          ? "http://$ip:8000${doctor.doctorImage}"
-                                          : "no data ",
-                                    ),
+                                  left: 13.0, right: 13, bottom: 15),
+                              child: Card(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 5),
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                shadowColor: Colors.grey,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    // borderRadius: BorderRadius.circular(40),
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 18.0),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                  height: 190,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10.0, top: 15, bottom: 15),
+                                    child: Row(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                          CrossAxisAlignment.center,
                                       children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "${doctor.doctorName ?? "unknown"}",
-                                              style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 20),
-                                            ),
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  left: 28.0),
-                                              child: IconButton(
-                                                onPressed: () {
-                                                  setState(() {
-                                                    heart = !heart;
-                                                  });
-                                                },
-                                                icon: Icon(
-                                                  heart
-                                                      ? FontAwesomeIcons
-                                                          .solidHeart
-                                                      : FontAwesomeIcons.heart,
-                                                  color: heart
-                                                      ? Colors.red
-                                                      : Colors.grey,
+                                        CircleAvatar(
+                                          radius: 40,
+                                          backgroundImage: NetworkImage(
+                                            // scale: 10,
+                                            doctor.doctorImage != null
+                                                ? "http://$ip:8000${doctor.doctorImage}"
+                                                : "no data ",
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(left: 18.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    "${doctor.doctorName ?? "unknown"}",
+                                                    style: TextStyle(
+                                                        color: Colors.black,
+                                                        fontSize: 20),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            left: 28.0),
+                                                    child: IconButton(
+                                                      onPressed: () {
+                                                        setState(() {
+                                                          heart = !heart;
+                                                        });
+                                                      },
+                                                      icon: Icon(
+                                                        heart
+                                                            ? FontAwesomeIcons
+                                                                .solidHeart
+                                                            : FontAwesomeIcons
+                                                                .heart,
+                                                        color: heart
+                                                            ? Colors.red
+                                                            : Colors.grey,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 5.0),
+                                                child: Text(
+                                                  doctor.specialty ??
+                                                      "No specility",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                  ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 5.0),
-                                          child: Text(
-                                            doctor.specialty ?? "No specility",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 5.0),
-                                          child: Text(
-                                            "${doctor.service ?? "No service"} years of exp",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        // Padding(
-                                        //   padding: EdgeInsets.only(bottom: 5.0),
-                                        //   child: Text(
-                                        //     doctor.language ?? "english",
-                                        //     style: TextStyle(
-                                        //       fontSize: 14,
-                                        //     ),
-                                        //   ),
-                                        // ),
-                                        // Padding(
-                                        //   padding: EdgeInsets.only(bottom: 5.0),
-                                        //   child: Text(
-                                        //     doctor.doctorLocation ??
-                                        //         "No specility",
-                                        //     style: TextStyle(
-                                        //       fontSize: 14,
-                                        //     ),
-                                        //   ),
-                                        // ),
+                                              Padding(
+                                                padding: EdgeInsets.only(
+                                                    bottom: 5.0),
+                                                child: Text(
+                                                  "${doctor.service ?? "No service"} years of exp",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                              // Padding(
+                                              //   padding: EdgeInsets.only(bottom: 5.0),
+                                              //   child: Text(
+                                              //     doctor.language ?? "english",
+                                              //     style: TextStyle(
+                                              //       fontSize: 14,
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                              // Padding(
+                                              //   padding: EdgeInsets.only(bottom: 5.0),
+                                              //   child: Text(
+                                              //     doctor.doctorLocation ??
+                                              //         "No specility",
+                                              //     style: TextStyle(
+                                              //       fontSize: 14,
+                                              //     ),
+                                              //   ),
+                                              // ),
 
-                                        Padding(
-                                          padding: EdgeInsets.only(top: 8.0),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                            children: [
-                                              OutlinedButton(
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                    doc_profile(
-                                                                      data:
-                                                                          "${doctor.id}",
-                                                                    )));
-                                                  },
-                                                  style:
-                                                      OutlinedButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.blueAccent,
-                                                          shadowColor:
-                                                              Colors.grey),
-                                                  child: Text(
-                                                    "Book",
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  )),
                                               Padding(
                                                 padding:
-                                                    EdgeInsets.only(left: 38.0),
+                                                    EdgeInsets.only(top: 8.0),
                                                 child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
                                                   children: [
-                                                    Icon(
-                                                      Icons.star,
-                                                      color: Colors.yellow,
+                                                    OutlinedButton(
+                                                        onPressed: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          doc_profile(
+                                                                            data:
+                                                                                "${doctor.id}",
+                                                                          )));
+                                                        },
+                                                        style: OutlinedButton
+                                                            .styleFrom(
+                                                                backgroundColor:
+                                                                    Colors
+                                                                        .blueAccent,
+                                                                shadowColor:
+                                                                    Colors
+                                                                        .grey),
+                                                        child: Text(
+                                                          "Book",
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                        )),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          left: 38.0),
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.star,
+                                                            color:
+                                                                Colors.yellow,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
+                                                    Container(
+                                                        width: 60,
+                                                        child: Text(
+                                                            "${doctor.regNo ?? 0}")),
                                                   ],
                                                 ),
-                                              ),
-                                              Container(
-                                                  width: 60,
-                                                  child: Text(
-                                                      "${doctor.regNo ?? 0}")),
+                                              )
                                             ],
                                           ),
                                         )
                                       ],
                                     ),
-                                  )
-                                ],
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
-                        ),
-                      )
-                    : Text("data");
-              }),
-          Container(
-            height: 300,
+                            )
+                          : Text("data");
+                    }),
+                Container(
+                  height: 300,
+                )
+              ],
+            ),
           )
-        ],
-      ),
-    ):Center(child: Container(child: CircularProgressIndicator()));
+        : Center(child: Container(child: CircularProgressIndicator()));
   }
 }
