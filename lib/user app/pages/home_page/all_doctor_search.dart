@@ -7,6 +7,9 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Backend_information/get_fav_doc_backend.dart';
+import '../../../Backend_information/user_details_backend.dart';
+import '../Profile_page/profile_page.dart';
 import 'doctor_profile_3.dart';
 
 class SearchDoctorPage extends StatefulWidget {
@@ -18,8 +21,146 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
   TextEditingController searchController = TextEditingController();
   List<doctor_details> search_doctor = [];
   bool isLoading = false;
+  List<get_fav_doc> get_fav_doctor = [];
   bool set_fav = false;
   String doc_id = "";
+  update_profile? userprofile;
+  String errormessage ="";
+
+  // @override
+  // void initState() {
+  //   // TODO: implement initState
+  //   super.initState();
+  //   userpro();
+  //   _show_favorite_doc();
+  //
+  // }
+  Future<void> userpro() async {
+    String phone_number = "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try {
+      final response = await http.get(
+          Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          userprofile = update_profile.fromJson(jsonResponse);
+          isLoading = false;
+        });
+
+      } else {
+        setState(() {
+          errormessage = response.body.toString();
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      errormessage = e.toString();
+      isLoading = false;
+    }
+  }
+
+  void valid_user() {
+    if (userprofile!.firstName == null) {
+      print("${userprofile!.firstName}");
+      if (userprofile!.lastName == null) {
+        if (userprofile!.age == null) {
+          if (userprofile!.gender == null) {
+            if (userprofile!.email == null) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      "Invalid User",
+                      style: TextStyle(color: Colors.red, fontSize: 25),
+                    ),
+                    content: Text(
+                      "you must create the account for make favorite!",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => profile_page()));
+                          },
+                          child: Text("Ok"))
+                    ],
+                  ));
+            }
+          }
+        }
+      }
+    } else {
+      _favorite_doctor();
+    }
+  }
+
+
+
+  Future<void> _show_favorite_doc() async {
+    String phone_number = "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst("+", "");
+    });
+    try {
+      final response = await http.get(
+        Uri.parse("http://$ip:8000/booking_doctor/get_fav_doc/$phone_number/"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          get_fav_doctor =
+              jsonResponse.map((data) => get_fav_doc.fromJson(data)).toList();
+          print("${response.body}");
+        });
+      } else {
+        setState(() {
+          errormessage = "failed to load favorite doctor details";
+        });
+      }
+    } catch (e) {
+      errormessage = e.toString();
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(
+              "Alert Message",
+              style: TextStyle(
+                  color: Colors.red,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
+            content: Text(
+              "$errormessage",
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text("Ok"))
+            ],
+          ));
+    }
+  }
 
   // Function to fetch doctors
   Future<void> searchDoctors(String query) async {
@@ -36,6 +177,8 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
       print("Response body: ${response.body}");
       if (response.statusCode == 200) {
         var jsonResponse = jsonDecode(response.body);
+        userpro();
+        _show_favorite_doc();
         print("jsonResponse: $jsonResponse");
         if (jsonResponse is Map && jsonResponse.containsKey('result')) {
           var resultList = jsonResponse['result'];
@@ -46,6 +189,7 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
                   .toList();
               isLoading = false;
             });
+            // _show_favorite_doc();
           } else {
             setState(() {
               search_doctor = [];
@@ -86,18 +230,7 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
           body: jsonEncode(
               {"id": doc_id, "like": set_fav, "phone_number": phone_number}));
       if (response.statusCode == 201) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: Text(
-                "your like add",
-                style: TextStyle(
-                    color: Colors.green,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
-              ),
-              content: Text("this doctor is like by you."),
-            ));
+        _show_favorite_doc();
       } else {
         showDialog(
             context: context,
@@ -196,6 +329,9 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
                 itemCount: search_doctor.length,
                 itemBuilder: (context, index) {
                   var doctor = search_doctor[index];
+                  var show_fav_doctor = index < get_fav_doctor.length
+                      ? get_fav_doctor[index]
+                      : null;
                   return doctor.id !=null
                       ? Padding(
                     padding: EdgeInsets.only(
@@ -255,7 +391,8 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
                                             padding:
                                             const EdgeInsets.only(
                                                 left: 28.0),
-                                            child: IconButton(
+                                            child:
+                                            IconButton(
                                               onPressed: () {
                                                 setState(() {
                                                   doc_id = search_doctor[
@@ -265,29 +402,37 @@ class _SearchDoctorPageState extends State<SearchDoctorPage> {
                                                       '';
                                                   search_doctor[index]
                                                       .like =
-                                                  !(search_doctor[
-                                                  index]
+                                                  !(search_doctor[index]
                                                       .like ??
                                                       false);
                                                   set_fav =
                                                   search_doctor[index]
                                                       .like!;
-                                                  print(
-                                                      "${search_doctor[index].id}");
-                                                  _favorite_doctor();
+                                                  valid_user();
+
                                                   // _add_like_doctor_details();
                                                 });
                                               },
                                               icon: Icon(
-                                                (set_fav ?? false)
+                                                show_fav_doctor != null &&
+                                                    show_fav_doctor
+                                                        .id !=
+                                                        null &&
+                                                    show_fav_doctor
+                                                        .like ==
+                                                        true
                                                     ? FontAwesomeIcons
                                                     .solidHeart
                                                     : FontAwesomeIcons
                                                     .heart,
-                                                color:
-                                                (search_doctor[index]
-                                                    .like ??
-                                                    false)
+                                                color: show_fav_doctor !=
+                                                    null &&
+                                                    show_fav_doctor
+                                                        .id !=
+                                                        null &&
+                                                    show_fav_doctor
+                                                        .like ==
+                                                        true
                                                     ? Colors.red
                                                     : Colors.grey,
                                               ),
