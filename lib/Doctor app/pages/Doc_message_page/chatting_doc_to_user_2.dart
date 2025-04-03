@@ -446,6 +446,7 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
   // doctor_details? user_on_off;
   TextEditingController messageController = TextEditingController();
   String doc_phone_no ="";
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -459,14 +460,21 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
     });
     // Add this widget as an observer to listen to lifecycle events
     WidgetsBinding.instance.addObserver(this);
+    _get_user_doctor_chat_history().then((_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    });
   }
 
   @override
   void dispose() {
     _chatRefreshTime?.cancel(); // Cancel the timer
+    _scrollController.dispose();
     WidgetsBinding.instance.removeObserver(this); // Remove observer
-    super.dispose();
     _doc_offline();
+    super.dispose();
+
   }
 
   // Listen to app lifecycle changes
@@ -476,6 +484,18 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
     if (state == AppLifecycleState.paused || state == AppLifecycleState.detached || state == AppLifecycleState.inactive) {
       // Call _doc_offline when the app is minimized or closed
       _doc_offline();
+    }
+  }
+
+  void _scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }else {
+      print("ScrollController has no clients yet.");
     }
   }
 
@@ -545,10 +565,16 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
           "sender_type": sender_type
         }),
       );
-
       if (response.statusCode == 201) {
         await _get_user_doctor_chat_history();
         messageController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _scrollToBottom();
+        });
+        Future.delayed(Duration(milliseconds: 100), () {
+          print("Delayed check: Current position: ${_scrollController.position.pixels}, Max extent: ${_scrollController.position.maxScrollExtent}");
+          _scrollToBottom();
+        });
       } else {
         showDialog(
           context: context,
@@ -700,6 +726,7 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
             child: isloading
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
+              controller: _scrollController,
               itemCount: get_chats_history.length,
               itemBuilder: (context, index) {
                 var chat = get_chats_history[index];
@@ -724,7 +751,7 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 8, top: 8, bottom: 100),
+            padding: EdgeInsets.only(left: 8.0, right: 8, top: 8, bottom: 50),
             child: Row(
               children: [
                 Expanded(
@@ -741,7 +768,9 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
                 ),
                 IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: () => _create_chats_two(),
+                  onPressed: () {
+                    _create_chats_two();
+                  }
                 ),
               ],
             ),

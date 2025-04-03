@@ -18,9 +18,7 @@ class doc_message extends StatefulWidget {
 class _doc_messageState extends State<doc_message> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -37,7 +35,7 @@ class _doc_messageState extends State<doc_message> {
           ],
         ),
         body: patient_chat_show(),
-      ),
+
     );
   }
 }

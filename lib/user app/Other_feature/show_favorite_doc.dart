@@ -75,6 +75,23 @@ class _show_docState extends State<show_doc> {
     _show_favorite_doc();
   }
 
+  Future<void> _delete_fav(int doctor_id) async{
+    String phone_number = "";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = perf.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try{
+      final response = await http.delete(Uri.parse("http://$ip:8000/booking_doctor/delete_fav_doc/$phone_number/$doctor_id/"));
+      if(response.statusCode==204){
+        _show_favorite_doc();
+      }
+    }catch(e){
+      print("${e.toString()}");
+    }
+  }
+
   Future<void> _show_favorite_doc() async {
     String phone_number = "";
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -183,15 +200,12 @@ class _show_docState extends State<show_doc> {
                                             const EdgeInsets.only(left: 28.0),
                                             child: IconButton(
                                               onPressed: () {
-                                                // setState(() {
-                                                //   like = fav_doc.like ?? false;
-                                                //   like = !like;
-                                                // });
+                                                _delete_fav(fav_doc.id as int);
                                               },
                                               icon: Icon(
-                                                like ? FontAwesomeIcons.heart
-                                                     : FontAwesomeIcons.solidHeart,
-                                                color: like? Colors.grey : Colors.red,
+                                                fav_doc.like ==true ? FontAwesomeIcons.solidHeart
+                                                     : FontAwesomeIcons.heart,
+                                                color:fav_doc.like==true? Colors.red : Colors.grey,
 
                                               ),
                                             ),

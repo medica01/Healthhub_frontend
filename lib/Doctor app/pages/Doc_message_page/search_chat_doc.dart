@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Backend_information/chat_history_backend.dart';
@@ -114,17 +115,20 @@ class _search_chat_docState extends State<search_chat_doc> {
         children: [
           Expanded(
             child: isloading
-                ? Center(child: CircularProgressIndicator())
+                ? Center(child: Text("no search",style: TextStyle(color: Color(0xff1f8acc)),))
                 : ListView.builder(
               itemCount: get_chats_history.length,
               itemBuilder: (context, index) {
                 var chat = get_chats_history[index];
+                bool showDate = index==0||
+                    get_chats_history[index].datestamp!=
+                        get_chats_history[index-1].datestamp;
                 return chat !=null || chat.message != null || chat.docPhoneNo != null || chat.userPhoneNo != null || chat.senderType != null || chat.datestamp != null
                     ?ChatBubble(
                     text: chat.message,
                     senderType: chat.senderType,
                     time:chat.timestamp,
-                    date:chat.datestamp
+                    date:chat.datestamp,showDate : showDate
                 )
                     :Text("data");
               },
@@ -141,33 +145,87 @@ class ChatBubble extends StatefulWidget {
   final dynamic senderType;
   final dynamic time;
   final dynamic date;
+  final dynamic showDate;
 
-  ChatBubble({required this.text, required this.senderType,required this.time,required this.date});
+  ChatBubble({required this.text, required this.senderType,required this.time,required this.date,required this.showDate});
 
   @override
   State<ChatBubble> createState() => _ChatBubbleState();
 }
 
 class _ChatBubbleState extends State<ChatBubble> {
+  DateTime now = DateTime.now();
+  String forr = "";
+  String chattime = "";
+  DateTime chatt=DateTime.now();
+
+  @override
+  void initState() {
+    super.initState();
+
+    setState(() {
+      forr = DateFormat("yyyy-MM-dd").format(DateTime.now());
+      chattime = widget.time;
+
+      try {
+        // Take only HH:mm part
+        String timeOnly = chattime.substring(0, 5); // e.g., "19:39"
+        DateTime chatt = DateFormat("HH:mm").parse(timeOnly);
+
+        // Convert to 12-hour format with AM/PM
+        chattime = DateFormat("hh:mm a").format(chatt);
+        print(chattime); // Should print "07:39 PM"
+      } catch (e) {
+        print("Error parsing time: $e");
+      }
+    });
+  }
   @override
   Widget build(BuildContext context) {
     bool isUser = widget.senderType == 'doctor';
     return  widget.text !=null
         ?Column(
       children: [
-        Center(
-          child: Card(
-            child: Container(
-              height: 25,
-              width: 70,
-              decoration: BoxDecoration(
+        if (widget.showDate) // Only show date if showDate is true
+          widget.date != forr
+              ? (Center(
+            child: Card(
+              child: Container(
+                height: 25,
+                width: 70,
+                decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey
+                  color: Colors.grey,
+                ),
+                child: Center(
+                  child: Text(
+                    widget.date,
+                    style: TextStyle(
+                        fontSize: 10, color: Colors.white),
+                  ),
+                ),
               ),
-              child: Center(child: Text(widget.date,style: TextStyle(fontSize: 10),)),
+            ),
+          ))
+              : Center(
+            child: Card(
+              child: Container(
+                height: 25,
+                width: 70,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: Colors.grey,
+                ),
+                child: Center(
+                  child: Text(
+                    "Today",
+                    style: TextStyle(
+                        fontSize: 10, color: Colors.white),
+                  ),
+                ),
+              ),
             ),
           ),
-        ),
         Align(
           alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
           child: Container(
@@ -199,7 +257,7 @@ class _ChatBubbleState extends State<ChatBubble> {
             //     bottomRight: isUser ? Radius.zero : Radius.circular(15),
             //   ),
             // ),
-            child: Text(widget.time, style: TextStyle(fontSize: 10)),
+            child: Text(chattime, style: TextStyle(fontSize: 10)),
           ),
         ),
       ],

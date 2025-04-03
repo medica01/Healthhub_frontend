@@ -17,9 +17,7 @@ class doc_book_pati extends StatefulWidget {
 class _doc_book_patiState extends State<doc_book_pati> {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: true,
@@ -64,7 +62,7 @@ class _doc_book_patiState extends State<doc_book_pati> {
           ],
         ),
         body: Doc_see_user(),
-      ),
+
     );
   }
 }

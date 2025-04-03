@@ -178,7 +178,7 @@ class _doc_bio_photoState extends State<doc_bio_photo> {
                 onPressed: (){
                   if(webImage !=null  || img !=null) {
                     _updatedocphoto();
-                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
+                    Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>docHomePage()), (route)=>false);
                   }else{
                     showDialog(context: context, builder: (context)=>AlertDialog(
                       title: Text("Error",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25),),

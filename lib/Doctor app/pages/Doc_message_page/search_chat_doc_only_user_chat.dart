@@ -57,6 +57,7 @@ class _search_doc_messageState extends State<search_doc_message> {
       }else{
         setState(() {
           chat_user_only_doc_chat =[];
+          errormessage ="no doctor found";
           isloading=false;
         });
       }
@@ -92,7 +93,8 @@ class _search_doc_messageState extends State<search_doc_message> {
           },
         ),
       ),
-      body: ListView(
+      body: isloading ==false
+      ?ListView(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ListView.builder(
@@ -153,7 +155,7 @@ class _search_doc_messageState extends State<search_doc_message> {
                     : Text("data");
               })
         ],
-      ),
+      ):Center(child: Text("no search",style: TextStyle(color: Color(0xff1f8acc)),),),
     );
   }
 }

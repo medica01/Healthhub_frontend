@@ -42,7 +42,7 @@ class _doc_otpState extends State<doc_otp> {
 
   @override
   Widget build(BuildContext context) {
-    return _doc_login ? HomePage() : doc_otp_verfiy();
+    return _doc_login ? docHomePage() : doc_otp_verfiy();
   }
 }
 
@@ -334,7 +334,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("user already exist")));
         Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+            context, MaterialPageRoute(builder: (context) => docHomePage()));
       } else if (response.statusCode == 404) {
         await _doc_profile();
       }
