@@ -61,9 +61,7 @@ class _doc_profilesState extends State<doc_profiles> {
   }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           backgroundColor: Color(0xfffdfdfd),
           title: text("Profile", Colors.black, 30, FontWeight.bold),
@@ -88,7 +86,7 @@ class _doc_profilesState extends State<doc_profiles> {
           ],
         ),
         body: doc_profile_page(),
-      ),
+
     );
   }
 }

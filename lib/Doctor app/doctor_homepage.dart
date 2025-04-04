@@ -4,12 +4,14 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_Booking_patient_history/Doc_booking_patient_history.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_home_page/Doc_home_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_locations_page/doc_location_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_message_page/doc_message_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_profile_page/doc_profile_page.dart';
 import 'package:http/http.dart%20' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Backend_information/Backend_doctor_details.dart';
@@ -191,13 +193,58 @@ class _docHomePageState extends State<docHomePage> {
   doctor_details? get_doc_details;
   String doc_phone_no="";
   bool isloading = false;
+  List<booking_doctor> booking_doc_user = [];
+  DateTime now = DateTime.now();
+  String todate="";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _get_doctor_details();
+    _show_booked_user();
+    todate = DateFormat('yyyy-MMM-dd-EEE').format(now);
+    print("${todate}");
   }
+
+  Future<void> _show_booked_user() async {
+    String doc_phone_number = "";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      doc_phone_number = pref.getString('doctor_phone_no') ?? "";
+      doc_phone_number = doc_phone_number.replaceFirst("+", "");
+      print("$doc_phone_number");
+    });
+    try {
+      final response = await http.get(
+        Uri.parse(
+            "http://$ip:8000/booking_doctor/spec_doctor_booked/$doc_phone_number/"),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      );
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          booking_doc_user = jsonResponse
+              .map((data) => booking_doctor.fromJson(data))
+              .toList();
+          print("${booking_doc_user.length}");
+          isloading = true;
+        });
+      } else {
+        setState(() {
+          errormessage = "failed to load user details";
+          isloading = true;
+        });
+      }
+    } catch (e) {
+      errormessage = e.toString();
+      print("${errormessage}");
+      isloading = true;
+    }
+  }
+
 
   Future<void> _get_doctor_details() async{
     SharedPreferences perf = await SharedPreferences.getInstance();
@@ -217,7 +264,11 @@ class _docHomePageState extends State<docHomePage> {
 
         });
       }
-    }catch(e){}
+    }catch(e){
+      errormessage = e.toString();
+      print("${errormessage}");
+      isloading = true;
+    }
   }
   final List<String> images = [
     "https://static.vecteezy.com/system/resources/previews/016/699/936/non_2x/book-doctor-appointment-online-flat-banner-template-making-visit-poster-leaflet-printable-color-designs-editable-flyer-page-with-text-space-vector.jpg",
@@ -415,136 +466,107 @@ class _docHomePageState extends State<docHomePage> {
                     fontSize: 20),
               ),
             ),
-            Card(
-              margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              clipBehavior: Clip.hardEdge,
-              shadowColor: Colors.grey,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  // borderRadius: BorderRadius.circular(40),
-                ),
-                height: 190,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
-                  child: Center(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(
-                              // scale: 10,
-                              "https://i.postimg.cc/QMrGLDb2/deadpool.jpg"),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 28.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    "gokulraj",
-                                    style: TextStyle(
-                                        color: Colors.black, fontSize: 20),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 5.0),
-                                child: Text(
-                                  "age:20",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 5.0),
-                                child: Text(
-                                  "gender: male",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              // Padding(
-                              //   padding: EdgeInsets.only(bottom: 5.0),
-                              //   child: Text(
-                              //     doctor.language ?? "english",
-                              //     style: TextStyle(
-                              //       fontSize: 14,
-                              //     ),
-                              //   ),
-                              // ),
-                              // Padding(
-                              //   padding: EdgeInsets.only(bottom: 5.0),
-                              //   child: Text(
-                              //     doctor.doctorLocation ??
-                              //         "No specility",
-                              //     style: TextStyle(
-                              //       fontSize: 14,
-                              //     ),
-                              //   ),
-                              // ),
 
+            SingleChildScrollView(
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: booking_doc_user.map((show_book) {
+                  return show_book.bookingDate == todate
+                      ? Card(
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    clipBehavior: Clip.hardEdge,
+                    shadowColor: Colors.grey,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                      ),
+                      height: 190,
+                      width: 330,
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
+                        child: Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                  show_book.userPhoto != null
+                                      ? "http://$ip:8000${show_book.userPhoto}"
+                                      : "no data ",
+                                )),
                               Padding(
-                                padding: EdgeInsets.only(top: 8.0),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                padding: EdgeInsets.only(left: 28.0),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    OutlinedButton(
-                                        onPressed: () {
-                                          // Navigator.push(
-                                          //     context,
-                                          //     MaterialPageRoute(
-                                          //         builder:
-                                          //             (context) =>
-                                          //             doc_profile(
-                                          //               data:
-                                          //               "${doctor.id}",
-                                          //             )));
-                                        },
-                                        style: OutlinedButton.styleFrom(
-                                            backgroundColor: Colors.blueAccent,
-                                            shadowColor: Colors.grey),
-                                        child: Text(
-                                          "Book",
-                                          style: TextStyle(color: Colors.white),
-                                        )),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "${show_book.firstName} ${show_book.lastName}",
+                                          style: TextStyle(
+                                              color: Colors.black, fontSize: 20),
+                                        ),
+                                      ],
+                                    ),
                                     Padding(
-                                      padding: EdgeInsets.only(left: 38.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            color: Colors.yellow,
-                                          ),
-                                        ],
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        "age:${show_book.age}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
                                       ),
                                     ),
+                                    Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        "gender: ${show_book.gender}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        "date: ${show_book.bookingDate}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),Padding(
+                                      padding: EdgeInsets.only(bottom: 5.0),
+                                      child: Text(
+                                        "time: ${show_book.bookingTime}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+
                                   ],
                                 ),
                               )
                             ],
                           ),
-                        )
-                      ],
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  )
+                      : SizedBox();
+                }).toList(), // <-- fix applied here
               ),
             ),
+
             Container(
               height: 100,
             )

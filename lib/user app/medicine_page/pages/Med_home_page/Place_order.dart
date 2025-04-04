@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
 import '../../../../main.dart';
+import 'about_specific_product.dart';
 import 'order_successfully.dart';
 
 class place_order extends StatefulWidget {
@@ -19,7 +20,7 @@ class place_order extends StatefulWidget {
 
 class _place_orderState extends State<place_order> {
   bool isChecked = false;
-  medicine_purchase? specific_product;
+  medicine_purchase? specific_products;
   String phone_number ="";
   patient_address? patients_address;
   int a=0;
@@ -84,7 +85,7 @@ class _place_orderState extends State<place_order> {
         headers: {"Content-Type":"application/json"},
         body: jsonEncode({
           "pry_phone_number":"${phone_number}",
-          "product_number":"${specific_product!.productNumber}",
+          "product_number":"${specific_products!.productNumber}",
           "purchase_quantity":"${quantity}",
           "purchase_total_price":"${total_price}",
           "purchase_pay_type":"${selectedPaymentMethod}",
@@ -109,7 +110,7 @@ class _place_orderState extends State<place_order> {
       if(response.statusCode == 200){
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(()  {
-          specific_product = medicine_purchase.fromJson(jsonResponse);
+          specific_products = medicine_purchase.fromJson(jsonResponse);
           isChecked = true;
         });
       }else{
@@ -243,7 +244,7 @@ class _place_orderState extends State<place_order> {
                                     child: Image(
                                         image: NetworkImage(
                                             scale: 3,
-                                            "http://$ip:8000${specific_product!.productImage}")),
+                                            "http://$ip:8000${specific_products!.productImage}")),
                                   ),
                                   Padding(
                                     padding:  EdgeInsets.all(8.0),
@@ -256,10 +257,10 @@ class _place_orderState extends State<place_order> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("${specific_product!.productName}"),
-                                Text("${specific_product!.aboutProduct}"),
-                                Text("${specific_product!.cureDisases}"),
-                                Text("₹ ${specific_product!.price}")
+                                Text("${specific_products!.productName}"),
+                                Text("${specific_products!.aboutProduct}"),
+                                Text("${specific_products!.cureDisases}"),
+                                Text("₹ ${specific_products!.price}")
                               ],
                             ),
                           ],

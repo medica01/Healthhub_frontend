@@ -105,38 +105,98 @@ class _search_doc_user_bookState extends State<search_doc_user_book> {
                   physics: BouncingScrollPhysics(),
                   shrinkWrap: true,
                   itemBuilder: (context, index) {
-                    var show_user = booking_doc_user[index];
+                    var show_book = booking_doc_user[index];
                     return Padding(
                       padding: EdgeInsets.only(bottom: 10),
                       child: Card(
                         margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         elevation: 5,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: ListTile(
-                          title: Text(
-                            "${show_user.firstName} ${show_user.lastName}" ??
-                                "no name",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        shadowColor: Colors.grey,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Age: ${show_user.age ?? "Not Available"}"),
-                              Text(
-                                  "Gender: ${show_user.gender ?? "Not Available"}"),
-                              Text(
-                                  "Email: ${show_user.email ?? "Not Available"}"),
-                              Text(
-                                  "Address: ${show_user.location ?? "Not Available"}"),
-                              Text(
-                                  "Date: ${show_user.bookingDate ?? "Not Available"}"),
-                              Text(
-                                  "Time: ${show_user.bookingTime ?? "Not Available"}"),
-                            ],
+                          height: 190,
+                          width: 330,
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: NetworkImage(
+                                        show_book.userPhoto != null
+                                            ? "http://$ip:8000/media/${show_book.userPhoto}"
+                                            : "no data ",
+                                      )),
+                                  Padding(
+                                    padding: EdgeInsets.only(left: 28.0),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "${show_book.firstName} ${show_book.lastName}",
+                                              style: TextStyle(
+                                                  color: Colors.black, fontSize: 20),
+                                            ),
+                                          ],
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 5.0),
+                                          child: Text(
+                                            "age:${show_book.age}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(bottom: 5.0),
+                                          child: Text(
+                                            "gender: ${show_book.gender}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),Padding(
+                                          padding: EdgeInsets.only(bottom: 5.0),
+                                          child: Text(
+                                            "date: ${show_book.bookingDate}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),Padding(
+                                          padding: EdgeInsets.only(bottom: 5.0),
+                                          child: Text(
+                                            "time: ${show_book.bookingTime}",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                      )
                     );
                   }))
         ],
