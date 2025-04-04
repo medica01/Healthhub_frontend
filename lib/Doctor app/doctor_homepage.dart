@@ -364,6 +364,12 @@ class _docHomePageState extends State<docHomePage> {
                             child:
                                 one("Appointment", FontAwesomeIcons.bookmark)),
                         GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => doc_profiles()));
+                            },
                             child: one("Doctor plan", Icons.event_note)),
                       ],
                     ),

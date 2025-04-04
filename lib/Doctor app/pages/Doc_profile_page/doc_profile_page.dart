@@ -18,16 +18,38 @@ class doc_profiles extends StatefulWidget {
 }
 
 class _doc_profilesState extends State<doc_profiles> {
+
+  Future<void> doc_logout()async{
+    showDialog(context: context, builder: (context)=>AlertDialog(
+      content: Text("You want to logout ?",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 20),),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(onPressed: (){
+              Navigator.pop(context);
+            }, child: Text("Cancel",style: TextStyle(color: Colors.green),)),
+            TextButton(onPressed: (){
+              signOutFromDocphone();
+              Navigator.pop(context);
+            }, child: Text("Ok",style: TextStyle(color: Colors.red),))
+          ],
+        )
+      ],
+    ));
+  }
   Future<bool> signOutFromDocphone() async {
     try {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
 
       // Remove the 'login' key to clear the logged-in state
       await prefs.remove('doc_login');
+      await prefs.remove('doctor_phone_no');
+      await prefs.remove('phone_number');
 
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => doc_otp()),
+        MaterialPageRoute(builder: (context) => doc_otp_verfiy()),
             (route) => false,
       );
 
@@ -56,7 +78,7 @@ class _doc_profilesState extends State<doc_profiles> {
                   //     signOutFromGoogleAnd();
                   //   }
                   // },
-                  onPressed: ()=>signOutFromDocphone(),
+                  onPressed: ()=>doc_logout(),
                   icon: Icon(
                     Icons.logout,
                     color: Color(0xff1f8acc),

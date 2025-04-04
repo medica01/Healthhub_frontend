@@ -42,7 +42,7 @@ class _doc_otpState extends State<doc_otp> {
 
   @override
   Widget build(BuildContext context) {
-    return _doc_login ? docHomePage() : doc_otp_verfiy();
+    return _doc_login ? docHomePage() : choose_use_doc();
   }
 }
 
@@ -331,6 +331,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
         SharedPreferences perf = await SharedPreferences.getInstance();
         await perf.setBool('doc_login', true);
         await perf.setString('doctor_phone_no', check_number);
+        await perf.setString('phone_number', check_number);
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text("user already exist")));
         Navigator.pushReplacement(
@@ -351,6 +352,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
     SharedPreferences perf = await SharedPreferences.getInstance();
     // await perf.setBool('doc_login', true);
     await perf.setString('doctor_phone_no', save_phone_number);
+    await perf.setString('phone_number', save_phone_number);
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("phone number add successfully")));
     Navigator.pushReplacement(

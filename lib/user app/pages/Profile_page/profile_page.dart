@@ -100,6 +100,7 @@ class _profile_pageState extends State<profile_page> {
 
       // Remove the 'login' key to clear the logged-in state
       await prefs.remove('login');
+      await prefs.remove('phone_number');
 
       Navigator.pushAndRemoveUntil(
         context,
