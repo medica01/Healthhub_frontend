@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
+import 'package:health_hub/Doctor%20app/pages/Doc_Booking_patient_history/specific_patient_details.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart'as http;
 
@@ -108,90 +109,95 @@ class _search_doc_user_bookState extends State<search_doc_user_book> {
                     var show_book = booking_doc_user[index];
                     return Padding(
                       padding: EdgeInsets.only(bottom: 10),
-                      child: Card(
-                        margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        clipBehavior: Clip.hardEdge,
-                        shadowColor: Colors.grey,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_patient(user_id : "${show_book.id}")));
+                        },
+                        child: Card(
+                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                          height: 190,
-                          width: 330,
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
-                            child: Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CircleAvatar(
-                                      radius: 50,
-                                      backgroundImage: NetworkImage(
-                                        show_book.userPhoto != null
-                                            ? "http://$ip:8000/media/${show_book.userPhoto}"
-                                            : "no data ",
-                                      )),
-                                  Padding(
-                                    padding: EdgeInsets.only(left: 28.0),
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "${show_book.firstName} ${show_book.lastName}",
+                          clipBehavior: Clip.hardEdge,
+                          shadowColor: Colors.grey,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                            ),
+                            height: 190,
+                            width: 330,
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                        radius: 50,
+                                        backgroundImage: NetworkImage(
+                                          show_book.userPhoto != null
+                                              ? "http://$ip:8000/media/${show_book.userPhoto}"
+                                              : "no data ",
+                                        )),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 28.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "${show_book.firstName} ${show_book.lastName}",
+                                                style: TextStyle(
+                                                    color: Colors.black, fontSize: 20),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            child: Text(
+                                              "age:${show_book.age}",
                                               style: TextStyle(
-                                                  color: Colors.black, fontSize: 20),
-                                            ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 5.0),
-                                          child: Text(
-                                            "age:${show_book.age}",
-                                            style: TextStyle(
-                                              fontSize: 14,
+                                                fontSize: 14,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.only(bottom: 5.0),
-                                          child: Text(
-                                            "gender: ${show_book.gender}",
-                                            style: TextStyle(
-                                              fontSize: 14,
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            child: Text(
+                                              "gender: ${show_book.gender}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),Padding(
+                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            child: Text(
+                                              "date: ${show_book.bookingDate}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),Padding(
+                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            child: Text(
+                                              "time: ${show_book.bookingTime}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
                                             ),
                                           ),
-                                        ),Padding(
-                                          padding: EdgeInsets.only(bottom: 5.0),
-                                          child: Text(
-                                            "date: ${show_book.bookingDate}",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),Padding(
-                                          padding: EdgeInsets.only(bottom: 5.0),
-                                          child: Text(
-                                            "time: ${show_book.bookingTime}",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
 
-                                      ],
-                                    ),
-                                  )
-                                ],
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
                               ),
                             ),
                           ),

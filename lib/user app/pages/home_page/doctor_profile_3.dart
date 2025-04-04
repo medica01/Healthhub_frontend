@@ -36,6 +36,7 @@ class _doc_profileState extends State<doc_profile> {
   String selectedTime = "";
   String user_phone = "";
   List<Map<String, String>> next7Days = [];
+  String phone_number="";
 
   Future<void> _booking_doc() async {
     String? doc_id = pk;
@@ -95,6 +96,33 @@ class _doc_profileState extends State<doc_profile> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("An error occurred: $e")),
       );
+    }
+  }
+
+  Future<void> _create_chat_doc_only_user_chat(String doc_phone_number) async {
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = perf.getString("phone_number") ?? "";
+      phone_number = phone_number.replaceFirst("+", "");
+    });
+    try {
+      final response = await http.post(
+          Uri.parse(
+              "http://$ip:8000/booking_doctor/create_chat_doc_only_user_chat/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "phone_number": phone_number,
+            "doctor_phone_number": doc_phone_number
+          }));
+      if (response.statusCode == 201) {
+
+        print("the user successfully add to doctor chat");
+      } else {
+        print("the user failed to add the doctor chat");
+      }
+    } catch (e) {
+
+      print("${e.toString()}");
     }
   }
 
@@ -582,6 +610,7 @@ class _doc_profileState extends State<doc_profile> {
                   onTap: () {
                     _vibrate();
                     valid_user();
+                    _create_chat_doc_only_user_chat("");
                   },
                   child: Container(
                     height: 50,
