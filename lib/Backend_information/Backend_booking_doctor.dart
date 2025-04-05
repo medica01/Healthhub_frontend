@@ -1,5 +1,3 @@
-import 'dart:io';
-
 class booking_doctor {
   int? id;
   String? bookingDate;
@@ -18,9 +16,12 @@ class booking_doctor {
   String? firstName;
   String? lastName;
   String? gender;
+  String? docGender;
   int? age;
+  int? docAge;
   int? docPhoneNumber;
   String? email;
+  String? docEmail;
   String? location;
   String? userPhoto;
   int? patient;
@@ -44,9 +45,12 @@ class booking_doctor {
         this.firstName,
         this.lastName,
         this.gender,
+        this.docGender,
         this.age,
+        this.docAge,
         this.docPhoneNumber,
         this.email,
+        this.docEmail,
         this.location,
         this.userPhoto,
         this.patient,
@@ -70,9 +74,12 @@ class booking_doctor {
     firstName = json['first_name'];
     lastName = json['last_name'];
     gender = json['gender'];
+    docGender = json['doc_gender'];
     age = json['age'];
+    docAge = json['doc_age'];
     docPhoneNumber = json['doc_phone_number'];
     email = json['email'];
+    docEmail = json['doc_email'];
     location = json['location'];
     userPhoto = json['user_photo'];
     patient = json['patient'];
@@ -98,9 +105,12 @@ class booking_doctor {
     data['first_name'] = this.firstName;
     data['last_name'] = this.lastName;
     data['gender'] = this.gender;
+    data['doc_gender'] = this.docGender;
     data['age'] = this.age;
+    data['doc_age'] = this.docAge;
     data['doc_phone_number'] = this.docPhoneNumber;
     data['email'] = this.email;
+    data['doc_email'] = this.docEmail;
     data['location'] = this.location;
     data['user_photo'] = this.userPhoto;
     data['patient'] = this.patient;

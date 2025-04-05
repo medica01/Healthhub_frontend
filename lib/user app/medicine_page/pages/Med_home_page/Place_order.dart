@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
@@ -122,6 +123,11 @@ class _place_orderState extends State<place_order> {
     }
   }
 
+  Future<void> _vibrate() async{
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.vibrate(duration: 500);
+    }
+  }
 
   Future<void> _get_patients_address() async{
     // String phone_number ="";
@@ -325,6 +331,7 @@ class _place_orderState extends State<place_order> {
                                   side: BorderSide(
                                       color: Colors.blueAccent, width: 2)),
                               onPressed: () {
+                                _vibrate();
                                 _create_order_details_patient();
                               },
                               child: Text(

@@ -5,6 +5,7 @@ import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vibration/vibration.dart';
 
 import '../Doc_message_page/chatting_doc_to_user_2.dart';
 
@@ -42,6 +43,12 @@ class _specific_patientState extends State<specific_patient> {
       }
     }catch(e){
       print("${e.toString()}");
+    }
+  }
+
+  Future<void> _vibrate() async{
+    if (await Vibration.hasVibrator() ?? false) {
+      Vibration.vibrate(duration: 500);
     }
   }
 

@@ -479,7 +479,7 @@ class _search_chat_nameState extends State<search_chat_name> {
                           // color: Colors.red,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(
+                            child: Row( 
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 CircleAvatar(

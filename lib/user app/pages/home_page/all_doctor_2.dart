@@ -301,7 +301,7 @@ class _all_doctorState extends State<all_doctor> {
                   return doctor.id != null
                       ? Padding(
                     padding:
-                    EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
+                    EdgeInsets.only(bottom: 10),
                     child: Card(
                       margin:
                       EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -317,24 +317,26 @@ class _all_doctorState extends State<all_doctor> {
                           // borderRadius: BorderRadius.circular(40),
                         ),
                         height: 190,
+                        // width: 330,
                         child: Padding(
                           padding: EdgeInsets.only(
                               left: 10.0, top: 15, bottom: 15),
                           child: Center(
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 CircleAvatar(
-                                  radius: 40,
+                                  radius: 50,
                                   backgroundImage: NetworkImage(
                                     // scale: 10,
-                                    doctor != null
+                                    doctor.doctorImage != null
                                         ? "http://$ip:8000${doctor.doctorImage}"
                                         : "no data ",
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsets.only(left: 18.0),
+                                  padding: EdgeInsets.only(left: 28.0),
                                   child: Column(
                                     mainAxisAlignment:
                                     MainAxisAlignment.center,
@@ -444,52 +446,30 @@ class _all_doctorState extends State<all_doctor> {
 
                                       Padding(
                                         padding: EdgeInsets.only(top: 8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                          children: [
-                                            OutlinedButton(
-                                                onPressed: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder:
-                                                              (context) =>
-                                                              doc_profile(
-                                                                data:
-                                                                "${doctor.id}",
-                                                              )));
-                                                },
-                                                style: OutlinedButton
-                                                    .styleFrom(
-                                                    backgroundColor:
-                                                    Colors
-                                                        .blueAccent,
-                                                    shadowColor:
-                                                    Colors.grey),
-                                                child: Text(
-                                                  "Book",
-                                                  style: TextStyle(
-                                                      color: Colors.white),
-                                                )),
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 38.0),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.yellow,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                                width: 60,
-                                                child: Text(
-                                                    "${doctor.regNo ?? 0}")),
-                                          ],
-                                        ),
+                                        child: OutlinedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder:
+                                                          (context) =>
+                                                          doc_profile(
+                                                            data:
+                                                            "${doctor.id}",
+                                                          )));
+                                            },
+                                            style: OutlinedButton
+                                                .styleFrom(
+                                                backgroundColor:
+                                                Colors
+                                                    .blueAccent,
+                                                shadowColor:
+                                                Colors.grey),
+                                            child: Text(
+                                              "Book",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            )),
                                       )
                                     ],
                                   ),

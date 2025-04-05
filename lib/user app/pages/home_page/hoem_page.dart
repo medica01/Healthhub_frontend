@@ -455,11 +455,12 @@ class _home_pageState extends State<home_page> {
                                     padding: EdgeInsets.only(
                                         left: 10.0, top: 15, bottom: 15),
                                     child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
                                         CircleAvatar(
-                                          radius: 40,
+                                          radius: 50,
                                           backgroundImage: NetworkImage(
                                             // scale: 10,
                                             doctor.doctorImage != null

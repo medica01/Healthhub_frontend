@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/user%20app/pages/message_page/search_chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -10,6 +11,7 @@ import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../Backend_information/chat_history_backend.dart';
 import '../../../Backend_information/on_off_backend.dart';
 import '../../../main.dart';
+import '../home_page/doctor_profile_3.dart';
 
 Timer? _chatsRefreshtime;
 
@@ -280,7 +282,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                   child: get_doc_number != null
                       ? Text("${get_doc_number!.doctorName ?? "No name"}",
                       style: TextStyle(fontWeight: FontWeight.bold))
-                      : CircularProgressIndicator(), // Show a loader until data is loaded
+                      : SizedBox(), // Show a loader until data is loaded
                 ),
                 Center(
                   child: get_doc_number != null &&
@@ -306,8 +308,10 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
           Row(
             children: [
               IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.video_camera_back_outlined)),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_profile(data: "${get_doc_number!.id}",)));
+                  },
+                  icon: Icon(Icons.calendar_month)),
               IconButton(
                   onPressed: () {
                     _launchPhoneDialer();

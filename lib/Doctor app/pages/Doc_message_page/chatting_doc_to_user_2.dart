@@ -733,7 +733,7 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
                 bool showDate = index == 0 || // First message
                     get_chats_history[index].datestamp !=
                         get_chats_history[index - 1].datestamp; // New day
-                return chat != null ||
+                return chat.id != null ||
                     chat.message != null ||
                     chat.docPhoneNo != null ||
                     chat.userPhoneNo != null ||
@@ -756,7 +756,6 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
               children: [
                 Expanded(
                   child: TextField(
-                    autofocus: true,
                     controller: messageController,
                     decoration: InputDecoration(
                       hintText: "Type a message",

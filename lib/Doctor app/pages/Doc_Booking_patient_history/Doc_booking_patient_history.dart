@@ -155,7 +155,7 @@ class _Doc_see_userState extends State<Doc_see_user> {
                             color: Colors.white,
                           ),
                           height: 190,
-                          width: 330,
+                          // width: 330,
                           child: Padding(
                             padding: EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
                             child: Center(
