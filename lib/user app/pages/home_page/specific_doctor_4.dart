@@ -206,40 +206,11 @@ class _Specif_docState extends State<Specif_doc> {
                             crossAxisAlignment:
                             CrossAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment
-                                    .spaceBetween,
-                                children: [
-                                  Text(
-                                    "${doctor.doctorName ?? "unknown"}",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 20),
-                                  ),
-                                  Padding(
-                                    padding:
-                                    const EdgeInsets.only(
-                                        left: 28.0),
-                                    child: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          heart = !heart;
-                                        });
-                                      },
-                                      icon: Icon(
-                                        heart
-                                            ? FontAwesomeIcons
-                                            .solidHeart
-                                            : FontAwesomeIcons
-                                            .heart,
-                                        color: heart
-                                            ? Colors.red
-                                            : Colors.grey,
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                              Text(
+                                "${doctor.doctorName ?? "unknown"}",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20),
                               ),
                               Padding(
                                 padding: EdgeInsets.only(
@@ -316,23 +287,6 @@ class _Specif_docState extends State<Specif_doc> {
                                               color:
                                               Colors.white),
                                         )),
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: 38.0),
-                                      child: Row(
-                                        children: [
-                                          Icon(
-                                            Icons.star,
-                                            color:
-                                            Colors.yellow,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                        width: 60,
-                                        child: Text(
-                                            "${doctor.regNo ?? 0}")),
                                   ],
                                 ),
                               )

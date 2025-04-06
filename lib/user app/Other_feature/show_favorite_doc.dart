@@ -8,6 +8,7 @@ import '../../Backend_information/get_fav_doc_backend.dart';
 import '../pages/home_page/doctor_profile_3.dart';
 
 class show_fav_doc extends StatefulWidget {
+
   const show_fav_doc({super.key});
 
   @override
@@ -66,6 +67,7 @@ class show_doc extends StatefulWidget {
 class _show_docState extends State<show_doc> {
   List<get_fav_doc> get_fav_doctor = [];
   bool like = false;
+  bool isloading = false;
   String errormessage = "";
 
   @override
@@ -112,11 +114,13 @@ class _show_docState extends State<show_doc> {
           get_fav_doctor =
               jsonResponse.map((data) => get_fav_doc.fromJson(data)).toList();
           print("${response.body}");
+          isloading=true;
         });
       }
       else {
         setState(() {
           errormessage = "failed to load favorite doctor details";
+          isloading=true;
         });
       }
     } catch (e) {
@@ -137,7 +141,17 @@ class _show_docState extends State<show_doc> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return isloading
+      ?( get_fav_doctor.isEmpty
+        ?Center(
+      child: Text(
+        "No Favorite Doctor",
+        style: TextStyle(
+            color: Colors.blueAccent,
+            fontSize: 20,
+            fontWeight: FontWeight.bold),
+      ),
+    ):ListView(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -201,6 +215,9 @@ class _show_docState extends State<show_doc> {
                                             child: IconButton(
                                               onPressed: () {
                                                 _delete_fav(fav_doc.id as int);
+                                                setState(() {
+                                                  get_fav_doctor.removeAt(index); // Remove the card from the local list
+                                                });
                                               },
                                               icon: Icon(
                                                 fav_doc.like ==true ? FontAwesomeIcons.solidHeart
@@ -275,22 +292,6 @@ class _show_docState extends State<show_doc> {
                                                   style: TextStyle(
                                                       color: Colors.white),
                                                 )),
-                                            Padding(
-                                              padding:
-                                              EdgeInsets.only(left: 38.0),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons.star,
-                                                    color: Colors.yellow,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                                width: 60,
-                                                child:
-                                                Text("${fav_doc.regNo ?? 0}")),
                                           ],
                                         ),
                                       )
@@ -304,13 +305,13 @@ class _show_docState extends State<show_doc> {
                       ),
                     ),
                   )
-                    : Text("no favorite doctor in your account");
+                    : SizedBox.shrink();
               }),
         ),
         Container(
           height: 100,
         )
       ],
-    );
+    )):Center(child: CircularProgressIndicator(),);
   }
 }

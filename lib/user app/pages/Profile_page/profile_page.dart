@@ -428,7 +428,7 @@ class _profileState extends State<profile> {
                                 userprofile != null && userprofile!.userPhoto != null
                                     ? NetworkImage(
                                     "http://$ip:8000${userprofile!.userPhoto}")
-                                    : AssetImage('assets/default_avatar.png')
+                                    : NetworkImage('https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
                                 as ImageProvider, // Use a default image
                               ) ,
                           )),
@@ -465,7 +465,7 @@ class _profileState extends State<profile> {
                       : Center(
                           child: Text(
                               "Guest",
-                            style: TextStyle(fontSize: 18, color: Colors.red),
+                            style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.bold),
                           ),
                         ),
               const SizedBox(height: 10),

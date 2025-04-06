@@ -11,8 +11,6 @@ import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../medicine_page/pages/Med_home_page/order_successfully.dart';
 import '../Profile_page/personal_details_collect.dart';
 
-
-
 class doc_profile extends StatefulWidget {
   final dynamic data;
 
@@ -25,7 +23,7 @@ class doc_profile extends StatefulWidget {
 class _doc_profileState extends State<doc_profile> {
   update_profile? userprofile;
   bool heart = false;
-  List<doctor_details> doctor_detail = [];
+  doctor_details? doctor_detail;
   bool isLoading = true;
   String? errorMessage;
   String? pk;
@@ -36,7 +34,7 @@ class _doc_profileState extends State<doc_profile> {
   String selectedTime = "";
   String user_phone = "";
   List<Map<String, String>> next7Days = [];
-  String phone_number="";
+  String phone_number = "";
 
   Future<void> _booking_doc() async {
     String? doc_id = pk;
@@ -51,45 +49,46 @@ class _doc_profileState extends State<doc_profile> {
 
     try {
       final response = await http.post(
-        Uri.parse("http://$ip:8000/booking_doctor/create_booking_doctor_user/"),
-        headers: {"Content-Type":"application/json"},
-        body: jsonEncode({
-          'id': doc_id,
-          'phone_number': user_phone,
-          'booking_date':book_date,
-          'booking_time':book_time
-        })
-      );
-      if(response.statusCode==201){
-        showBottomSheet(context: context, builder: (context)=>Booking_success());
-        // showDialog(context: context, builder: (context)=>AlertDialog(
-        //   title: Text("Booking Successfully",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 20),),
-        //   content: Text("Your booking this doctor is successfull"),
-        //   actions: [
-        //     TextButton(onPressed: (){
-        //       Navigator.pushAndRemoveUntil(
-        //         context,
-        //         MaterialPageRoute(builder: (context) => HomePage()),
-        //             (route) => false,
-        //       );
-        //     }, child: Text("Ok",style: TextStyle(color: Color(0xff1f8acc)),))
-        //   ],
-        // ));
-
-      }
-      else{
-      //   print('your booking failed:${response.body}');
-      //   ScaffoldMessenger.of(context).showSnackBar(
-      //     SnackBar(content: Text("your booking failed${response.body}")),);
-        showDialog(context: context, builder: (context)=>AlertDialog(
-          title: Text("Booking failed",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 20),),
-          content: Text("this slot already booked"),
-          actions: [
-            TextButton(onPressed: (){
-              Navigator.pop(context);
-            }, child: Text("Ok",style: TextStyle(color: Color(0xff1f8acc)),))
-          ],
-        ));
+          Uri.parse(
+              "http://$ip:8000/booking_doctor/create_booking_doctor_user/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            'id': doc_id,
+            'phone_number': user_phone,
+            'booking_date': book_date,
+            'booking_time': book_time
+          }));
+      if (response.statusCode == 201) {
+        _create_chat_doc_only_user_chat();
+        _create_booked_doc_chat();
+        showBottomSheet(
+            context: context, builder: (context) => Booking_success());
+      } else {
+        //   print('your booking failed:${response.body}');
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(content: Text("your booking failed${response.body}")),);
+        showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text(
+                    "Booking failed",
+                    style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                  content: Text("this slot already booked"),
+                  actions: [
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Ok",
+                          style: TextStyle(color: Color(0xff1f8acc)),
+                        ))
+                  ],
+                ));
       }
     } catch (e) {
       print('Error occurred: $e');
@@ -99,7 +98,8 @@ class _doc_profileState extends State<doc_profile> {
     }
   }
 
-  Future<void> _create_chat_doc_only_user_chat(String doc_phone_number) async {
+  Future<void> _create_chat_doc_only_user_chat() async {
+    String doc_phone_number = "${doctor_detail!.doctorPhoneNo}";
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString("phone_number") ?? "";
@@ -115,13 +115,36 @@ class _doc_profileState extends State<doc_profile> {
             "doctor_phone_number": doc_phone_number
           }));
       if (response.statusCode == 201) {
-
         print("the user successfully add to doctor chat");
       } else {
         print("the user failed to add the doctor chat");
       }
     } catch (e) {
-
+      print("${e.toString()}");
+    }
+  }
+  Future<void> _create_booked_doc_chat() async {
+    String doc_phone_number = "${doctor_detail!.doctorPhoneNo}";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = perf.getString("phone_number") ?? "";
+      phone_number = phone_number.replaceFirst("+", "");
+    });
+    try {
+      final response = await http.post(
+          Uri.parse(
+              "http://$ip:8000/booking_doctor/create_booked_doc_chat/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "patient_phone_number":phone_number,
+            "doctor_phone_no":doc_phone_number
+          }));
+      if (response.statusCode == 201) {
+        print("the doctor successfully add to user chat");
+      } else {
+        print("the doctor failed to add the user chat");
+      }
+    } catch (e) {
       print("${e.toString()}");
     }
   }
@@ -156,32 +179,32 @@ class _doc_profileState extends State<doc_profile> {
     });
   }
 
-  Future<void> userpro()async{
-    String phone_number="";
+  Future<void> userpro() async {
+    String phone_number = "";
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
       phone_number = pref.getString('phone_number') ?? "";
       phone_number = phone_number.replaceFirst('+', '');
     });
-    try{
-      final response = await http.get(Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
-        headers: {"Content-Type":"application/json"}
-      );
-      if(response.statusCode==200){
-        Map<String,dynamic>jsonResponse = jsonDecode(response.body);
+    try {
+      final response = await http.get(
+          Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/"),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
-          userprofile=update_profile.fromJson(jsonResponse);
-          isLoading=false;
+          userprofile = update_profile.fromJson(jsonResponse);
+          isLoading = false;
         });
-      }else{
+      } else {
         setState(() {
           errorMessage = response.body.toString();
-          isLoading=false;
+          isLoading = false;
         });
       }
-    }catch(e){
-      errorMessage=e.toString();
-      isLoading=false;
+    } catch (e) {
+      errorMessage = e.toString();
+      isLoading = false;
     }
   }
 
@@ -219,7 +242,8 @@ class _doc_profileState extends State<doc_profile> {
     bool isToday = selectedDateIndex == 0;
     List<String> workingHours = getWorkingHours(isToday);
     selectedTimeIndex = 0;
-    selectedTime = workingHours[0]; // e.g., "6:00 AM" (if current hour is before 5 AM)
+    selectedTime =
+        workingHours[0]; // e.g., "6:00 AM" (if current hour is before 5 AM)
 
     // Proceed with other initialization
     _showdoctor();
@@ -236,7 +260,7 @@ class _doc_profileState extends State<doc_profile> {
         // Assuming the response is a single JSON object, not a list
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
-          doctor_detail = [doctor_details.fromJson(jsonResponse)];
+          doctor_detail = doctor_details.fromJson(jsonResponse);
           isLoading = false;
         });
         print(jsonResponse); // Log raw JSON response
@@ -254,37 +278,47 @@ class _doc_profileState extends State<doc_profile> {
     }
   }
 
-
-
-  Future<void> _vibrate() async{
+  Future<void> _vibrate() async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: 500);
     }
   }
 
-  void valid_user(){
-    if(userprofile!.firstName == null) {
+  void valid_user() {
+    if (userprofile!.firstName == null) {
       print("${userprofile!.firstName}");
       if (userprofile!.lastName == null) {
-        if(userprofile!.age==null){
-          if(userprofile!.gender==null){
-            if(userprofile!.email==null){
-              showDialog(context: context, builder: (context)=>AlertDialog(
-                title: Text("Invalid User",style: TextStyle(color: Colors.red,fontSize: 25),),
-                content: Text("you must create the account for booking!",style: TextStyle(fontSize: 20),),
-                actions: [
-                  TextButton(onPressed: (){
-                    Navigator.pop(context);
-                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
-                    showModalBottomSheet(context: context, builder: (context)=>SaveDetails());
-                    }, child: Text("Ok"))
-                ],
-              ));
+        if (userprofile!.age == null) {
+          if (userprofile!.gender == null) {
+            if (userprofile!.email == null) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                        title: Text(
+                          "Invalid User",
+                          style: TextStyle(color: Colors.red, fontSize: 25),
+                        ),
+                        content: Text(
+                          "you must create the account for booking!",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        actions: [
+                          TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                // Navigator.push(context, MaterialPageRoute(builder: (context)=>profile_page()));
+                                showModalBottomSheet(
+                                    context: context,
+                                    builder: (context) => SaveDetails());
+                              },
+                              child: Text("Ok"))
+                        ],
+                      ));
             }
           }
         }
       }
-    }else{
+    } else {
       _booking_doc();
     }
   }
@@ -299,339 +333,339 @@ class _doc_profileState extends State<doc_profile> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Doctor's Profile"),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.share))],
+        actions: [
+          Row(
+            children: [
+              IconButton(onPressed: () {}, icon: Icon(FontAwesomeIcons.heart)),
+              IconButton(onPressed: () {}, icon: Icon(Icons.share)),
+            ],
+          )
+        ],
       ),
-      body: Stack(
-        children: [
-          ListView.builder(
-            physics: const BouncingScrollPhysics(),
-            itemCount: doctor_detail.length,
-            // shrinkWrap: true,
-            itemBuilder: (context, index) {
-              var doctor = doctor_detail[index];
-              return doctor.id != null
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(15.0),
-                          child: Container(
-                            height: 200,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(40),
+      body: isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ListView(
+              children: [
+                Center(
+                  child: doctor_detail!.doctorImage != null
+                      ? Image.network(
+                          scale: 1,
+                          "http://$ip:8000${doctor_detail!.doctorImage}")
+                      : SizedBox(),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "About Doctor",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Name : ${doctor_detail!.doctorName}"),
+                      Text("Specialist : ${doctor_detail!.specialty}"),
+                      Text("Service : ${doctor_detail!.service} years of exp"),
+                      Text("Age: ${doctor_detail!.age}"),
+                      Text("Gender: ${doctor_detail!.gender}"),
+                      Text("Know Language : ${doctor_detail!.language}"),
+                      Text("Location : ${doctor_detail!.doctorLocation}"),
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "Select Date and Time",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Card(
+                    color: Colors.white,
+                    shadowColor: Colors.grey,
+                    child: Container(
+                      height: 280,
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                            top: 18.0, bottom: 8, left: 8, right: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Select date",
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Image.network(
-                                  doctor.doctorImage != null
-                                      ? "http://$ip:8000${doctor.doctorImage}"
-                                      : "no data",
-                                  scale: 5,
-                                  fit: BoxFit.cover,
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        doctor.doctorName ?? "Unknown",
-                                        style: const TextStyle(
-                                            color: Colors.black, fontSize: 20),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(
+                                  next7Days.length,
+                                      (index) => GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedDateIndex =
+                                            index; // Update selected date index
+                                        selectedDate =
+                                        "${next7Days[index]['year']}-${next7Days[selectedDateIndex]['date']}-${next7Days[selectedDateIndex]['day']}";
+                                        selectedDate = selectedDate.replaceFirst(" ", "-");
+                                        print("$selectedDate");
+                                      });
+                                    },
+                                    child: Container(
+                                      height: 90,
+                                      width: 70,
+                                      margin:
+                                      const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      padding:
+                                      const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color:
+                                        selectedDateIndex == index
+                                            ? Color(0xff1f8acc)
+                                            : Colors.transparent,
+                                        border: Border.all(
+                                          color: Color(0xff1f8acc),
+                                          width: 1.5,
+                                        ),
+                                        borderRadius:
+                                        BorderRadius.circular(8),
                                       ),
-                                      Text(
-                                        doctor.specialty ?? "No qualification",
-                                        maxLines: 3,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(fontSize: 14),
+                                      child: Column(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            next7Days[index]['day']!,
+                                            // Show day name
+                                            style: TextStyle(
+                                              color:
+                                              selectedDateIndex ==
+                                                  index
+                                                  ? Colors.white
+                                                  : Color(
+                                                  0xff1f8acc),
+                                              fontWeight:
+                                              FontWeight.bold,
+                                            ),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Padding(
+                                            padding: EdgeInsets.only(
+                                                left: 8.0),
+                                            child: Text(
+                                              next7Days[index]['date']!,
+                                              // Show date
+                                              style: TextStyle(
+                                                color:
+                                                selectedDateIndex ==
+                                                    index
+                                                    ? Colors.white
+                                                    : Color(
+                                                    0xff1f8acc),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      Text("${doctor.service} years of exp"),
-                                      Text(doctor.language ?? "Tamil"),
-                                      Text(doctor.doctorLocation ?? "Chennai"),
-                                    ],
+                                    ),
                                   ),
                                 ),
-                              ],
+                              ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Card(
-                            color: Colors.white,
-                            shadowColor: Colors.grey,
-                            child: Container(
-                              height: 280,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 18.0, bottom: 8, left: 8, right: 8),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      "Select date",
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        // mainAxisAlignment: MainAxisAlignment.center,
-                                        children: List.generate(
-                                          next7Days.length,
-                                          (index) => GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                selectedDateIndex =
-                                                    index; // Update selected date index
-                                                selectedDate =
-                                                    "${next7Days[index]['year']}-${next7Days[selectedDateIndex]['date']}-${next7Days[selectedDateIndex]['day']}";
-                                                selectedDate = selectedDate.replaceFirst(" ", "-");
-                                                print("$selectedDate");
-                                              });
-                                            },
-                                            child: Container(
-                                              height: 90,
-                                              width: 70,
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8),
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    selectedDateIndex == index
-                                                        ? Color(0xff1f8acc)
-                                                        : Colors.transparent,
-                                                border: Border.all(
-                                                  color: Color(0xff1f8acc),
-                                                  width: 1.5,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    next7Days[index]['day']!,
-                                                    // Show day name
-                                                    style: TextStyle(
-                                                      color:
-                                                          selectedDateIndex ==
-                                                                  index
-                                                              ? Colors.white
-                                                              : Color(
-                                                                  0xff1f8acc),
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 5),
-                                                  Padding(
-                                                    padding: EdgeInsets.only(
-                                                        left: 8.0),
-                                                    child: Text(
-                                                      next7Days[index]['date']!,
-                                                      // Show date
-                                                      style: TextStyle(
-                                                        color:
-                                                            selectedDateIndex ==
-                                                                    index
-                                                                ? Colors.white
-                                                                : Color(
-                                                                    0xff1f8acc),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                            SizedBox(height: 20),
+                            // if (selectedDateIndex != -1) // Show selected date below
+                            //  Text(
+                            //    'Selected Date: ${next17Days[selectedDateIndex]['day']} - ${next17Days[selectedDateIndex]['date']}',
+                            //    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            //  ),
+                            Text(
+                              "Select time",
+                              style: TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20),
+                            ),
+                            // if (selectedDateIndex != -1)
+                            selectedDateIndex == -1
+                                ? Center(
+                                child: Text(
+                                  "Working hour only 5 am to 10 pm",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.red,
+                                      fontWeight: FontWeight.bold),
+                                ))
+                                : Padding(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: List.generate(
+                                    workingHours.length,
+                                        (index) => GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedTimeIndex =
+                                              index;
+                                          selectedTime =
+                                          workingHours[index];
+                                          print(
+                                              "Selected Time: $selectedTime");
+                                        });
+                                      },
+                                      child: Container(
+                                        height: 50,
+                                        width: 90,
+                                        margin: const EdgeInsets
+                                            .symmetric(
+                                            horizontal: 7),
+                                        decoration: BoxDecoration(
+                                          color:
+                                          selectedTimeIndex ==
+                                              index
+                                              ? Color(
+                                              0xff1f8acc)
+                                              : Colors
+                                              .transparent,
+                                          border: Border.all(
+                                              color: Color(
+                                                  0xff1f8acc),
+                                              width: 1.5),
+                                          borderRadius:
+                                          BorderRadius
+                                              .circular(8),
+                                        ),
+                                        child: Center(
+                                          child: Text(
+                                            workingHours[index],
+                                            style: TextStyle(
+                                              color: selectedTimeIndex ==
+                                                  index
+                                                  ? Colors.white
+                                                  : Color(
+                                                  0xff1f8acc),
+                                              fontWeight:
+                                              FontWeight.bold,
                                             ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 20),
-                                    // if (selectedDateIndex != -1) // Show selected date below
-                                    //  Text(
-                                    //    'Selected Date: ${next17Days[selectedDateIndex]['day']} - ${next17Days[selectedDateIndex]['date']}',
-                                    //    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                    //  ),
-                                    Text(
-                                      "Select time",
-                                      style: TextStyle(
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 20),
-                                    ),
-                                    // if (selectedDateIndex != -1)
-                                    selectedDateIndex == -1
-                                        ? Center(
-                                            child: Text(
-                                            "Working hour only 5 am to 10 pm",
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.bold),
-                                          ))
-                                        : Padding(
-                                            padding: EdgeInsets.only(top: 10.0),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                children: List.generate(
-                                                  workingHours.length,
-                                                  (index) => GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        selectedTimeIndex =
-                                                            index;
-                                                        selectedTime =
-                                                            workingHours[index];
-                                                        print(
-                                                            "Selected Time: $selectedTime");
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      height: 50,
-                                                      width: 90,
-                                                      margin: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 7),
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            selectedTimeIndex ==
-                                                                    index
-                                                                ? Color(
-                                                                    0xff1f8acc)
-                                                                : Colors
-                                                                    .transparent,
-                                                        border: Border.all(
-                                                            color: Color(
-                                                                0xff1f8acc),
-                                                            width: 1.5),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      child: Center(
-                                                        child: Text(
-                                                          workingHours[index],
-                                                          style: TextStyle(
-                                                            color: selectedTimeIndex ==
-                                                                    index
-                                                                ? Colors.white
-                                                                : Color(
-                                                                    0xff1f8acc),
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 28.0, left: 15),
-                          child: Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "About Doctor",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                                Text(doctor.bio ?? "no bio")
-                              ],
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 28.0, left: 15),
-                          child: Text(
-                            "Treatment and producedures",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.0, left: 15),
-                          child: Text(doctor.specialty ?? "no report"),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 28.0, left: 15),
-                          child: Text(
-                            "Registration",
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 20),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.only(top: 8.0, left: 15),
-                          child: Text("${doctor.regNo}" ?? "no report"),
-                        ),
-                        Container(
-                          height: 200,
-                        )
-                      ],
-                    )
-                  : const Text("No data available");
-            },
-          ),
-          Positioned(
-            bottom: 80,
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                // margin: const EdgeInsets.all(16.0),
-                child: GestureDetector(
-                  onTap: () {
-                    _vibrate();
-                    valid_user();
-                    _create_chat_doc_only_user_chat("");
-                  },
-                  child: Container(
-                    height: 50,
-                    width: MediaQuery.of(context).size.width * 0.92,
-                    decoration: BoxDecoration(
-                      color: Colors.blueAccent,
-                      borderRadius: BorderRadius.circular(40),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        "Book Free Consult",
-                        style: TextStyle(color: Colors.white, fontSize: 16),
                       ),
                     ),
                   ),
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "Treatment and Producedures",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("${doctor_detail!.specialty}"),
+                ),Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "Doctor Qualification",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("${doctor_detail!.qualification}"),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "Doctor Bio",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("${doctor_detail!.bio}"),
+                ),Padding(
+                  padding: EdgeInsets.only(top: 18.0),
+                  child: Text(
+                    "Doctor Register number",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("${doctor_detail!.regNo}"),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Center(
+                    child: SizedBox(
+                      height: 50,
+                      width: 1000,
+                      child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                              side: BorderSide(
+                                  color: Colors.blueAccent, width: 1),
+                              backgroundColor: Colors.blueAccent,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10))),
+                          onPressed: () {
+                            _vibrate();
+                            valid_user();
+                          },
+                          child: Text(
+                            "Book Free Consult",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold),
+                          )),
+                    ),
+                  ),
+                )
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }

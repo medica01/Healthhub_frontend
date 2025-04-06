@@ -179,7 +179,7 @@ class _home_pageState extends State<home_page> {
                         backgroundImage: userprofile!.userPhoto != null
                             ? NetworkImage(
                                 "http://$ip:8000${userprofile!.userPhoto}")
-                            : NetworkImage("$photourl"),
+                            : NetworkImage("https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png"),
                       ),
                     ),
                   ),

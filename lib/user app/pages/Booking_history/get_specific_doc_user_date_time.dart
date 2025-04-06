@@ -436,7 +436,7 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text("Date: ${doc_book!.specialty}"),
+              child: Text("Specialist: ${doc_book!.specialty}"),
             ),
             Padding(
               padding:  EdgeInsets.only(top: 18.0),

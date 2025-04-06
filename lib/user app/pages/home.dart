@@ -10,6 +10,7 @@ import 'Profile_page/profile_page.dart';
 import 'home_page/hoem_page.dart';
 import 'locaton_page/location_page.dart';
 import 'message_page/message_page.dart';
+import 'message_page/tabbar_alldoc_bookdoc.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -91,7 +92,7 @@ class _HomePageState extends State<HomePage>
                 controller: _tabController,
                 children: [
                   MapRouteApp(),
-                  message_page(),
+                  tab_alldoc_bookdoc(),
                   main_home(),
                   Medical_main_page(),
                   booking_history_page(),
