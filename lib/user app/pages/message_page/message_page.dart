@@ -373,6 +373,7 @@ import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/Backend_information/Backend_doctor_details.dart';
 import 'package:health_hub/user%20app/pages/message_page/search_doc_message_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -392,21 +393,6 @@ class message_page extends StatefulWidget {
 }
 
 class _message_pageState extends State<message_page> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false, home: show_all_doctor());
-  }
-}
-
-class show_all_doctor extends StatefulWidget {
-  const show_all_doctor({super.key});
-
-  @override
-  State<show_all_doctor> createState() => _show_all_doctorState();
-}
-
-class _show_all_doctorState extends State<show_all_doctor> {
   List<doctor_details> chattting_doc = [];
   String errormessage = "";
   update_profile? userprofile;
@@ -483,12 +469,12 @@ class _show_all_doctorState extends State<show_all_doctor> {
           chattting_doc = jsonResponse
               .map((data) => doctor_details.fromJson(data))
               .toList();
-          isLoading=true;
+          isLoading=false;
         });
       } else {
         setState(() {
           errormessage = "failed to load doctor_details";
-          isLoading=true;
+          isLoading=false;
         });
       }
     } catch (e) {
@@ -622,118 +608,128 @@ class _show_all_doctorState extends State<show_all_doctor> {
                       return show_docc.id != null
                           ? Padding(
                               padding: const EdgeInsets.all(8.0),
-                              child: GestureDetector(
-                                onTap: () {
-                                  if (userprofile!.firstName == null) {
-                                    print("${userprofile!.firstName}");
-                                    if (userprofile!.lastName == null) {
-                                      if (userprofile!.age == null) {
-                                        if (userprofile!.gender == null) {
-                                          if (userprofile!.email == null) {
-                                            showDialog(
-                                                context: context,
-                                                builder: (context) =>
-                                                    AlertDialog(
-                                                      title: Text(
-                                                        "Invalid User",
+                              child: AnimationConfiguration.staggeredList(
+                                position: index,
+                                duration: const Duration(milliseconds: 500),
+                                child: SlideAnimation(
+                                  horizontalOffset: 500.0,
+                                  child: FadeInAnimation(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (userprofile!.firstName == null) {
+                                          print("${userprofile!.firstName}");
+                                          if (userprofile!.lastName == null) {
+                                            if (userprofile!.age == null) {
+                                              if (userprofile!.gender == null) {
+                                                if (userprofile!.email == null) {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) =>
+                                                          AlertDialog(
+                                                            title: Text(
+                                                              "Invalid User",
+                                                              style: TextStyle(
+                                                                  color: Colors.red,
+                                                                  fontSize: 25),
+                                                            ),
+                                                            content: Text(
+                                                              "you must create the account for chatting!",
+                                                              style: TextStyle(
+                                                                  fontSize: 20),
+                                                            ),
+                                                            actions: [
+                                                              TextButton(
+                                                                  onPressed: () {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder:
+                                                                                (context) =>
+                                                                                profile_page()));
+                                                                  },
+                                                                  child: Text("Ok"))
+                                                            ],
+                                                          ));
+                                                }
+                                              }
+                                            }
+                                          }
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) => user_doc(
+                                                      data:
+                                                      "${show_docc.doctorPhoneNo}")));
+                                          _online();
+                                        }
+                                      },
+                                      child: Card(
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 5),
+                                        elevation: 5,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        clipBehavior: Clip.hardEdge,
+                                        shadowColor: Colors.grey,
+                                        child: Container(
+                                          height: 100,
+                                          // color: Colors.red,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 40,
+                                                  backgroundImage: NetworkImage(
+                                                    // scale: 10,
+                                                    show_docc.doctorImage != null
+                                                        ? "http://$ip:8000${show_docc.doctorImage}"
+                                                        : "no data ",
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                  EdgeInsets.only(left: 15.0),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text(
+                                                        "${show_docc.doctorName}",
                                                         style: TextStyle(
-                                                            color: Colors.red,
-                                                            fontSize: 25),
-                                                      ),
-                                                      content: Text(
-                                                        "you must create the account for chatting!",
-                                                        style: TextStyle(
+                                                            fontWeight:
+                                                            FontWeight.bold,
                                                             fontSize: 20),
                                                       ),
-                                                      actions: [
-                                                        TextButton(
-                                                            onPressed: () {
-                                                              Navigator.pop(
-                                                                  context);
-                                                              Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              profile_page()));
-                                                            },
-                                                            child: Text("Ok"))
-                                                      ],
-                                                    ));
-                                          }
-                                        }
-                                      }
-                                    }
-                                  } else {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => user_doc(
-                                                data:
-                                                    "${show_docc.doctorPhoneNo}")));
-                                    _online();
-                                  }
-                                },
-                                child: Card(
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 5),
-                                  elevation: 5,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  clipBehavior: Clip.hardEdge,
-                                  shadowColor: Colors.grey,
-                                  child: Container(
-                                    height: 100,
-                                    // color: Colors.red,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 40,
-                                            backgroundImage: NetworkImage(
-                                              // scale: 10,
-                                              show_docc.doctorImage != null
-                                                  ? "http://$ip:8000${show_docc.doctorImage}"
-                                                  : "no data ",
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding:
-                                                EdgeInsets.only(left: 15.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "${show_docc.doctorName}",
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 20),
-                                                ),
-                                                Text(
-                                                  "${show_docc.specialty}",
-                                                  style: TextStyle(
-                                                      color: Colors.grey,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                      Text(
+                                                        "${show_docc.specialty}",
+                                                        style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                            FontWeight.bold),
+                                                      )
+                                                    ],
+                                                  ),
                                                 )
                                               ],
                                             ),
-                                          )
-                                        ],
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
+                              )
+
                             )
                           : Text("data");
                     })

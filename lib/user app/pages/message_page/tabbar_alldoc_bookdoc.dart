@@ -25,9 +25,7 @@ class _tab_alldoc_bookdocState extends State<tab_alldoc_bookdoc>with SingleTicke
   }
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
+    return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text("Message",style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold,fontSize: 20),),
@@ -47,12 +45,12 @@ class _tab_alldoc_bookdocState extends State<tab_alldoc_bookdoc>with SingleTicke
             // physics: const NeverScrollableScrollPhysics(),
             controller: _tabController,
             children: [
-              show_all_doctor(),
+              message_page(),
               booking_doc_message()
             ],
           ),
         ),
-      ),
+
     );
   }
 }

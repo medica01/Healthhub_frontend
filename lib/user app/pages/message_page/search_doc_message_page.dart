@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart%20' as http;
 
 import '../../../Backend_information/Backend_doctor_details.dart';
@@ -100,69 +101,80 @@ class _search_chat_nameState extends State<search_chat_name> {
             return show_docc.id != null
                 ? Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => user_doc(
-                              data: "${show_docc.doctorPhoneNo}")));
-                },
-                child: Card(
-                  margin:
-                  EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  clipBehavior: Clip.hardEdge,
-                  shadowColor: Colors.grey,
-                  child: Container(
-                    height: 100,
-                    // color: Colors.red,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            radius: 40,
-                            backgroundImage: NetworkImage(
-                              // scale: 10,
-                              show_docc.doctorImage != null
-                                  ? "http://$ip:8000/media/${show_docc.doctorImage}"
-                                  : "no data ",
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.only(left: 15.0),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment:
-                              CrossAxisAlignment.start,
+              child:
+              AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 500),
+                child: SlideAnimation(
+                  horizontalOffset: 500.0,
+                  child: FadeInAnimation(
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => user_doc(
+                                    data: "${show_docc.doctorPhoneNo}")));
+                      },
+                      child: Card(
+                        margin:
+                        EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        clipBehavior: Clip.hardEdge,
+                        shadowColor: Colors.grey,
+                        child: Container(
+                          height: 100,
+                          // color: Colors.red,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                Text(
-                                  "${show_docc.doctorName}",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundImage: NetworkImage(
+                                    // scale: 10,
+                                    show_docc.doctorImage != null
+                                        ? "http://$ip:8000/media/${show_docc.doctorImage}"
+                                        : "no data ",
+                                  ),
                                 ),
-                                Text(
-                                  "${show_docc.specialty}",
-                                  style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
+                                Padding(
+                                  padding: EdgeInsets.only(left: 15.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "${show_docc.doctorName}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20),
+                                      ),
+                                      Text(
+                                        "${show_docc.specialty}",
+                                        style: TextStyle(
+                                            color: Colors.grey,
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    ],
+                                  ),
                                 )
                               ],
                             ),
-                          )
-                        ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
+              )
+
             )
                 : Text("data");
           }),

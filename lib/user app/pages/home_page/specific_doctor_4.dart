@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import '../../../Backend_information/Backend_doctor_details.dart';
@@ -166,138 +167,149 @@ class _Specif_docState extends State<Specif_doc> {
                 ? Padding(
               padding: EdgeInsets.only(
                   left: 13.0, right: 13, bottom: 15),
-              child: Card(
-                margin: EdgeInsets.symmetric(
-                    horizontal: 10, vertical: 5),
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                clipBehavior: Clip.hardEdge,
-                shadowColor: Colors.grey,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    // borderRadius: BorderRadius.circular(40),
-                  ),
-                  height: 190,
-                  child: Padding(
-                    padding: EdgeInsets.only(
-                        left: 10.0, top: 15, bottom: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment:
-                      CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundImage: NetworkImage(
-                            // scale: 10,
-                            doctor.doctorImage != null
-                                ? "http://$ip:8000/media/${doctor.doctorImage}"
-                                : "no data ",
-                          ),
+              child:
+              AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 500),
+                child: SlideAnimation(
+                  horizontalOffset: 500.0,
+                  child: FadeInAnimation(
+                    child: Card(
+                      margin: EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      clipBehavior: Clip.hardEdge,
+                      shadowColor: Colors.grey,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          // borderRadius: BorderRadius.circular(40),
                         ),
-                        Padding(
-                          padding: EdgeInsets.only(left: 18.0),
-                          child: Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
+                        height: 190,
+                        child: Padding(
+                          padding: EdgeInsets.only(
+                              left: 10.0, top: 15, bottom: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment:
-                            CrossAxisAlignment.start,
+                            CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                "${doctor.doctorName ?? "unknown"}",
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 20),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: 5.0),
-                                child: Text(
-                                  doctor.specialty ??
-                                      "No specility",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
+                              CircleAvatar(
+                                radius: 50,
+                                backgroundImage: NetworkImage(
+                                  // scale: 10,
+                                  doctor.doctorImage != null
+                                      ? "http://$ip:8000/media/${doctor.doctorImage}"
+                                      : "no data ",
                                 ),
                               ),
                               Padding(
-                                padding: EdgeInsets.only(
-                                    bottom: 5.0),
-                                child: Text(
-                                  "${doctor.service ?? "No service"} years of exp",
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                              // Padding(
-                              //   padding: EdgeInsets.only(bottom: 5.0),
-                              //   child: Text(
-                              //     doctor.language ?? "english",
-                              //     style: TextStyle(
-                              //       fontSize: 14,
-                              //     ),
-                              //   ),
-                              // ),
-                              // Padding(
-                              //   padding: EdgeInsets.only(bottom: 5.0),
-                              //   child: Text(
-                              //     doctor.doctorLocation ??
-                              //         "No specility",
-                              //     style: TextStyle(
-                              //       fontSize: 14,
-                              //     ),
-                              //   ),
-                              // ),
-
-                              Padding(
-                                padding:
-                                EdgeInsets.only(top: 8.0),
-                                child: Row(
+                                padding: EdgeInsets.only(left: 18.0),
+                                child: Column(
                                   mainAxisAlignment:
-                                  MainAxisAlignment
-                                      .spaceEvenly,
+                                  MainAxisAlignment.center,
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
-                                    OutlinedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder:
-                                                      (context) =>
-                                                      doc_profile(
-                                                        data:
-                                                        "${doctor.id}",
-                                                      )));
-                                        },
-                                        style: OutlinedButton
-                                            .styleFrom(
-                                            backgroundColor:
-                                            Colors
-                                                .blueAccent,
-                                            shadowColor:
-                                            Colors
-                                                .grey),
-                                        child: Text(
-                                          "Book",
-                                          style: TextStyle(
-                                              color:
-                                              Colors.white),
-                                        )),
+                                    Text(
+                                      "${doctor.doctorName ?? "unknown"}",
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 20),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: 5.0),
+                                      child: Text(
+                                        doctor.specialty ??
+                                            "No specility",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          bottom: 5.0),
+                                      child: Text(
+                                        "${doctor.service ?? "No service"} years of exp",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    // Padding(
+                                    //   padding: EdgeInsets.only(bottom: 5.0),
+                                    //   child: Text(
+                                    //     doctor.language ?? "english",
+                                    //     style: TextStyle(
+                                    //       fontSize: 14,
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // Padding(
+                                    //   padding: EdgeInsets.only(bottom: 5.0),
+                                    //   child: Text(
+                                    //     doctor.doctorLocation ??
+                                    //         "No specility",
+                                    //     style: TextStyle(
+                                    //       fontSize: 14,
+                                    //     ),
+                                    //   ),
+                                    // ),
+
+                                    Padding(
+                                      padding:
+                                      EdgeInsets.only(top: 8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceEvenly,
+                                        children: [
+                                          OutlinedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder:
+                                                            (context) =>
+                                                            doc_profile(
+                                                              data:
+                                                              "${doctor.id}",
+                                                            )));
+                                              },
+                                              style: OutlinedButton
+                                                  .styleFrom(
+                                                  backgroundColor:
+                                                  Colors
+                                                      .blueAccent,
+                                                  shadowColor:
+                                                  Colors
+                                                      .grey),
+                                              child: Text(
+                                                "Book",
+                                                style: TextStyle(
+                                                    color:
+                                                    Colors.white),
+                                              )),
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
                               )
                             ],
                           ),
-                        )
-                      ],
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              )
+
             )
                 : SizedBox(height: 0,);
           }),

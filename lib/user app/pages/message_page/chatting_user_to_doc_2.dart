@@ -375,7 +375,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                 bool showDate = index == 0 || // First message
                     get_chat_history[index].datestamp !=
                         get_chat_history[index - 1].datestamp; // New day
-                return chat != null ||
+                return chat.id!= null ||
                     chat.message != null ||
                     chat.docPhoneNo != null ||
                     chat.userPhoneNo != null ||
@@ -393,7 +393,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
             ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 8, top: 8, bottom: 50),
+            padding: EdgeInsets.only(left: 8.0, right: 8,bottom: 8),
             child: Row(
               children: [
                 Expanded(
@@ -462,7 +462,6 @@ class _ChatBubbleState extends State<ChatBubble> {
 
         // Convert to 12-hour format with AM/PM
         chattime = DateFormat("hh:mm a").format(chatt);
-        print(chattime); // Should print "07:39 PM"
       } catch (e) {
         print("Error parsing time: $e");
       }
@@ -541,6 +540,7 @@ class _ChatBubbleState extends State<ChatBubble> {
             child: Text(chattime, style: TextStyle(fontSize: 10)),
           ),
         ),
+
       ],
     )
         : Text("No chat, Start chatting!");

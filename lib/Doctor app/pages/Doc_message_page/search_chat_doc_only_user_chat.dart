@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart%20' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -105,52 +106,63 @@ class _search_doc_messageState extends State<search_doc_message> {
                 return show_patiii.id != null
                     ? Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: GestureDetector(
-                    onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_user(data:"${show_patiii.phoneNumber}")));
-                    },
-                    child: Card(
-                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      clipBehavior: Clip.hardEdge,
-                      shadowColor: Colors.grey,
-                      child: Container(
-                        height: 100,
-                        // color: Colors.red,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundImage: NetworkImage(
-                                  // scale: 10,
-                                  show_patiii.userPhoto != null
-                                      ? "http://$ip:8000/media/${show_patiii.userPhoto}"
-                                      : "no data ",
-                                ),
-                              ),
-                              Padding(
-                                padding:  EdgeInsets.only(left: 15.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                  child:
+                  AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 500),
+                    child: SlideAnimation(
+                      horizontalOffset: 500.0,
+                      child: FadeInAnimation(
+                        child: GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_user(data:"${show_patiii.phoneNumber}")));
+                          },
+                          child: Card(
+                            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            clipBehavior: Clip.hardEdge,
+                            shadowColor: Colors.grey,
+                            child: Container(
+                              height: 100,
+                              // color: Colors.red,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    Text("${show_patiii.firstName}${show_patiii.lastName}",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
-                                    Text("${show_patiii.location}",style: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.bold),)
+                                    CircleAvatar(
+                                      radius: 40,
+                                      backgroundImage: NetworkImage(
+                                        // scale: 10,
+                                        show_patiii.userPhoto != null
+                                            ? "http://$ip:8000/media/${show_patiii.userPhoto}"
+                                            : "no data ",
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding:  EdgeInsets.only(left: 15.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text("${show_patiii.firstName}${show_patiii.lastName}",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                                          Text("${show_patiii.location}",style: TextStyle(color: Colors.grey,fontSize: 14,fontWeight: FontWeight.bold),)
+                                        ],
+                                      ),
+                                    )
                                   ],
                                 ),
-                              )
-                            ],
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
+                  )
+
                 )
                     : Text("data");
               })
