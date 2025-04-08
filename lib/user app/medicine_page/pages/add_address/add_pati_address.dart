@@ -26,6 +26,7 @@ class _add_pati_addressState extends State<add_pati_address> {
   TextEditingController town_name = TextEditingController();
   TextEditingController state_name = TextEditingController();
   bool isChecked = false;
+
   void valid_address(){
     List missingfield =[];
     if(full_name.text.isEmpty){
@@ -74,6 +75,44 @@ class _add_pati_addressState extends State<add_pati_address> {
           )
         ],
       ));
+    }
+  }
+
+  Future<void> _get_patients_address() async{
+     String phone_number ="";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = perf.getString("phone_number") ?? "";
+      phone_number=phone_number.replaceFirst("+", "");
+    });
+    try{
+      final response = await http.get(Uri.parse("http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/1/"));
+      if(response.statusCode==200){
+        showDialog(context: context, builder: (context)=>AlertDialog(
+          title: Text("Notice!",style: TextStyle(color: Colors.green,fontSize: 25,fontWeight: FontWeight.bold),),
+          content: Text("you want to add new address go to add address!",style: TextStyle(fontWeight: FontWeight.bold,color: Colors.black,fontSize: 20),),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Cancel",style: TextStyle(color: Colors.red),)),
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                }, child: Text("Ok",style: TextStyle(color: Colors.green),)),
+              ],
+            )
+          ],
+        ));
+      }
+      else{
+        valid_address();
+        print("error in the program");
+        isChecked=true;
+      }
+    }catch(e){
+      print("${e.toString()}");
     }
   }
 
@@ -245,7 +284,7 @@ class _add_pati_addressState extends State<add_pati_address> {
                                 backgroundColor: Colors.blueAccent
                             ),
                             onPressed: () {
-                              valid_address();
+                              _get_patients_address();
                             },
                             child: Text(
                               "Add Address",

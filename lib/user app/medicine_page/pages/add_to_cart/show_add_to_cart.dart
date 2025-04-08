@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/main.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -123,6 +124,12 @@ class _show_to_cartState extends State<show_to_cart> {
                               ? Padding(
                                   padding: const EdgeInsets.only(
                                       left: 28.0, right: 28, bottom: 15),
+                                  child: AnimationConfiguration.staggeredList(
+                                  position: index,
+                                  duration: const Duration(milliseconds: 500),
+                                  child: SlideAnimation(
+                                  horizontalOffset: 500.0,
+                                  child: FadeInAnimation(
                                   child: GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -131,7 +138,7 @@ class _show_to_cartState extends State<show_to_cart> {
                                               builder: (context) =>
                                                   specific_product(
                                                     product_number:
-                                                        "${carts.productNumber}",
+                                                    "${carts.productNumber}",
                                                   )));
                                     },
                                     child: Card(
@@ -143,13 +150,13 @@ class _show_to_cartState extends State<show_to_cart> {
                                         height: 160,
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             Padding(
                                               padding: EdgeInsets.only(right: 18.0),
                                               child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 children: [
                                                   Container(
                                                     child: Image(
@@ -168,9 +175,9 @@ class _show_to_cartState extends State<show_to_cart> {
                                               padding: EdgeInsets.only(left: 8.0),
                                               child: Column(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.center,
+                                                MainAxisAlignment.center,
                                                 crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                                CrossAxisAlignment.start,
                                                 children: [
                                                   Text("${carts.productName}"),
                                                   Text("${carts.cureDisases}"),
@@ -179,23 +186,23 @@ class _show_to_cartState extends State<show_to_cart> {
                                                   Text("${carts.price} Rs"),
                                                   Padding(
                                                     padding:
-                                                        EdgeInsets.only(top: 10.0),
+                                                    EdgeInsets.only(top: 10.0),
                                                     child: OutlinedButton(
                                                       onPressed: () {
                                                         _delete_your_cart_item(
                                                             carts.productNumber!);
                                                       },
                                                       style:
-                                                          OutlinedButton.styleFrom(
-                                                              side: BorderSide(
-                                                                  color: Colors
-                                                                      .blueAccent,
-                                                                  width: 1)),
+                                                      OutlinedButton.styleFrom(
+                                                          side: BorderSide(
+                                                              color: Colors
+                                                                  .blueAccent,
+                                                              width: 1)),
                                                       child: Text(
                                                         "delete",
                                                         style: TextStyle(
                                                             color:
-                                                                Colors.blueAccent),
+                                                            Colors.blueAccent),
                                                       ),
                                                     ),
                                                   )
@@ -206,7 +213,8 @@ class _show_to_cartState extends State<show_to_cart> {
                                         ),
                                       ),
                                     ),
-                                  ),
+                                  ),)))
+
                                 )
                               : SizedBox.shrink();
                         }),

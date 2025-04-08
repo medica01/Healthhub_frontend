@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/medicine_page/pages/Order_show/show_order_specific_item.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -76,8 +77,9 @@ class _medicine_home_pageState extends State<show_order_placed> {
                   ))
             ],
           ),
-          body:loading ==true
-          ?ListView(
+          body:loading
+          ?(order_placed_user_details.isNotEmpty
+              ?ListView(
             children: [
               ListView.builder(
                 shrinkWrap: true,
@@ -88,54 +90,61 @@ class _medicine_home_pageState extends State<show_order_placed> {
                     builder: (context) {
                       return Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: GestureDetector(
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>show_spe_order_pro(
-                              id: "${order_detials.id}",
-                            )));
-                          },
-                          child: Container(
-                            color: Colors.transparent,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                GestureDetector(
-                                  onTap:(){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
-                                        product_number : "${order_detials.productNumber}"
-                                    )));
-                                  },
-                                  child: Container(
-                                    child: Image(
-                                        image: NetworkImage(
-                                            scale: 3,
-                                            "http://$ip:8000${order_detials.productImage}")),
+                        child: AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 500),
+                      child: SlideAnimation(
+                      horizontalOffset: 500.0,
+                      child: FadeInAnimation(
+                      child:GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>show_spe_order_pro(
+                            id: "${order_detials.id}",
+                          )));
+                        },
+                        child: Container(
+                          color: Colors.transparent,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              GestureDetector(
+                                onTap:(){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
+                                      product_number : "${order_detials.productNumber}"
+                                  )));
+                                },
+                                child: Container(
+                                  child: Image(
+                                      image: NetworkImage(
+                                          scale: 3,
+                                          "http://$ip:8000${order_detials.productImage}")),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 50,
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text("${order_detials.productName}"),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: 50,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Text("${order_detials.productName}"),
-                                    ),
-                                    Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 8),)
-                                  ],
-                                ),
-                                 Divider(
-                                  color: Colors.red,
-                                  thickness: 1,
-                                  indent: 25,
-                                  endIndent: 35,
-                                ),
-                                Icon(Icons.arrow_forward_ios,color: Colors.black,)
-                              ],
-                            ),
+                                  Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 8),)
+                                ],
+                              ),
+                              Divider(
+                                color: Colors.red,
+                                thickness: 1,
+                                indent: 25,
+                                endIndent: 35,
+                              ),
+                              Icon(Icons.arrow_forward_ios,color: Colors.black,)
+                            ],
                           ),
                         ),
+                      ),)))
+
                       );
                     }
                   );
@@ -144,7 +153,7 @@ class _medicine_home_pageState extends State<show_order_placed> {
                 height: 100,
               )
             ],
-          ):Center(child: CircularProgressIndicator(),),
+          ):Center(child: Text("No Order Found",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),),)):Center(child: CircularProgressIndicator(),),
       ),
     );
   }

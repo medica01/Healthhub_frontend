@@ -88,6 +88,7 @@ class _patient_chat_showState extends State<patient_chat_show> {
       errormessage=e.toString();
     }
   }
+
   Future<void> _doc_online() async {
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
