@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:health_hub/user%20app/pages/message_page/search_chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -157,7 +158,6 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
           get_chat_history =
               jsonResponse.map((data) => chat_history.fromJson(data)).toList();
           isloading = false;
-
         });
       }
     } catch (e) {
@@ -195,6 +195,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
 
       if (response.statusCode == 201) {
         await _get_user_doctor_chat_history();
+        NotificationService().showNotification(id: 0, title: "Health hub", body: "you: ${messageController.text}");
         messageController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
@@ -203,6 +204,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
           print("Delayed check: Current position: ${_scrollController.position.pixels}, Max extent: ${_scrollController.position.maxScrollExtent}");
           _scrollToBottom();
         });
+
       } else {
         showDialog(
           context: context,
@@ -262,9 +264,10 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleSpacing: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CircleAvatar(
               radius: 20,
@@ -412,6 +415,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                     onPressed: () {
                       _create_chat_two();
                       _create_chat_doc_only_user_chat();
+
                     }),
               ],
             ),

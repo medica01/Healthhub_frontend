@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:health_hub/main.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -443,6 +444,7 @@ class _OtpPageState extends State<OtpPage> {
             SnackBar(content: Text("user already exist")));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "Welcome to the health hub");
       } else if (response.statusCode == 404){
         await _user_profile();
       }
@@ -473,6 +475,7 @@ class _OtpPageState extends State<OtpPage> {
             SnackBar(content: Text("phone number add successfully")));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => HomePage()));
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "Thanking for Install health hub");
       } else {
         print('add phone number failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(

@@ -7,6 +7,7 @@ import 'package:http/http.dart%20' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../../Notification_services.dart';
 import '../Med_home_page/about_specific_product.dart';
 import 'Order_show.dart';
 import 'order_product_more_info.dart';
@@ -72,6 +73,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
       final response = await http.delete(Uri.parse("http://$ip:8000/medicine_pur/delete_order_product/$phone_number/${widget.id}/"));
       if(response.statusCode==204){
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>show_order_placed()), (route)=>false);
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "${get_spec_pro!.productName} Order Canceled Successfully");
       }
     }catch(e){
       print("${e.toString()}");

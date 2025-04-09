@@ -677,6 +677,7 @@ import 'dart:convert';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
 import 'package:health_hub/Backend_information/user_details_backend.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -735,11 +736,13 @@ class _doc_profileState extends State<doc_profile> {
             'booking_time': book_time
           }));
       if (response.statusCode == 201) {
+        _vibrate();
         _create_chat_doc_only_user_chat();
         _create_booked_doc_chat();
         showBottomSheet(
             context: context, builder: (context) => Booking_success());
         await _show_booked_user();
+        NotificationService().showNotification(id: 0, title: "Health hub", body: "Dr ${doctor_detail!.doctorName} Appointment Successfully Booking \nDate: $book_date \nTime: $book_time");
       } else {
         showDialog(
             context: context,
@@ -1017,9 +1020,11 @@ class _doc_profileState extends State<doc_profile> {
                                 context: context,
                                 builder: (context) => SaveDetails());
                           },
-                          child: Text("Ok"))
+                          child: Text("Ok")
+                      )
                     ],
-                  ));
+                  )
+              );
             }
           }
         }
@@ -1354,7 +1359,7 @@ class _doc_profileState extends State<doc_profile> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10))),
                     onPressed: () {
-                      _vibrate();
+
                       valid_user();
                       // Example: Block a specific date and time after booking (optional)
                       // blockSpecificDateTime("2025-Apr-06-Sun", "1:00 PM");

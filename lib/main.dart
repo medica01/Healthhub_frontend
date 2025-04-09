@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:health_hub/user%20app/medicine_page/pages/add_address/add_pati_address.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Authentication/doc_otp_verfication/doc_otp_verify.dart';
@@ -14,6 +15,7 @@ import 'firebase_options.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await NotificationService().init();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );

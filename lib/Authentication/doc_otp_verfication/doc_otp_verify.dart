@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Authentication/doc_otp_verfication/doctor_details_collect.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -396,6 +397,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
             ElevatedButton(
               onPressed: () async {
                 await _verifyOtp(); // Correct call to the method
+                NotificationService().showNotification(id: 0, title: "Health Hub", body: "Welcome Doctor");
               },
               child: const Text('Verify OTP'),
             ),

@@ -7,6 +7,7 @@ import 'package:vibration/vibration.dart';
 
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
+import '../../../../Notification_services.dart';
 import '../../../../main.dart';
 import 'about_specific_product.dart';
 import 'order_successfully.dart';
@@ -93,6 +94,7 @@ class _place_orderState extends State<place_order> {
           "order_date":"${delivery_date}"
         }));
       if(response.statusCode==201){
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "${specific_products!.productName} Order Placed Successfully \nDelivered on ${delivery_date}");
         showBottomSheet(context: context, builder: (context)=>order_success());
       }
     }catch(e){

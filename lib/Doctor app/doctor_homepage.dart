@@ -11,6 +11,7 @@ import 'package:health_hub/Doctor%20app/pages/Doc_home_page/Doc_home_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_locations_page/doc_location_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_message_page/doc_message_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_profile_page/doc_profile_page.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:http/http.dart%20' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -307,6 +308,7 @@ class _docHomePageState extends State<docHomePage> {
   Widget build(BuildContext context) {
     return get_doc_details != null
         ? Scaffold(
+      backgroundColor: Colors.white,
             appBar: AppBar(
               leadingWidth: 1000,
               leading: Builder(builder: (context) {
@@ -600,6 +602,7 @@ class _docHomePageState extends State<docHomePage> {
                       }).toList(), // <-- fix applied here
                     ),
                   ),
+
                   Container(
                     height: 100,
                   )

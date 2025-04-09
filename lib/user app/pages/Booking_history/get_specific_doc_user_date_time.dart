@@ -247,6 +247,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
 import '../../../Backend_information/Backend_booking_doctor.dart';
+import '../../../Notification_services.dart';
 import '../message_page/chatting_user_to_doc_2.dart';
 import 'booking_history_page.dart';
 
@@ -382,7 +383,9 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
       final response = await http.delete(Uri.parse("http://$ip:8000/booking_doctor/delete_specific_user_doctor/$phone_number/$doc_phone_number/$outputDate/$encodedTime/"),
       );
       if(response.statusCode==200){
+        _vibrate();
         Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>booking_history_page()), (route)=>false);
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "${doc_book!.doctorName} Appointment is Canceled");
       }
       else{
         print("${response.body}");
@@ -496,7 +499,7 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
                           )
                       ),
                       onPressed: (){
-                        _vibrate();
+
                         _delete_booking();
                       }, child: Text("Cancel the Booking",style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold),)),
                 ),
