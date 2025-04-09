@@ -82,6 +82,7 @@ class _medicine_home_pageState extends State<show_order_placed> {
               ?ListView(
             children: [
               ListView.builder(
+                physics: BouncingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: order_placed_user_details.length,
                   itemBuilder: (context, index) {
@@ -133,13 +134,11 @@ class _medicine_home_pageState extends State<show_order_placed> {
                                   Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 8),)
                                 ],
                               ),
-                              Divider(
-                                color: Colors.red,
-                                thickness: 1,
-                                indent: 25,
-                                endIndent: 35,
-                              ),
-                              Icon(Icons.arrow_forward_ios,color: Colors.black,)
+
+                              Padding(
+                                padding:  EdgeInsets.only(left: 15.0),
+                                child: Icon(Icons.arrow_forward_ios,color: Colors.black,),
+                              )
                             ],
                           ),
                         ),

@@ -231,6 +231,7 @@ class _message_pageState extends State<message_page> {
                   ),
                 ),
                 ListView.builder(
+                  physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: chattting_doc.length,
                     itemBuilder: (context, index) {
@@ -362,7 +363,8 @@ class _message_pageState extends State<message_page> {
 
                             )
                           : Text("data");
-                    })
+                    }),
+                Container(height: 100,)
               ],
             ));
   }

@@ -319,12 +319,19 @@ class _Medical_main_pageState extends State<Medical_main_page>
   }
 }
 
-class BottomNavigationBarWidget extends StatelessWidget {
+class BottomNavigationBarWidget extends StatefulWidget {
   final TabController controller;
 
   const BottomNavigationBarWidget({required this.controller, Key? key})
       : super(key: key);
 
+  @override
+  State<BottomNavigationBarWidget> createState() => _BottomNavigationBarWidgetState();
+}
+
+class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
+  bool doc_or_use = false;
+  bool use_or_doc = false;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -339,7 +346,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
             heightFactor: 0.1,
             child: FloatingActionButton(
               onPressed: () {
-                controller.animateTo(2);
+                widget.controller.animateTo(2);
               },
               backgroundColor: Color(0xff1f8acc),
               child: Icon(FontAwesomeIcons.houseMedical, color: Colors.white),
@@ -348,17 +355,28 @@ class BottomNavigationBarWidget extends StatelessWidget {
           ),
           Positioned.fill(
             child: TabBar(
-              controller: controller,
+              controller: widget.controller,
               labelColor: Color(0xff1f8acc),
               unselectedLabelColor: Colors.black,
               indicatorColor: Colors.transparent,
               tabs: [
+
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushAndRemoveUntil(
+                  onTap: () async{
+                    SharedPreferences perf = await SharedPreferences.getInstance();
+                    setState(() {
+                      doc_or_use = perf.getBool("doc_login") ?? false;
+                      use_or_doc = perf.getBool("login") ?? false;
+                    });
+                    doc_or_use
+                    ?Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => docHomePage()),
+                        (route) => false)
+                        :Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => HomePage()),
-                        (route) => false);
+                            (route) => false);
                   },
                   child: const Icon(Icons.arrow_back),
                 ),

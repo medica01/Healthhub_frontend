@@ -162,160 +162,156 @@ class _show_docState extends State<show_doc> {
               itemBuilder: (context, index) {
                 var fav_doc = get_fav_doctor[index];
                 return fav_doc.id!= null
-                  ?Padding(
-                    padding: EdgeInsets.only(left: 13.0, right: 13, bottom: 15),
-                    child:
-                    AnimationConfiguration.staggeredList(
-                      position: index,
-                      duration: const Duration(milliseconds: 500),
-                      child: SlideAnimation(
-                        horizontalOffset: 500.0,
-                        child: FadeInAnimation(
-                          child: Card(
-                            margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                  ?AnimationConfiguration.staggeredList(
+                    position: index,
+                    duration: const Duration(milliseconds: 500),
+                    child: SlideAnimation(
+                      horizontalOffset: 500.0,
+                      child: FadeInAnimation(
+                        child: Card(
+                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          clipBehavior: Clip.hardEdge,
+                          shadowColor: Colors.grey,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              // borderRadius: BorderRadius.circular(40),
                             ),
-                            clipBehavior: Clip.hardEdge,
-                            shadowColor: Colors.grey,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                // borderRadius: BorderRadius.circular(40),
-                              ),
-                              height: 190,
-                              child: Padding(
-                                padding:
-                                EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 50,
-                                        backgroundImage: NetworkImage(
-                                          // scale: 10,
-                                          fav_doc.doctorImage != null
-                                              ? "http://$ip:8000${fav_doc.doctorImage}"
-                                              : "https://www.pinterest.com/pin/tik-tok-profile-picture--88523948917046149/",
-                                        ),
+                            height: 190,
+                            child: Padding(
+                              padding:
+                              EdgeInsets.only(left: 10.0, top: 15, bottom: 15),
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundImage: NetworkImage(
+                                        // scale: 10,
+                                        fav_doc.doctorImage != null
+                                            ? "http://$ip:8000${fav_doc.doctorImage}"
+                                            : "https://www.pinterest.com/pin/tik-tok-profile-picture--88523948917046149/",
                                       ),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 18.0),
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                              children: [
-                                                Text(
-                                                  "${fav_doc.doctorName}",
-                                                  style: TextStyle(
-                                                      color: Colors.black,
-                                                      fontSize: 20),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                  const EdgeInsets.only(left: 28.0),
-                                                  child: IconButton(
-                                                    onPressed: () {
-                                                      _delete_fav(fav_doc.id as int);
-                                                      setState(() {
-                                                        get_fav_doctor.removeAt(index); // Remove the card from the local list
-                                                      });
-                                                    },
-                                                    icon: Icon(
-                                                      fav_doc.like ==true ? FontAwesomeIcons.solidHeart
-                                                          : FontAwesomeIcons.heart,
-                                                      color:fav_doc.like==true? Colors.red : Colors.grey,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 18.0),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "${fav_doc.doctorName}",
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontSize: 20),
+                                              ),
+                                              Padding(
+                                                padding:
+                                                const EdgeInsets.only(left: 28.0),
+                                                child: IconButton(
+                                                  onPressed: () {
+                                                    _delete_fav(fav_doc.id as int);
+                                                    setState(() {
+                                                      get_fav_doctor.removeAt(index); // Remove the card from the local list
+                                                    });
+                                                  },
+                                                  icon: Icon(
+                                                    fav_doc.like ==true ? FontAwesomeIcons.solidHeart
+                                                        : FontAwesomeIcons.heart,
+                                                    color:fav_doc.like==true? Colors.red : Colors.grey,
 
-                                                    ),
                                                   ),
                                                 ),
+                                              ),
+                                            ],
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            child: Text(
+                                              "${fav_doc.specialty}",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(bottom: 5.0),
+                                            child: Text(
+                                              "${fav_doc.service} years of exp",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                          ),
+                                          // Padding(
+                                          //   padding: EdgeInsets.only(bottom: 5.0),
+                                          //   child: Text(
+                                          //     doctor.language ?? "english",
+                                          //     style: TextStyle(
+                                          //       fontSize: 14,
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          // Padding(
+                                          //   padding: EdgeInsets.only(bottom: 5.0),
+                                          //   child: Text(
+                                          //     doctor.doctorLocation ??
+                                          //         "No specility",
+                                          //     style: TextStyle(
+                                          //       fontSize: 14,
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                          Padding(
+                                            padding: EdgeInsets.only(top: 8.0),
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                              children: [
+                                                OutlinedButton(
+                                                    onPressed: () {
+                                                      Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  doc_profile(
+                                                                    data:
+                                                                    "${fav_doc.doctor}",
+                                                                  )));
+                                                    },
+                                                    style: OutlinedButton.styleFrom(
+                                                        backgroundColor:
+                                                        Colors.blueAccent,
+                                                        shadowColor: Colors.grey),
+                                                    child: Text(
+                                                      "Book",
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    )),
                                               ],
                                             ),
-                                            Padding(
-                                              padding: EdgeInsets.only(bottom: 5.0),
-                                              child: Text(
-                                                "${fav_doc.specialty}",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(bottom: 5.0),
-                                              child: Text(
-                                                "${fav_doc.service} years of exp",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                            // Padding(
-                                            //   padding: EdgeInsets.only(bottom: 5.0),
-                                            //   child: Text(
-                                            //     doctor.language ?? "english",
-                                            //     style: TextStyle(
-                                            //       fontSize: 14,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            // Padding(
-                                            //   padding: EdgeInsets.only(bottom: 5.0),
-                                            //   child: Text(
-                                            //     doctor.doctorLocation ??
-                                            //         "No specility",
-                                            //     style: TextStyle(
-                                            //       fontSize: 14,
-                                            //     ),
-                                            //   ),
-                                            // ),
-                                            Padding(
-                                              padding: EdgeInsets.only(top: 8.0),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.spaceEvenly,
-                                                children: [
-                                                  OutlinedButton(
-                                                      onPressed: () {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder: (context) =>
-                                                                    doc_profile(
-                                                                      data:
-                                                                      "${fav_doc.doctor}",
-                                                                    )));
-                                                      },
-                                                      style: OutlinedButton.styleFrom(
-                                                          backgroundColor:
-                                                          Colors.blueAccent,
-                                                          shadowColor: Colors.grey),
-                                                      child: Text(
-                                                        "Book",
-                                                        style: TextStyle(
-                                                            color: Colors.white),
-                                                      )),
-                                                ],
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
                           ),
                         ),
                       ),
-                    )
+                    ),
                   )
                     : SizedBox.shrink();
               }),
