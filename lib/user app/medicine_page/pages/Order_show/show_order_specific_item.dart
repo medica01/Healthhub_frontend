@@ -101,7 +101,9 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white54,
       appBar: AppBar(
+        backgroundColor: Colors.white54,
         title: Text(""),
       ),
       body: isloading

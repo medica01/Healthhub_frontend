@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
@@ -8,11 +6,9 @@ import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
 import '../add_address/add_pati_address.dart';
 import 'Place_order.dart';
-import 'order_successfully.dart';
 
 class specific_product extends StatefulWidget {
   final dynamic product_number;
@@ -174,7 +170,9 @@ class _specific_productState extends State<specific_product> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+      backgroundColor: Colors.white54,
       appBar: AppBar(
+        backgroundColor: Colors.white54,
         centerTitle: true,
         title: isloading == true
             ? Text(
@@ -285,7 +283,7 @@ class _specific_productState extends State<specific_product> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 18.0, left: 5),
+                  padding: EdgeInsets.only(top: 18.0, left: 15),
                   child: Text(
                     "FREE delivery $formattedseven, \nOrder within 19hrs 56 mins.",
                     style: TextStyle(
@@ -295,7 +293,7 @@ class _specific_productState extends State<specific_product> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 18.0),
+                  padding: EdgeInsets.only(top: 18.0,left: 15,bottom: 10),
                   child: Row(
                     children: [
                       Icon(
@@ -306,7 +304,7 @@ class _specific_productState extends State<specific_product> {
                       patients_address!.fullName == null ||
                               patients_address!.townCity == null ||
                               patients_address!.pincode == null
-                          ? Text("No address")
+                          ? const Text("Add Address")
                           : Text(
                               " Deliver to ${patients_address!.fullName} - ${patients_address!.townCity} ${patients_address!.pincode}"),
                     ],

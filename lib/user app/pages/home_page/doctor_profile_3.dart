@@ -1080,306 +1080,305 @@ class _doc_profileState extends State<doc_profile> {
       ),
       body: isLoading
           ? Center(child: CircularProgressIndicator())
-          : ListView(
-        children: [
-          Center(
-            child: doctor_detail!.doctorImage != null
-                ? Image.network(
-                scale: 1,
-                "http://$ip:8000${doctor_detail!.doctorImage}")
-                : SizedBox(),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0),
-            child: Text(
-              "About Doctor",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Name : ${doctor_detail!.doctorName}"),
-                Text("Specialist : ${doctor_detail!.specialty}"),
-                Text("Service : ${doctor_detail!.service} years of exp"),
-                Text("Age: ${doctor_detail!.age}"),
-                Text("Gender: ${doctor_detail!.gender}"),
-                Text("Know Language : ${doctor_detail!.language}"),
-                Text("Location : ${doctor_detail!.doctorLocation}"),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0),
-            child: Text(
-              "Select Date and Time",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Card(
-              color: Colors.white,
-              shadowColor: Colors.grey,
-              child: Container(
-                height: 280,
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      top: 18.0, bottom: 8, left: 8, right: 8),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          : Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ListView(
                     children: [
-                      Text(
-                        "Select date",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                      SizedBox(height: 10),
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: List.generate(
-                            next7Days.length,
-                                (index) => GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedDateIndex = index;
-                                  selectedDate =
-                                      "${next7Days[index]['year']}-${next7Days[index]['date']}-${next7Days[index]['day']}"
-                                          .replaceFirst(" ", "-");
-                                  bool isToday = selectedDateIndex == 0;
-                                  List<String> updatedWorkingHours =
-                                  getWorkingHours(isToday, selectedDate);
-                                  if (updatedWorkingHours.isNotEmpty) {
-                                    selectedTimeIndex = 0;
-                                    selectedTime = updatedWorkingHours[0];
-                                  } else {
-                                    selectedTimeIndex = -1;
-                                    selectedTime = "";
-                                  }
-                                });
-                              },
-                              child: Container(
-                                height: 90,
-                                width: 70,
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 8),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: selectedDateIndex == index
-                                      ? Color(0xff1f8acc)
-                                      : Colors.transparent,
-                                  border: Border.all(
-                                    color: Color(0xff1f8acc),
-                                    width: 1.5,
-                                  ),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      next7Days[index]['day']!,
-                                      style: TextStyle(
-                                        color: selectedDateIndex == index
-                                            ? Colors.white
-                                            : Color(0xff1f8acc),
-                                        fontWeight: FontWeight.bold,
-                                      ),
+            Center(
+              child: doctor_detail!.doctorImage != null
+                  ? Image.network(
+                  scale: 1,
+                  "http://$ip:8000${doctor_detail!.doctorImage}")
+                  : SizedBox(),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 18.0),
+              child: Text(
+                "About Doctor",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Name : ${doctor_detail!.doctorName}"),
+                  Text("Specialist : ${doctor_detail!.specialty}"),
+                  Text("Service : ${doctor_detail!.service} years of exp"),
+                  Text("Age: ${doctor_detail!.age}"),
+                  Text("Gender: ${doctor_detail!.gender}"),
+                  Text("Know Language : ${doctor_detail!.language}"),
+                  Text("Location : ${doctor_detail!.doctorLocation}"),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 18.0),
+              child: Text(
+                "Select Date and Time",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Card(
+                color: Colors.white,
+                shadowColor: Colors.grey,
+                child: Container(
+                  height: 280,
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top: 18.0, bottom: 8, left: 8, right: 8),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Select date",
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                        SizedBox(height: 10),
+                        SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: Row(
+                            children: List.generate(
+                              next7Days.length,
+                                  (index) => GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedDateIndex = index;
+                                    selectedDate =
+                                        "${next7Days[index]['year']}-${next7Days[index]['date']}-${next7Days[index]['day']}"
+                                            .replaceFirst(" ", "-");
+                                    bool isToday = selectedDateIndex == 0;
+                                    List<String> updatedWorkingHours =
+                                    getWorkingHours(isToday, selectedDate);
+                                    if (updatedWorkingHours.isNotEmpty) {
+                                      selectedTimeIndex = 0;
+                                      selectedTime = updatedWorkingHours[0];
+                                    } else {
+                                      selectedTimeIndex = -1;
+                                      selectedTime = "";
+                                    }
+                                  });
+                                },
+                                child: Container(
+                                  height: 90,
+                                  width: 70,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: selectedDateIndex == index
+                                        ? Color(0xff1f8acc)
+                                        : Colors.transparent,
+                                    border: Border.all(
+                                      color: Color(0xff1f8acc),
+                                      width: 1.5,
                                     ),
-                                    SizedBox(height: 5),
-                                    Padding(
-                                      padding: EdgeInsets.only(left: 8.0),
-                                      child: Text(
-                                        next7Days[index]['date']!,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        next7Days[index]['day']!,
                                         style: TextStyle(
                                           color: selectedDateIndex == index
                                               ? Colors.white
                                               : Color(0xff1f8acc),
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Padding(
+                                        padding: EdgeInsets.only(left: 8.0),
+                                        child: Text(
+                                          next7Days[index]['date']!,
+                                          style: TextStyle(
+                                            color: selectedDateIndex == index
+                                                ? Colors.white
+                                                : Color(0xff1f8acc),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          "Select time",
+                          style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20),
+                        ),
+                        workingHours.isEmpty
+                            ? Center(
+                          child: Text(
+                            "No available times for this date",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.red,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        )
+                            : Padding(
+                          padding: EdgeInsets.only(top: 10.0),
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: List.generate(
+                                workingHours.length,
+                                    (index) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectedTimeIndex = index;
+                                      selectedTime = workingHours[index];
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 50,
+                                    width: 90,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 7),
+                                    decoration: BoxDecoration(
+                                      color: selectedTimeIndex == index
+                                          ? Color(0xff1f8acc)
+                                          : Colors.transparent,
+                                      border: Border.all(
+                                          color: Color(0xff1f8acc),
+                                          width: 1.5),
+                                      borderRadius:
+                                      BorderRadius.circular(8),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        workingHours[index],
+                                        style: TextStyle(
+                                          color: selectedTimeIndex ==
+                                              index
+                                              ? Colors.white
+                                              : Color(0xff1f8acc),
+                                          fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20),
-                      Text(
-                        "Select time",
-                        style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                      workingHours.isEmpty
-                          ? Center(
-                        child: Text(
-                          "No available times for this date",
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )
-                          : Padding(
-                        padding: EdgeInsets.only(top: 10.0),
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: List.generate(
-                              workingHours.length,
-                                  (index) => GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedTimeIndex = index;
-                                    selectedTime = workingHours[index];
-                                  });
-                                },
-                                child: Container(
-                                  height: 50,
-                                  width: 90,
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 7),
-                                  decoration: BoxDecoration(
-                                    color: selectedTimeIndex == index
-                                        ? Color(0xff1f8acc)
-                                        : Colors.transparent,
-                                    border: Border.all(
-                                        color: Color(0xff1f8acc),
-                                        width: 1.5),
-                                    borderRadius:
-                                    BorderRadius.circular(8),
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      workingHours[index],
-                                      style: TextStyle(
-                                        color: selectedTimeIndex ==
-                                            index
-                                            ? Colors.white
-                                            : Color(0xff1f8acc),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0),
-            child: Text(
-              "Treatment and Procedures",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("${doctor_detail!.specialty}"),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0),
-            child: Text(
-              "Doctor Qualification",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("${doctor_detail!.qualification}"),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0),
-            child: Text(
-              "Doctor Bio",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("${doctor_detail!.bio}"),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 18.0),
-            child: Text(
-              "Doctor Register number",
-              style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("${doctor_detail!.regNo}"),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Center(
-              child: SizedBox(
-                height: 50,
-                width: 1000,
-                child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                        side: BorderSide(
-                            color: Colors.blueAccent, width: 1),
-                        backgroundColor: Colors.blueAccent,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                    onPressed: () {
-
-                      valid_user();
-                      // Example: Block a specific date and time after booking (optional)
-                      // blockSpecificDateTime("2025-Apr-06-Sun", "1:00 PM");
-                    },
-                    child: Text(
-                      "Book Free Consult",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold),
-                    )),
+            Padding(
+              padding: EdgeInsets.only(top: 18.0),
+              child: Text(
+                "Treatment and Procedures",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("${doctor_detail!.specialty}"),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 18.0),
+              child: Text(
+                "Doctor Qualification",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("${doctor_detail!.qualification}"),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 18.0),
+              child: Text(
+                "Doctor Bio",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("${doctor_detail!.bio}"),
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 18.0),
+              child: Text(
+                "Doctor Register number",
+                style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text("${doctor_detail!.regNo}"),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Center(
+                child: SizedBox(
+                  height: 50,
+                  width: 1000,
+                  child: OutlinedButton(
+                      style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                              color: Colors.blueAccent, width: 1),
+                          backgroundColor: Colors.blueAccent,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      onPressed: () {
+
+                        valid_user();
+                        // Example: Block a specific date and time after booking (optional)
+                        // blockSpecificDateTime("2025-Apr-06-Sun", "1:00 PM");
+                      },
+                      child: Text(
+                        "Book Free Consult",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold),
+                      )),
+                ),
+              ),
+            ),
+            Container(height: 50,)
+                    ],
+                  ),
           ),
-          Column(
-            children: [
-              Text("data"),
-            ],
-          )
-        ],
-      ),
     );
   }
 }

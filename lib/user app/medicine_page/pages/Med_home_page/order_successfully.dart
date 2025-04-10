@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:health_hub/user%20app/pages/home.dart';
-
 import '../medical_home.dart';
 
 
@@ -51,30 +50,31 @@ class Booking_success extends StatefulWidget {
 class _Booking_successState extends State<Booking_success> {
   @override
   Widget build(BuildContext context) {
-    return Builder(
-        builder: (context) {
-          return GestureDetector(
-            onTap: (){
-              Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
-            },
-            child: Scaffold(
-              backgroundColor: Colors.blueAccent,
-              body: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Icon(Icons.check_circle_outline,color: Colors.white,size: 50,),
-                    ),
-                    Text("Booking Successfully",style: TextStyle(color: Colors.white),)
-                  ],
+    return
+      Builder(
+          builder: (context) {
+            return GestureDetector(
+              onTap: (){
+                Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
+              },
+              child: Scaffold(
+                backgroundColor: Colors.blueAccent,
+                body: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Icon(Icons.check_circle_outline,color: Colors.white,size: 50,),
+                      ),
+                      Text("Booking Successfully",style: TextStyle(color: Colors.white),)
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        }
-    );
+            );
+          }
+      );
   }
 }
 

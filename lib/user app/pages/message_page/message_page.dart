@@ -308,7 +308,7 @@ class _message_pageState extends State<message_page> {
                                         shadowColor: Colors.grey,
                                         child: Container(
                                           height: 100,
-                                          // color: Colors.red,
+                                          color: Colors.white54,
                                           child: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Row(

@@ -160,7 +160,7 @@ class _booking_doc_messageState extends State<booking_doc_message> {
                                     shadowColor: Colors.grey,
                                     child: Container(
                                       height: 100,
-                                      // color: Colors.red,
+                                      color: Colors.white54,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: Row(

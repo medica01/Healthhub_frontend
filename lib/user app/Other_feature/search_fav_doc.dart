@@ -1,64 +1,72 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:health_hub/main.dart';
-import 'package:health_hub/user%20app/Other_feature/search_fav_doc.dart';
+import 'package:http/http.dart%20' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+
 import '../../Backend_information/get_fav_doc_backend.dart';
+import '../../main.dart';
 import '../pages/home_page/doctor_profile_3.dart';
 
-class show_fav_doc extends StatefulWidget {
-
-  const show_fav_doc({super.key});
-
-  @override
-  State<show_fav_doc> createState() => _show_fav_docState();
-}
-
-class _show_fav_docState extends State<show_fav_doc> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        centerTitle: true,
-        title: Text(
-          "Favorite doctor",
-          style: TextStyle(
-              color: Color(0xff0a8eac), fontWeight: FontWeight.bold),
-        ),
-        actions: [
-          IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>search_fav_doc()));
-          }, icon: Icon(Icons.search))
-        ],
-      ),
-      body: show_doc(),
-    );
-  }
-}
-
-class show_doc extends StatefulWidget {
-  const show_doc({super.key});
+class search_fav_doc extends StatefulWidget {
+  const search_fav_doc({super.key});
 
   @override
-  State<show_doc> createState() => _show_docState();
+  State<search_fav_doc> createState() => _search_fav_docState();
 }
 
-class _show_docState extends State<show_doc> {
+class _search_fav_docState extends State<search_fav_doc> {
   List<get_fav_doc> get_fav_doctor = [];
   bool like = false;
   bool isloading = false;
   String errormessage = "";
+  TextEditingController searchController=TextEditingController();
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _show_favorite_doc();
+  Future<void> _search_fav_docs(String query) async {
+    String phone_number = "";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    phone_number = perf.getString("phone_number") ?? "";
+    phone_number = phone_number.replaceFirst("+", "");
+
+    try {
+      String patiPhone = Uri.encodeQueryComponent(phone_number);
+      String encodedQuery = Uri.encodeQueryComponent(query);
+
+      final response = await http.get(Uri.parse(
+        "http://$ip:8000/booking_doctor/search_doc_fav/?phone_number=$patiPhone&q=$encodedQuery",
+      ));
+
+      if (response.statusCode == 200) {
+        var jsonResponse = jsonDecode(response.body);
+        if (jsonResponse is List) {
+          setState(() {
+            get_fav_doctor = jsonResponse
+                .map((data) => get_fav_doc.fromJson(data))
+                .toList();
+            isloading = false;
+          });
+        } else {
+          setState(() {
+            get_fav_doctor = [];
+            isloading = false;
+          });
+        }
+      } else {
+        setState(() {
+          get_fav_doctor = [];
+          isloading = false;
+        });
+      }
+    } catch (e) {
+      print("Error: $e");
+      setState(() {
+        isloading = false;
+      });
+    }
   }
+
 
   Future<void> _delete_fav(int doctor_id) async{
     String phone_number = "";
@@ -70,81 +78,64 @@ class _show_docState extends State<show_doc> {
     try{
       final response = await http.delete(Uri.parse("http://$ip:8000/booking_doctor/delete_fav_doc/$phone_number/$doctor_id/"));
       if(response.statusCode==204){
-        _show_favorite_doc();
+
       }
     }catch(e){
       print("${e.toString()}");
     }
   }
 
-  Future<void> _show_favorite_doc() async {
-    String phone_number = "";
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      phone_number = pref.getString('phone_number') ?? "917845711277";
-      phone_number = phone_number.replaceFirst("+", "");
-    });
-    try {
-      final response = await http.get(Uri.parse(
-          "http://$ip:8000/booking_doctor/get_fav_doc/$phone_number/"),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      );
-      if (response.statusCode == 200) {
-        List<dynamic> jsonResponse = jsonDecode(response.body);
-        setState(() {
-          get_fav_doctor =
-              jsonResponse.map((data) => get_fav_doc.fromJson(data)).toList();
-          print("${response.body}");
-          isloading=true;
-        });
-      }
-      else {
-        setState(() {
-          errormessage = "failed to load favorite doctor details";
-          isloading=true;
-        });
-      }
-    } catch (e) {
-      errormessage = e.toString();
-      showDialog(context: context, builder: (context)=>AlertDialog(
-        title: Text("Alert Message",style: TextStyle(
-          color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25
-        ),),
-        content: Text("$errormessage",style: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),),
-        actions: [
-          TextButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text("Ok"))
-        ],
-      ));
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
-    return isloading
-      ?( get_fav_doctor.isEmpty
-        ?Center(
-      child: Text(
-        "No Favorite Doctor",
-        style: TextStyle(
-            color: Colors.blueAccent,
-            fontSize: 20,
-            fontWeight: FontWeight.bold),
-      ),
-    ):ListView(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: ListView.builder(
-            shrinkWrap: true,
-              itemCount: get_fav_doctor.length,
-              itemBuilder: (context, index) {
-                var fav_doc = get_fav_doctor[index];
-                return fav_doc.id!= null
-                  ?AnimationConfiguration.staggeredList(
+    return
+      Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: TextField(
+            autofocus: true,
+            controller: searchController,
+            cursorColor: Color(0xff1f8acc),
+            style:
+            TextStyle(color: Color(0xff1f8acc), fontWeight: FontWeight.bold),
+            decoration: InputDecoration(
+              focusColor: Colors.black,
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(
+                    color: Colors.black, width: 2.0), // Focused border color
+              ),
+              hintText: "Search Doctor...",
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            ),
+            onChanged: (query) {
+              if (query.length > 1) {
+                _search_fav_docs(query);
+              }
+            },
+          ),
+        ),
+        body: ( get_fav_doctor.isEmpty
+          ?Center(
+        child: Text(
+          "No Search Favorite",
+          style: TextStyle(
+              color: Colors.blueAccent,
+              fontSize: 20,
+              fontWeight: FontWeight.bold),
+        ),
+            ):ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: get_fav_doctor.length,
+                itemBuilder: (context, index) {
+                  var fav_doc = get_fav_doctor[index];
+                  return fav_doc.id!= null
+                      ?AnimationConfiguration.staggeredList(
                     position: index,
                     duration: const Duration(milliseconds: 500),
                     child: SlideAnimation(
@@ -295,13 +286,14 @@ class _show_docState extends State<show_doc> {
                       ),
                     ),
                   )
-                    : SizedBox.shrink();
-              }),
-        ),
-        Container(
-          height: 100,
-        )
-      ],
-    )):Center(child: CircularProgressIndicator(),);
+                      : SizedBox.shrink();
+                }),
+          ),
+          Container(
+            height: 100,
+          )
+        ],
+            )),
+      );
   }
 }

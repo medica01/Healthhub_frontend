@@ -62,7 +62,9 @@ class _medicine_home_pageState extends State<show_order_placed> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white54,
           appBar: AppBar(
+            backgroundColor: Colors.white54,
             title: Text(
               "Your Order",
               style: TextStyle(color: Colors.blueAccent),

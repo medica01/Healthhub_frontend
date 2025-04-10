@@ -26,7 +26,9 @@ class _tab_alldoc_bookdocState extends State<tab_alldoc_bookdoc>with SingleTicke
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white54,
         appBar: AppBar(
+          backgroundColor: Colors.white54,
           centerTitle: true,
           title: Text("Message",style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold,fontSize: 20),),
           bottom: TabBar(

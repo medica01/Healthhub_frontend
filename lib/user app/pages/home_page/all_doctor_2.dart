@@ -267,6 +267,7 @@ class _all_doctorState extends State<all_doctor> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white54,
       appBar: AppBar(
         backgroundColor: Colors.white,
         centerTitle: true,

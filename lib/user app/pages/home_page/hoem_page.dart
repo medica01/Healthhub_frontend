@@ -88,6 +88,7 @@ class _home_pageState extends State<home_page> {
 
   final List<String> images = [
     "https://static.vecteezy.com/system/resources/previews/016/699/936/non_2x/book-doctor-appointment-online-flat-banner-template-making-visit-poster-leaflet-printable-color-designs-editable-flyer-page-with-text-space-vector.jpg",
+    "https://i.postimg.cc/zvxSktP1/freelance-hub-job-portal-logo.jpg"
     // "https://img.freepik.com/free-psd/medical-business-social-media-promo-template_23-2149488299.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_incoming",
     // "https://img.freepik.com/free-psd/medical-business-horizontal-banner-template_23-2149488295.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_incoming"
   ];
@@ -162,7 +163,9 @@ class _home_pageState extends State<home_page> {
   Widget build(BuildContext context) {
     return userprofile != null
         ? Scaffold(
+      backgroundColor: Colors.white54,
             appBar: AppBar(
+              backgroundColor: Colors.white54,
               title: Row(
                 children: [
                   Padding(
@@ -304,13 +307,14 @@ class _home_pageState extends State<home_page> {
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(
                                   imagePath,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
+
                                   width: double.infinity,
                                 ),
                               ))
                           .toList(),
                       options: CarouselOptions(
-                        height: 200.0,
+                        height: 230.0,
                         autoPlay: true,
                         autoPlayInterval: Duration(seconds: 5),
                         autoPlayAnimationDuration: Duration(milliseconds: 800),
@@ -476,40 +480,14 @@ class _home_pageState extends State<home_page> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    "${doctor.doctorName ?? "unknown"}",
-                                                    style: TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 20),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            left: 28.0),
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        setState(() {
-                                                          heart = !heart;
-                                                        });
-                                                      },
-                                                      icon: Icon(
-                                                        heart
-                                                            ? FontAwesomeIcons
-                                                                .solidHeart
-                                                            : FontAwesomeIcons
-                                                                .heart,
-                                                        color: heart
-                                                            ? Colors.red
-                                                            : Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
+                                              Padding(
+                                                padding: const EdgeInsets.only(bottom: 5.0),
+                                                child: Text(
+                                                  "${doctor.doctorName ?? "unknown"}",
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      fontSize: 20),
+                                                ),
                                               ),
                                               Padding(
                                                 padding: EdgeInsets.only(
@@ -532,26 +510,6 @@ class _home_pageState extends State<home_page> {
                                                   ),
                                                 ),
                                               ),
-                                              // Padding(
-                                              //   padding: EdgeInsets.only(bottom: 5.0),
-                                              //   child: Text(
-                                              //     doctor.language ?? "english",
-                                              //     style: TextStyle(
-                                              //       fontSize: 14,
-                                              //     ),
-                                              //   ),
-                                              // ),
-                                              // Padding(
-                                              //   padding: EdgeInsets.only(bottom: 5.0),
-                                              //   child: Text(
-                                              //     doctor.doctorLocation ??
-                                              //         "No specility",
-                                              //     style: TextStyle(
-                                              //       fontSize: 14,
-                                              //     ),
-                                              //   ),
-                                              // ),
-
                                               Padding(
                                                 padding:
                                                     EdgeInsets.only(top: 8.0),

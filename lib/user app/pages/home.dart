@@ -118,6 +118,7 @@ class BottomNavigationBarWidgets extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: Colors.white54,
       height: 70,
       child: Stack(
         children: [
@@ -143,7 +144,7 @@ class BottomNavigationBarWidgets extends StatelessWidget {
               unselectedLabelColor: Colors.black,
               indicatorColor: Colors.transparent,
               tabs: [
-                const Tab(icon: Icon(FontAwesomeIcons.location)),
+                const Tab(icon: Icon(Icons.location_on_sharp)),
                 const Tab(icon: Icon(Icons.message_outlined)),
                 Container(width: 40),
                 GestureDetector(
