@@ -127,6 +127,7 @@ class _booking_doc_messageState extends State<booking_doc_message> {
               ),
             ),
             ListView.builder(
+              physics: BouncingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: show_book_doc_chat.length,
                 itemBuilder: (context, index) {
@@ -140,6 +141,8 @@ class _booking_doc_messageState extends State<booking_doc_message> {
                             duration: const Duration(milliseconds: 500),
                             child: SlideAnimation(
                               horizontalOffset: 500.0,
+                              verticalOffset: 500,
+                              // curve: Curves.elasticIn,
                               child: FadeInAnimation(
                                 child: GestureDetector(
                                   onTap: () {

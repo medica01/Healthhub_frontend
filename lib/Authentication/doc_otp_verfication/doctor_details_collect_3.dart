@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Doctor app/doctor_homepage.dart';
+import '../../Notification_services.dart';
 import '../../allfun.dart';
 import '../../main.dart';
 import 'doctor_details_collect_2.dart';
@@ -154,6 +155,7 @@ class _doc_bioState extends State<doc_bio> {
                     )
                   ],
                 ));
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "thanking doctor for Joining Health hub");
       } else {
         showDialog(
             context: context,

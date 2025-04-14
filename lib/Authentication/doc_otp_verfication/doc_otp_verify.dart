@@ -333,10 +333,9 @@ class _DocOtpPageState extends State<DocOtpPage> {
         await perf.setBool('doc_login', true);
         await perf.setString('doctor_phone_no', check_number);
         await perf.setString('phone_number', check_number);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("user already exist")));
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (context) => docHomePage()));
+        NotificationService().showNotification(id: 0, title: "Health Hub", body: "Welcome Doctor");
       } else if (response.statusCode == 404) {
         await _doc_profile();
       }
@@ -397,7 +396,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
             ElevatedButton(
               onPressed: () async {
                 await _verifyOtp(); // Correct call to the method
-                NotificationService().showNotification(id: 0, title: "Health Hub", body: "Welcome Doctor");
+
               },
               child: const Text('Verify OTP'),
             ),
