@@ -5,6 +5,7 @@ import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
+import '../../add_medicine_page.dart';
 import 'about_specific_product.dart';
 
 class medi_home_page extends StatefulWidget {
@@ -54,7 +55,14 @@ class _medi_home_pageState extends State<medi_home_page> {
       MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+          backgroundColor: Colors.white54,
             appBar: AppBar(
+              backgroundColor: Colors.white54,
+              actions: [IconButton(
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>add_medincine()));
+                },
+                  icon: Icon(Icons.add,color: Colors.blueAccent,))],
               // leading: IconButton(onPressed: (){
               //   Navigator.pop(context);
               // }, icon: Icon(Icons.arrow_back)),

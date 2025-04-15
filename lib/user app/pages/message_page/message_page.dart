@@ -244,6 +244,7 @@ class _message_pageState extends State<message_page> {
                                 duration: const Duration(milliseconds: 500),
                                 child: SlideAnimation(
                                   horizontalOffset: 500.0,
+                                  verticalOffset: 500,
                                   child: FadeInAnimation(
                                     child: GestureDetector(
                                       onTap: () {
