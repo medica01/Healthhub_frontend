@@ -73,8 +73,10 @@ class _medi_home_pageState extends State<medi_home_page> {
               ),
             ),
             body: ListView(
+              physics: BouncingScrollPhysics(),
               children: [
                 ListView.builder(
+                  physics: BouncingScrollPhysics(),
                     shrinkWrap: true,
                     itemCount: medical_details.length,
                     itemBuilder: (context, index) {
@@ -100,9 +102,11 @@ class _medi_home_pageState extends State<medi_home_page> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Container(
+                                              width: 150,
+                                               height: 100,
                                               child: Image(
                                                   image: NetworkImage(
-                                                      scale: 3,
+                                                      // scale: 50,
                                                       "http://$ip:8000${medicine.productImage}")),
                                             ),
                                             Padding(
@@ -112,33 +116,30 @@ class _medi_home_pageState extends State<medi_home_page> {
                                           ],
                                         ),
                                       ),
-                                      Padding(
-                                        padding:  EdgeInsets.only(left: 8.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text("${medicine.productName}"),
-                                            Text("${medicine.cureDisases}"),
-                                            Text("${medicine.quantity} ml bottle"),
-                                            Text("${medicine.price} Rs"),
-                                            Padding(
-                                              padding:  EdgeInsets.only(top: 10.0),
-                                              child: OutlinedButton(
-                                                onPressed: (){
-                                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
-                                                    product_number : "${medicine.productNumber}"
-                                                  )));
-                                                },
-                                                  style: OutlinedButton.styleFrom(
-                                                    backgroundColor: Colors.blueAccent
-                                                  ),
-                                                  child: Text("order",style: TextStyle(color: Colors.white),)),
-                                            )
-                                          ],
-                                        ),
+                                      Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text("${medicine.productName}"),
+                                          Text("${medicine.cureDisases}"),
+                                          Text("${medicine.quantity} ml bottle"),
+                                          Text("${medicine.price} Rs"),
+                                          Padding(
+                                            padding:  EdgeInsets.only(top: 10.0),
+                                            child: OutlinedButton(
+                                              onPressed: (){
+                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
+                                                  product_number : "${medicine.productNumber}"
+                                                )));
+                                              },
+                                                style: OutlinedButton.styleFrom(
+                                                  backgroundColor: Colors.blueAccent
+                                                ),
+                                                child: Text("order",style: TextStyle(color: Colors.white),)),
+                                          )
+                                        ],
                                       ),
                                     ],
                                   ),

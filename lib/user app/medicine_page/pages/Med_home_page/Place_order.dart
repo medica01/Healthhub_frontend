@@ -351,7 +351,7 @@ class _place_orderState extends State<place_order> {
               ),
             ),
             Container(
-              height: 100,
+              height: 50,
             )
           ],
         ),

@@ -186,7 +186,7 @@ class _specific_productState extends State<specific_product> {
               children: [
                 Center(
                   child: Container(
-                    width: 150,
+                    width: 250,
                     height: 300,
                     child: Image(
                         image: NetworkImage(
@@ -533,7 +533,7 @@ class _specific_productState extends State<specific_product> {
                   ),
                 ),
                 Container(
-                  height: 100,
+                  height: 50,
                 )
               ],
             )

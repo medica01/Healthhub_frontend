@@ -131,7 +131,7 @@ Widget form(
     double a,
     int maxlng,
     String hint,
-    TextInputType numstr,
+    List<TextInputFormatter> formatters,
     TextEditingController control,
     ) {
   return Padding(
@@ -147,8 +147,9 @@ Widget form(
           width: a,
           child: TextFormField(
             maxLength: maxlng,
-            keyboardType: numstr,
+            keyboardType: TextInputType.text,
             controller: control,
+            inputFormatters:formatters,
             autofocus: true,
             clipBehavior: Clip.hardEdge,
             cursorColor: Color(0xff1f8acc),
@@ -158,6 +159,7 @@ Widget form(
             ),
             decoration: InputDecoration(
               counterText: "",
+
               focusColor: Colors.black,
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
