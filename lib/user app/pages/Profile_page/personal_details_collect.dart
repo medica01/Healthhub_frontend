@@ -35,7 +35,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     String email = emailcontroller.text;
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
-      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = pref.getString('phone_number') ?? "";
       phone_number = phone_number.replaceFirst('+', '');
     });
     try {

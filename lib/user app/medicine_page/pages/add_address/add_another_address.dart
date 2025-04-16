@@ -2,24 +2,21 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:health_hub/Backend_information/medicine_app_backend/patient_address_backend.dart';
-import 'package:health_hub/main.dart';
-import 'package:health_hub/user%20app/medicine_page/pages/Med_home_page/order_successfully.dart';
+import 'package:http/http.dart%20' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
+
 import '../../../../allfun.dart';
+import '../../../../main.dart';
 import '../Med_home_page/Place_order.dart';
 
-class add_pati_address extends StatefulWidget {
-  add_pati_address({
-    super.key,
-  });
+class another_address extends StatefulWidget {
+  const another_address({super.key});
 
   @override
-  State<add_pati_address> createState() => _add_pati_addressState();
+  State<another_address> createState() => _another_addressState();
 }
 
-class _add_pati_addressState extends State<add_pati_address> {
+class _another_addressState extends State<another_address> {
   TextEditingController full_name = TextEditingController();
   TextEditingController sec_phone_number = TextEditingController();
   TextEditingController flat_name = TextEditingController();
@@ -61,137 +58,78 @@ class _add_pati_addressState extends State<add_pati_address> {
       showDialog(
           context: context,
           builder: (context) => AlertDialog(
-                title: Text(
-                  "Fill the Address",
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                ),
-                content: Text(
-                  "${missingfield.join("\n")}",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                actions: [
+            title: Text(
+              "Fill the Address",
+              style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              "${missingfield.join("\n")}",
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    "Ok",
+                    style: TextStyle(color: Colors.red),
+                  ))
+            ],
+          ));
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text(
+              "Notice!",
+              style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold),
+            ),
+            content: Text(
+              "makes sure the address is correct!",
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                  fontSize: 20),
+            ),
+            actions: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
                   TextButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
                       child: Text(
-                        "Ok",
+                        "Cancel",
                         style: TextStyle(color: Colors.red),
-                      ))
+                      )),
+                  TextButton(
+                      onPressed: () {
+                        _send_pati_address();
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "Ok",
+                        style: TextStyle(color: Colors.green),
+                      )),
                 ],
-              ));
-    } else {
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text(
-                  "Notice!",
-                  style: TextStyle(
-                      color: Colors.green,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold),
-                ),
-                content: Text(
-                  "makes sure the address is correct!",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 20),
-                ),
-                actions: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(color: Colors.red),
-                          )),
-                      TextButton(
-                          onPressed: () {
-                            _send_pati_address();
-                            Navigator.pop(context);
-                          },
-                          child: Text(
-                            "Ok",
-                            style: TextStyle(color: Colors.green),
-                          )),
-                    ],
-                  )
-                ],
+              )
+            ],
           ));
     }
   }
 
-  Future<void> _get_patients_address() async {
-    String phone_number = "";
-    SharedPreferences perf = await SharedPreferences.getInstance();
-    setState(() {
-      phone_number = perf.getString("phone_number") ?? "";
-      phone_number = phone_number.replaceFirst("+", "");
-    });
-    try {
-      final response = await http.get(Uri.parse(
-          "http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/1/"));
-      if (response.statusCode == 200) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text(
-                    "Notice!",
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  content: Text(
-                    "you want to add new address go to add address!",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 20),
-                  ),
-                  actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.red),
-                            )),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              "Ok",
-                              style: TextStyle(color: Colors.green),
-                            )),
-                      ],
-                    )
-                  ],
-                ));
-      } else {
-        valid_address();
-        isChecked = true;
-      }
-    } catch (e) {
-      print("${e.toString()}");
-    }
-  }
+
 
   Future<void> _send_pati_address() async {
     String phone_number = "";
@@ -216,8 +154,7 @@ class _add_pati_addressState extends State<add_pati_address> {
             "state_name": state_name.text
           }));
       if (response.statusCode == 201) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => place_order()));
+        Navigator.pop(context);
         print("${response.body}");
       }
     } catch (e) {
@@ -324,6 +261,30 @@ class _add_pati_addressState extends State<add_pati_address> {
                           [FilteringTextInputFormatter.singleLineFormatter],
                           state_name,
                         ),
+                        // Row(
+                        //   children: [
+                        //     Checkbox(
+                        //       visualDensity: VisualDensity(
+                        //         horizontal: 4.0,
+                        //         vertical: 0.0,
+                        //       ),
+                        //       // Max is 4.0
+                        //       checkColor: Colors.white,
+                        //       focusColor: Colors.blueAccent,
+                        //       activeColor: Colors.blueAccent,
+                        //       value: isChecked,
+                        //       onChanged: (bool? value) {
+                        //         setState(() {
+                        //           isChecked = value!;
+                        //         });
+                        //       },
+                        //     ),
+                        //     Text(
+                        //       "Make this my default address",
+                        //       style: TextStyle(fontWeight: FontWeight.bold),
+                        //     ),
+                        //   ],
+                        // ),
                         Center(
                           child: Container(
                             width: 300,
@@ -334,7 +295,7 @@ class _add_pati_addressState extends State<add_pati_address> {
                                   shadowColor: Colors.grey,
                                   backgroundColor: Colors.blueAccent),
                               onPressed: () {
-                                _get_patients_address();
+                                valid_address();
                               },
                               child: Text(
                                 "Add Address",

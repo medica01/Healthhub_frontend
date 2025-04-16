@@ -79,14 +79,16 @@ class _specific_productState extends State<specific_product> {
 
   Future<void> _get_patients_address() async {
     String phone_number = "";
+    int address_id =0;
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString("phone_number") ?? "";
       phone_number = phone_number.replaceFirst("+", "");
+      address_id=perf.getInt("address_id") ?? 1;
     });
     try {
       final response = await http.get(Uri.parse(
-          "http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/1/"));
+          "http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/$address_id/"));
       if (response.statusCode == 200) {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {

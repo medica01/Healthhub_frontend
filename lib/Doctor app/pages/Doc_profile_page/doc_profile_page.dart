@@ -46,6 +46,7 @@ class _doc_profilesState extends State<doc_profiles> {
       await prefs.remove('doc_login');
       await prefs.remove('doctor_phone_no');
       await prefs.remove('phone_number');
+      await prefs.remove('address_id');
 
       Navigator.pushAndRemoveUntil(
         context,

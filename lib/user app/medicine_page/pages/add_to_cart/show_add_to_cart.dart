@@ -145,71 +145,80 @@ class _show_to_cartState extends State<show_to_cart> {
                                       elevation: 5,
                                       clipBehavior: Clip.hardEdge,
                                       shadowColor: Colors.grey,
-                                      child: Container(
-                                        width: 140,
-                                        height: 160,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(right: 18.0),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                children: [
-                                                  Container(
-                                                    child: Image(
-                                                        image: NetworkImage(
-                                                            scale: 3,
-                                                            "http://$ip:8000${carts.productImage}")),
-                                                  ),
-                                                  Padding(
-                                                    padding:  EdgeInsets.all(10.0),
-                                                    child: Text("delivery time: $formattedseven"),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsets.only(left: 8.0),
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                                children: [
-                                                  Text("${carts.productName}"),
-                                                  Text("${carts.cureDisases}"),
-                                                  Text(
-                                                      "${carts.quantity} ml bottle"),
-                                                  Text("${carts.price} Rs"),
-                                                  Padding(
-                                                    padding:
-                                                    EdgeInsets.only(top: 10.0),
-                                                    child: OutlinedButton(
-                                                      onPressed: () {
-                                                        _delete_your_cart_item(
-                                                            carts.productNumber!);
-                                                      },
-                                                      style:
-                                                      OutlinedButton.styleFrom(
-                                                          side: BorderSide(
-                                                              color: Colors
-                                                                  .blueAccent,
-                                                              width: 1)),
-                                                      child: Text(
-                                                        "delete",
-                                                        style: TextStyle(
-                                                            color:
-                                                            Colors.blueAccent),
-                                                      ),
+                                      child: Padding(
+                                        padding:  EdgeInsets.all(8.0),
+                                        child: Container(
+                                          width: 140,
+                                          // height: 160,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding: EdgeInsets.only(right: 18.0),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                                  children: [
+                                                    Container(
+                                                      width: 150,
+                                                      height: 90,
+                                                      child: Image(
+                                                          image: NetworkImage(
+
+                                                              // scale: 3,
+                                                              "http://$ip:8000${carts.productImage}")),
                                                     ),
-                                                  )
-                                                ],
+                                                    Padding(
+                                                      padding:  EdgeInsets.all(10.0),
+                                                      child: Text("delivery time: $formattedseven"),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                              Flexible(
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                                  crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text("${carts.productName}",overflow: TextOverflow.ellipsis,),
+                                                    Text(
+                                                      "${carts.cureDisases}",
+                                                      // maxLines: 2, // Limit to 2 lines
+                                                      overflow: TextOverflow.ellipsis, // Show "..." for overflow
+                                                    ),
+                                                    Text(
+                                                        "${carts.quantity} ml bottle",overflow: TextOverflow.ellipsis,),
+                                                    Text("${carts.price} Rs",overflow: TextOverflow.ellipsis,),
+                                                    Padding(
+                                                      padding:
+                                                      EdgeInsets.only(top: 10.0),
+                                                      child: OutlinedButton(
+                                                        onPressed: () {
+                                                          _delete_your_cart_item(
+                                                              carts.productNumber!);
+                                                        },
+                                                        style:
+                                                        OutlinedButton.styleFrom(
+                                                            side: BorderSide(
+                                                                color: Colors
+                                                                    .blueAccent,
+                                                                width: 1)),
+                                                        child: Text(
+                                                          "delete",
+                                                          style: TextStyle(
+                                                              color:
+                                                              Colors.blueAccent),
+                                                        ),
+                                                      ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),

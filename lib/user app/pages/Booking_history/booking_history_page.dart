@@ -67,8 +67,10 @@ class _booking_history_pageState extends State<booking_history_page> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
+          backgroundColor: Colors.white54,
             appBar: AppBar(
-              backgroundColor: Colors.white,
+
+              backgroundColor: Colors.white54,
               centerTitle: true,
               title: Text(
                 "Booking History",

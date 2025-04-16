@@ -46,7 +46,9 @@ class _medi_home_pageState extends State<medi_home_page> {
               .toList();
         });
       }
-    } catch (e) {}
+    } catch (e) {
+      print("${e.toString()}");
+    }
   }
 
   @override
@@ -63,9 +65,6 @@ class _medi_home_pageState extends State<medi_home_page> {
                   Navigator.push(context, MaterialPageRoute(builder: (context)=>add_medincine()));
                 },
                   icon: Icon(Icons.add,color: Colors.blueAccent,))],
-              // leading: IconButton(onPressed: (){
-              //   Navigator.pop(context);
-              // }, icon: Icon(Icons.arrow_back)),
               centerTitle: true,
               title: Text(
                 "Health_hub Medical",
@@ -88,60 +87,65 @@ class _medi_home_pageState extends State<medi_home_page> {
                                 elevation: 5,
                                 clipBehavior: Clip.hardEdge,
                                 shadowColor: Colors.grey,
-                                child: Container(
-                                  width: 140,
-                                  height: 160,
-                                  // color: Colors.red,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.only(right: 18.0),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Container(
-                                              width: 150,
-                                               height: 100,
-                                              child: Image(
-                                                  image: NetworkImage(
-                                                      // scale: 50,
-                                                      "http://$ip:8000${medicine.productImage}")),
-                                            ),
-                                            Padding(
-                                              padding:  EdgeInsets.all(8.0),
-                                              child: Text("delivery time: $formattedseven"),
-                                            ),
-                                          ],
+                                child: Padding(
+                                  padding:  EdgeInsets.all(8.0),
+                                  child: Container(
+                                    width: 140,
+                                    // height: 160,
+                                    // color: Colors.red,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 18.0),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                width: 150,
+                                                 height: 100,
+                                                child: Image(
+                                                    image: NetworkImage(
+                                                        // scale: 50,
+                                                        "http://$ip:8000${medicine.productImage}")),
+                                              ),
+                                              Padding(
+                                                padding:  EdgeInsets.all(8.0),
+                                                child: Text("delivery time: $formattedseven"),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text("${medicine.productName}"),
-                                          Text("${medicine.cureDisases}"),
-                                          Text("${medicine.quantity} ml bottle"),
-                                          Text("${medicine.price} Rs"),
-                                          Padding(
-                                            padding:  EdgeInsets.only(top: 10.0),
-                                            child: OutlinedButton(
-                                              onPressed: (){
-                                                Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
-                                                  product_number : "${medicine.productNumber}"
-                                                )));
-                                              },
-                                                style: OutlinedButton.styleFrom(
-                                                  backgroundColor: Colors.blueAccent
-                                                ),
-                                                child: Text("order",style: TextStyle(color: Colors.white),)),
-                                          )
-                                        ],
-                                      ),
-                                    ],
+                                        Flexible(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text("${medicine.productName}",overflow: TextOverflow.ellipsis,),
+                                              Text("${medicine.cureDisases}",overflow: TextOverflow.ellipsis,),
+                                              Text("${medicine.quantity} ml bottle"),
+                                              Text("${medicine.price} Rs"),
+                                              Padding(
+                                                padding:  EdgeInsets.only(top: 10.0),
+                                                child: OutlinedButton(
+                                                  onPressed: (){
+                                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
+                                                      product_number : "${medicine.productNumber}"
+                                                    )));
+                                                  },
+                                                    style: OutlinedButton.styleFrom(
+                                                      backgroundColor: Colors.blueAccent
+                                                    ),
+                                                    child: Text("order",style: TextStyle(color: Colors.white),)),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

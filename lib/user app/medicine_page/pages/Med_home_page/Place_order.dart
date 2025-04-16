@@ -1,14 +1,16 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
-
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
 import '../../../../Notification_services.dart';
 import '../../../../main.dart';
+import '../add_address/add_another_address.dart';
+import '../add_address/change_user_address.dart';
 import 'about_specific_product.dart';
 import 'order_successfully.dart';
 
@@ -30,15 +32,23 @@ class _place_orderState extends State<place_order> {
   int quantity = 0;
   int total_price =0;
   String delivery_date="";
+  DateTime now = DateTime.now();
+  String formattedseven="";
 
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    show_date();
     show_quantity_price();
-    _get_patients_address();
+    get_patients_address();
     _get_product_number();
+  }
+
+  void show_date(){
+    DateTime seven= now.add(Duration(days: 7));
+    formattedseven = DateFormat('EEEE').format(seven);
   }
 
   void show_quantity_price()async{
@@ -76,17 +86,19 @@ class _place_orderState extends State<place_order> {
   }
 
   Future<void> _create_order_details_patient() async{
+    int address_id =0;
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
-
       phone_number = perf.getString("phone_number") ?? "";
       phone_number=phone_number.replaceFirst("+", "");
+      address_id=perf.getInt("address_id") ?? 1;
     });
     try{
       final response = await http.post(Uri.parse("http://$ip:8000/medicine_pur/create_order_placed_details/"),
         headers: {"Content-Type":"application/json"},
         body: jsonEncode({
           "pry_phone_number":"${phone_number}",
+          "address_id":"${address_id}",
           "product_number":"${specific_products!.productNumber}",
           "purchase_quantity":"${quantity}",
           "purchase_total_price":"${total_price}",
@@ -94,6 +106,7 @@ class _place_orderState extends State<place_order> {
           "order_date":"${delivery_date}"
         }));
       if(response.statusCode==201){
+        _vibrate();
         NotificationService().showNotification(id: 0, title: "Health Hub", body: "${specific_products!.productName} Order Placed Successfully \nDelivered on ${delivery_date}");
         showBottomSheet(context: context, builder: (context)=>order_success());
       }
@@ -131,15 +144,17 @@ class _place_orderState extends State<place_order> {
     }
   }
 
-  Future<void> _get_patients_address() async{
+  Future<void> get_patients_address() async{
     // String phone_number ="";
+    int address_id =0;
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString("phone_number") ?? "";
       phone_number=phone_number.replaceFirst("+", "");
+      address_id=perf.getInt("address_id") ?? 1;
     });
     try{
-      final response = await http.get(Uri.parse("http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/1/"));
+      final response = await http.get(Uri.parse("http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/$address_id/"));
       if(response.statusCode==200){
         Map<String,dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
@@ -158,7 +173,9 @@ class _place_orderState extends State<place_order> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white54,
       appBar: AppBar(
+        backgroundColor: Colors.white54,
         centerTitle: true,
         title: Text(
           "Order",
@@ -204,11 +221,19 @@ class _place_orderState extends State<place_order> {
                                         fontSize: 18),
                                   )),
                               TextButton(
-                                  onPressed: () {}, child: Text("change"))
+                                  onPressed: () {
+                                    showModalBottomSheet(context: context,
+                                        isScrollControlled: true,
+                                        builder: (context) {
+                                          return change_address( getpatiadd: get_patients_address);
+                                        });
+                                  }, child: Text("change",style: TextStyle(color: Colors.blueAccent,fontSize: 20),))
                             ],
                           ),
                           TextButton(
-                              onPressed: () {}, child: Text("add address"))
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>another_address()));
+                              }, child: Text("add address",style: TextStyle(color: Colors.blueAccent,fontSize: 20),))
                         ],
                       ),
                     ),
@@ -249,27 +274,30 @@ class _place_orderState extends State<place_order> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
+                                    width:150,
                                     child: Image(
                                         image: NetworkImage(
-                                            scale: 3,
+                                            // scale: 3,
                                             "http://$ip:8000${specific_products!.productImage}")),
                                   ),
                                   Padding(
                                     padding:  EdgeInsets.all(8.0),
-                                    child: Text("delivery time: Wednesday"),
+                                    child: Text("delivery time: $formattedseven"),
                                   ),
                                 ],
                               ),
                             ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("${specific_products!.productName}"),
-                                Text("${specific_products!.aboutProduct}"),
-                                Text("${specific_products!.cureDisases}"),
-                                Text("₹ ${specific_products!.price}")
-                              ],
+                            Flexible(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("${specific_products!.productName}",overflow: TextOverflow.ellipsis,),
+                                  Text("${specific_products!.aboutProduct}",overflow: TextOverflow.ellipsis,),
+                                  Text("${specific_products!.cureDisases}"),
+                                  Text("₹ ${specific_products!.price}")
+                                ],
+                              ),
                             ),
                           ],
                         ),
@@ -333,7 +361,7 @@ class _place_orderState extends State<place_order> {
                                   side: BorderSide(
                                       color: Colors.blueAccent, width: 2)),
                               onPressed: () {
-                                _vibrate();
+
                                 _create_order_details_patient();
                               },
                               child: Text(
@@ -383,4 +411,135 @@ Widget _buildPaymentOption(String method, bool isSelected, VoidCallback onTap) {
     ),
   );
 }
+
+class change_address extends StatefulWidget {
+  final Function getpatiadd;
+  change_address({super.key,required this.getpatiadd});
+
+  @override
+  State<change_address> createState() => _change_addressState();
+}
+
+class _change_addressState extends State<change_address> {
+  List<patient_address> patients_address=[];
+  bool isloading = false;
+  String err ="";
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _get_user_addresss();
+  }
+  Future<void> _get_user_addresss() async{
+    String phone_number ="";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = perf.getString("phone_number") ?? "";
+      phone_number=phone_number.replaceFirst("+", "");
+    });
+
+    try{
+      final response = await http.get(Uri.parse(
+          "http://$ip:8000/medicine_pur/get_specific_user_address/$phone_number/"));
+      if (response.statusCode == 200) {
+        List<dynamic>jsonResponse = jsonDecode(response.body);
+        setState(() {
+          patients_address =
+              jsonResponse.map((data) => patient_address.fromJson(data))
+                  .toList();
+          isloading = true;
+        });
+      }
+      else {
+        err ="err in the program ${response.body}";
+        print("$err");
+      }
+    }catch(e){
+      err=e.toString();
+      print("$err");
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(40))
+        ),
+        height: 500,
+        child: Column(
+          children: [
+            AppBar(
+              leading: Text(""),
+              centerTitle: true,
+              title: Text("Change Address",style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold,fontSize: 20),),
+              actions: [
+                IconButton(onPressed: (){
+                  Navigator.pop(context);
+                }, icon: Icon(Icons.close))
+              ],
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              itemCount: patients_address.length,
+                itemBuilder: (context,index){
+                var user_add = patients_address[index];
+              return AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 500),
+                child: SlideAnimation(
+                    horizontalOffset: 500.0,
+                    child: FadeInAnimation(
+                    child: Padding(
+                      padding: EdgeInsets.all( 15.0),
+                      child: GestureDetector(
+                        onTap: ()async{
+                          SharedPreferences pref = await SharedPreferences.getInstance();
+                          pref.setInt("address_id", user_add.sequenceNumber ?? 1);
+                          widget.getpatiadd();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white54,
+                              borderRadius: BorderRadius.circular(10),
+                              border:
+                              Border.all(color:
+                              Colors.black, width: 1)),
+                          child: ListTile(
+                            title: Text("${user_add.fullName}",style: TextStyle(fontWeight: FontWeight.bold),),
+                            subtitle: Padding(
+                              padding: EdgeInsets.only(top: 10.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+
+                                  Text(
+                                      "${user_add.flatHouseName},${user_add.areaBuildingName},${user_add.townCity}"),
+                                  Text(
+                                      "${user_add.areaBuildingName},${user_add.townCity}"),
+                                  Text("${user_add.pincode}"),
+                                  Text(
+                                      "Phone number: ${user_add.secPhoneNumber}")
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    )
+                    )));
+
+            })
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 

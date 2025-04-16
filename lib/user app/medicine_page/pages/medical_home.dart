@@ -380,7 +380,7 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
                   },
                   child: const Icon(Icons.arrow_back),
                 ),
-                Tab(icon: Icon(Icons.account_circle_outlined)),
+                Tab(icon: Icon(Icons.group_add_rounded)),
                 Container(width: 40),
                 Tab(icon: Icon(Icons.shopping_cart)),
                 Tab(icon: Icon(Icons.local_shipping_outlined)),
