@@ -21,8 +21,9 @@ class _show_fav_docState extends State<show_fav_doc> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white54,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white54,
         centerTitle: true,
         title: Text(
           "Favorite doctor",

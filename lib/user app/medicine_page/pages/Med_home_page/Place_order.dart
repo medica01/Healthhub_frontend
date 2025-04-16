@@ -462,7 +462,8 @@ class _change_addressState extends State<change_address> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return isloading
+      ?SingleChildScrollView(
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
@@ -538,7 +539,7 @@ class _change_addressState extends State<change_address> {
           ],
         ),
       ),
-    );
+    ):Container(height:500,child: Center(child: CircularProgressIndicator(),));
   }
 }
 
