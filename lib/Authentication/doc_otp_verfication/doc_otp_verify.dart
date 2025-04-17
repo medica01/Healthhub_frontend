@@ -333,8 +333,7 @@ class _DocOtpPageState extends State<DocOtpPage> {
         await perf.setBool('doc_login', true);
         await perf.setString('doctor_phone_no', check_number);
         await perf.setString('phone_number', check_number);
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => docHomePage()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>docHomePage()), (route)=>false);
         NotificationService().showNotification(id: 0, title: "Health Hub", body: "Welcome Doctor");
       } else if (response.statusCode == 404) {
         await _doc_profile();

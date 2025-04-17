@@ -57,6 +57,21 @@ class _booking_doc_messageState extends State<booking_doc_message> {
     }
   }
 
+  Future<void> _delete_doc_user_chat(int doc_phone_no) async{
+    String phone_number = "";
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = perf.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try{
+      final response = await http.delete(Uri.parse("http://$ip:8000/booking_doctor/delete_booked_doc_chat/$phone_number/$doc_phone_no/"));
+      if(response.statusCode==204){
+        _show_booking_doc_chat();
+      }
+    }catch(e){}
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -91,6 +106,7 @@ class _booking_doc_messageState extends State<booking_doc_message> {
                 scrollDirection: Axis.horizontal,
                 // ✅ Allow horizontal scrolling
                 child: Row(
+
                   children: show_book_doc_chat.map((show_docc) {
                     return show_docc.id != null
                         ? Padding(
@@ -145,6 +161,28 @@ class _booking_doc_messageState extends State<booking_doc_message> {
                               // curve: Curves.elasticIn,
                               child: FadeInAnimation(
                                 child: GestureDetector(
+                                  onLongPress: (){
+                                    showDialog(context: context, builder: (context)=>AlertDialog(
+                                      title: Text("Notice!",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 25),),
+                                      content: Text("Did you want to delete this Dr.${show_docc.doctorName} from booking chat!",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                      actions: [
+                                        Row(
+                                    mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      TextButton(onPressed: (){
+                                        Navigator.pop(context);
+                                      }, child: Text("Cancel",style: TextStyle(color: Colors.green),)),
+
+                                            TextButton(onPressed: (){
+                                              _delete_doc_user_chat(show_docc.doctorPhoneNo as int);
+                                              Navigator.pop(context);
+                                            }, child: Text("Ok",style: TextStyle(color: Colors.red),)),
+                                          ],
+                                        )
+                                      ],
+                                    ));
+
+                                  },
                                   onTap: () {
                                     Navigator.push(
                                         context,
@@ -219,7 +257,7 @@ class _booking_doc_messageState extends State<booking_doc_message> {
             )
           ],
         ):Center(child: Text("No Booking Doctor Chat",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),))
-        ):Center(child: CircularProgressIndicator(),),
+        ):Center(child: Text("No Booking Doctor Chat",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),)),
     );
   }
 }

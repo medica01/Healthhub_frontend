@@ -1,5 +1,9 @@
 import 'dart:convert';
-
+import 'dart:io' as io;
+import 'package:health_hub/Notification_services.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/profile_page.dart';
@@ -9,6 +13,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../allfun.dart';
 import '../../../main.dart';
+import '../home_page/hoem_page.dart';
 
 class SaveDetails extends StatefulWidget {
   const SaveDetails({super.key});
@@ -27,47 +32,29 @@ class _SaveDetailsState extends State<SaveDetails> {
   final TextEditingController emailcontroller = TextEditingController();
   String phone_number = "";
 
-  Future<void> _updateuser() async {
+  Future<void> updateuser(BuildContext context) async {
     String first_name = firstnamecontroller.text;
     String last_name = lastnamecontroller.text;
     String age = agecontroller.text;
     String gender = genders[selectedGenderIndex];
     String email = emailcontroller.text;
     SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      phone_number = pref.getString('phone_number') ?? "";
-      phone_number = phone_number.replaceFirst('+', '');
-    });
-    try {
-      final response = await http.put(
-          Uri.parse('http://$ip:8000/user_profile/user_edit/$phone_number/'),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({
-            'first_name': first_name,
-            'last_name': last_name,
-            'gender': gender,
-            'age': age,
-            'email': email
-          }));
-
-      if (response.statusCode == 200 || response.statusCode == 204) {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>HomePage()));
-      } else {
-        print('update user details failed:${response.body}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content: Text("Update user details failed: ${response.body}")),
-        );
-      }
-    } catch (e) {
-      print('Error occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("An error occurred: $e")),
-      );
-    }
+    pref.setString("first_name", first_name);
+    pref.setString("last_name", last_name);
+    pref.setString("age", age);
+    pref.setString("gender", gender);
+    pref.setString("email", email);
+    print("user data save successfully");
+    Navigator.pop(context);
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        builder: (context) {
+          return user_photo();
+        });
   }
 
-  void _validateandsave() {
+  void _validateandsave(BuildContext context) {
     List<String> missingfields = [];
     if (firstnamecontroller.text.isEmpty) {
       missingfields.add("enter first name");
@@ -109,7 +96,7 @@ class _SaveDetailsState extends State<SaveDetails> {
           ));
     } else {
       if (missingfields.isEmpty) {
-        _updateuser();
+        updateuser(context);
       }
     }
   }
@@ -142,7 +129,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Container(
-        height: 720, // Adjusted height to fit the new gender feature
+        height: 650, // Adjusted height to fit the new gender feature
         width: scr.width,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -261,14 +248,6 @@ class _SaveDetailsState extends State<SaveDetails> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                           ],
-                          // validator: (value) {
-                          //
-                          //   int? age = int.tryParse(value!);
-                          //   if (age == null || age > 100) {
-                          //     return "Enter age (1-100)";
-                          //   }
-                          //   return null;
-                          // },
                           decoration: InputDecoration(
                             counterText: "",
                             hintText: "Enter the age",
@@ -393,7 +372,7 @@ class _SaveDetailsState extends State<SaveDetails> {
                           )),
                       GestureDetector(
                         onTap: () {
-                          _validateandsave();
+                          _validateandsave(context);
                         },
                         child: Container(
                             decoration: BoxDecoration(
@@ -419,6 +398,253 @@ class _SaveDetailsState extends State<SaveDetails> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class user_photo extends StatefulWidget {
+  const user_photo({super.key});
+
+  @override
+  State<user_photo> createState() => _user_photoState();
+}
+
+class _user_photoState extends State<user_photo> {
+  Uint8List? webImage;
+  io.File? img;
+  String first_name="";
+  String last_name="";
+  String age="";
+  String gender="";
+  String email="";
+  final _picker = ImagePicker();
+
+  @override
+  void initState() {
+    super.initState();
+    // Lock orientation to portrait mode for this page
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    view_user_details();
+  }
+  @override
+  void dispose() {
+    // Reset orientation to allow rotation when leaving this page
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight,
+    ]);
+    super.dispose();
+  }
+
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      if (kIsWeb) {
+        // For Web
+        final bytes = await pickedFile.readAsBytes();
+        setState(() {
+          webImage = bytes;
+        });
+        // _saveimg(webImage as String);
+        // await _updateuserphoto();
+      } else {
+        // For Mobile
+        setState(() {
+          img = io.File(pickedFile.path);
+        });
+        // _saveimg(img as String);
+        // await _updateuserphoto();
+      }
+    } else {
+      print('No image selected.');
+    }
+  }
+  Future<void> view_user_details()async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      first_name= pref.getString("first_name")??"";
+      last_name=pref.getString("last_name")??"";
+      age=pref.getString("age")??"";
+      gender=pref.getString("gender")??"";
+      email=pref.getString("email")??"";
+      print("$email");
+    });
+  }
+
+  Future<void> _updateuserphoto(BuildContext context) async {
+    String phone_number ="";
+
+    // String? web_img = webImage as String?;
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      phone_number = pref.getString('phone_number') ?? "917845711277";
+      phone_number = phone_number.replaceFirst('+', '');
+    });
+    try{
+    final String uploadUrl =
+        'http://$ip:8000/user_profile/user_edit/$phone_number/';
+    if (kIsWeb && webImage != null) {
+      // Web upload
+      var request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+      request.files.add(http.MultipartFile.fromBytes(
+        'user_photo',
+        webImage!,
+        filename: 'upload.png', // Adjust the filename as needed
+      ));
+
+      request.fields['first_name']=first_name;
+      request.fields['last_name']=last_name;
+      request.fields['gender']=gender;
+      request.fields['age']=age;
+      request.fields['email']=email;
+
+      var response = await request.send();
+
+      if (response.statusCode == 200) {
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
+        print('Image uploaded successfully.');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}.');
+      }
+    } else if (!kIsWeb && img != null) {
+      // Mobile upload
+      var request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
+      request.files.add(await http.MultipartFile.fromPath(
+        'user_photo',
+        img!.path,
+        filename: basename(img!.path),
+      ));
+      request.fields['first_name']=first_name;
+      request.fields['last_name']=last_name;
+      request.fields['gender']=gender;
+      request.fields['age']=age;
+      request.fields['email']=email;
+
+      var response = await request.send();
+      print("${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        if (mounted) {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => main_home()),
+                (route) => false,
+          );
+          print('Image uploaded successfully.');
+        }
+        NotificationService().showNotification(id: 0, title: "Health hub", body: "Hi $first_name $last_name all the feature unlocked \nThanking you for Create Account in Health Hub \nAll Is Well");
+        print('Image uploaded successfully.');
+      } else {
+        print('Image upload failed with status: ${response.statusCode}.');
+      }
+    } else {
+      print('No image to upload.');
+    }
+
+    }catch(e){
+      print("${e.toString()}");
+    }
+  }
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      physics: BouncingScrollPhysics(),
+      child: Container(
+        height: 400,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding:  EdgeInsets.only(right: 8.0),
+              child: Text("hello! $first_name $last_name",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+            ),
+            Center(
+              child: Stack(
+                children: [
+                  Container(
+                    // width: scc.width * 1,
+                    // color: Colors.red,
+                    child: Padding(
+                        padding: EdgeInsets.only(
+                            left: 20.0, right: 20, top: 10, bottom: 20),
+                        child: Container(
+                          width: 130,
+                          height: 130,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.black, width: 1),
+                            // boxShadow: [
+                            //   BoxShadow(
+                            //       color: Colors.grey,
+                            //       offset: Offset(0, 2),
+                            //       blurRadius: 12)
+                            // ],
+                            shape: BoxShape.circle,
+                            image: DecorationImage(
+                              image: img != null
+                                  ? FileImage(img!) // For Mobile (File)
+                                  : webImage != null
+                                  ? MemoryImage(webImage!) // For Web (Uint8List)
+                                  : NetworkImage('https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png') as ImageProvider, // Placeholder
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        )),
+                  ),
+                  Positioned(
+                    right: 13,
+                    bottom: 20,
+                    child: Container(
+                      height: 40,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          color: Color(0xff1f8acc), shape: BoxShape.circle),
+                      child: IconButton(
+                          onPressed: () {
+                            _pickImage();
+                          },
+                          icon: Icon(
+                            Icons.camera_alt,
+                            color: Colors.white,
+                          )),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: 200,
+              child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                  ),
+                  onPressed: (){
+                    if(webImage !=null  || img !=null) {
+                      _updateuserphoto(context);
+                    }else{
+                      showDialog(context: context, builder: (context)=>AlertDialog(
+                        title: Text("Error",style: TextStyle(color: Colors.red,fontWeight: FontWeight.bold,fontSize: 25),),
+                        content: Text("Must must set the photo",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        actions: [
+                          TextButton(onPressed: (){
+                            Navigator.pop(context);
+                            _pickImage();
+                          }, child: Text("Ok"))
+                        ],
+                      ));
+                    }
+                  },
+                  child: const Center(
+                    child:  Text("Create the Account",style: TextStyle(
+                        color: Color(0xff1f8acc)
+                    ),),
+                  )),
+            )
+          ],
         ),
       ),
     );

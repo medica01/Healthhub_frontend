@@ -16,7 +16,7 @@ import 'order_successfully.dart';
 
 class place_order extends StatefulWidget {
 
-   place_order({super.key,});
+  place_order({super.key,});
 
   @override
   State<place_order> createState() => _place_orderState();
@@ -25,15 +25,15 @@ class place_order extends StatefulWidget {
 class _place_orderState extends State<place_order> {
   bool isChecked = false;
   medicine_purchase? specific_products;
-  String phone_number ="";
+  String phone_number = "";
   patient_address? patients_address;
-  int a=0;
+  int a = 0;
   String selectedPaymentMethod = "Cash on delivery";
   int quantity = 0;
-  int total_price =0;
-  String delivery_date="";
+  int total_price = 0;
+  String delivery_date = "";
   DateTime now = DateTime.now();
-  String formattedseven="";
+  String formattedseven = "";
 
 
   @override
@@ -46,17 +46,17 @@ class _place_orderState extends State<place_order> {
     _get_product_number();
   }
 
-  void show_date(){
-    DateTime seven= now.add(Duration(days: 7));
+  void show_date() {
+    DateTime seven = now.add(Duration(days: 7));
     formattedseven = DateFormat('EEEE').format(seven);
   }
 
-  void show_quantity_price()async{
+  void show_quantity_price() async {
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
-      quantity=perf.getInt("quantity")??0;
-      total_price=perf.getInt("total_price")??0;
-      delivery_date=perf.getString("delivery_date")??"";
+      quantity = perf.getInt("quantity") ?? 0;
+      total_price = perf.getInt("total_price") ?? 0;
+      delivery_date = perf.getString("delivery_date") ?? "";
     });
   }
 
@@ -85,91 +85,100 @@ class _place_orderState extends State<place_order> {
     // Your GPay function here
   }
 
-  Future<void> _create_order_details_patient() async{
-    int address_id =0;
+  Future<void> _create_order_details_patient() async {
+    int address_id = 0;
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString("phone_number") ?? "";
-      phone_number=phone_number.replaceFirst("+", "");
-      address_id=perf.getInt("address_id") ?? 1;
+      phone_number = phone_number.replaceFirst("+", "");
+      address_id = perf.getInt("address_id") ?? 1;
     });
-    try{
-      final response = await http.post(Uri.parse("http://$ip:8000/medicine_pur/create_order_placed_details/"),
-        headers: {"Content-Type":"application/json"},
-        body: jsonEncode({
-          "pry_phone_number":"${phone_number}",
-          "address_id":"${address_id}",
-          "product_number":"${specific_products!.productNumber}",
-          "purchase_quantity":"${quantity}",
-          "purchase_total_price":"${total_price}",
-          "purchase_pay_type":"${selectedPaymentMethod}",
-          "order_date":"${delivery_date}"
-        }));
-      if(response.statusCode==201){
+    try {
+      final response = await http.post(Uri.parse(
+          "http://$ip:8000/medicine_pur/create_order_placed_details/"),
+          headers: {"Content-Type": "application/json"},
+          body: jsonEncode({
+            "pry_phone_number": "${phone_number}",
+            "address_id": "${address_id}",
+            "product_number": "${specific_products!.productNumber}",
+            "purchase_quantity": "${quantity}",
+            "purchase_total_price": "${total_price}",
+            "purchase_pay_type": "${selectedPaymentMethod}",
+            "order_date": "${delivery_date}"
+          }));
+      if (response.statusCode == 201) {
         _vibrate();
-        NotificationService().showNotification(id: 0, title: "Health Hub", body: "${specific_products!.productName} Order Placed Successfully \nDelivered on ${delivery_date}");
-        showBottomSheet(context: context, builder: (context)=>order_success());
+        NotificationService().showNotification(id: 0,
+            title: "Health Hub",
+            body: "${specific_products!
+                .productName} Order Placed Successfully \nDelivered on ${delivery_date}");
+        showBottomSheet(
+            context: context, builder: (context) => order_success());
       }
-    }catch(e){
-      print("${e.toString()}");
-    }
-  }
-  Future<void> _get_product_number() async{
-    int product_number = 0;
-    SharedPreferences perf = await SharedPreferences.getInstance();
-    setState(() {
-      product_number = (perf.getInt("product_number")??"") as int;
-      print("${product_number}");
-    });
-    try{
-      final response = await http.get(Uri.parse("http://$ip:8000/medicine_pur/get_specific_product/$product_number/"));
-      if(response.statusCode == 200){
-        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-        setState(()  {
-          specific_products = medicine_purchase.fromJson(jsonResponse);
-          isChecked = true;
-        });
-      }else{
-        print("error in the program");
-        isChecked=true;
-      }
-    }catch(e){
+    } catch (e) {
       print("${e.toString()}");
     }
   }
 
-  Future<void> _vibrate() async{
+  Future<void> _get_product_number() async {
+    int product_number = 0;
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      product_number = (perf.getInt("product_number") ?? "") as int;
+      print("${product_number}");
+    });
+    try {
+      final response = await http.get(Uri.parse(
+          "http://$ip:8000/medicine_pur/get_specific_product/$product_number/"));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          specific_products = medicine_purchase.fromJson(jsonResponse);
+          isChecked = true;
+        });
+      } else {
+        print("error in the program");
+        isChecked = true;
+      }
+    } catch (e) {
+      print("${e.toString()}");
+    }
+  }
+
+  Future<void> _vibrate() async {
     if (await Vibration.hasVibrator() ?? false) {
       Vibration.vibrate(duration: 500);
     }
   }
 
-  Future<void> get_patients_address() async{
+  Future<void> get_patients_address() async {
     // String phone_number ="";
-    int address_id =0;
+    int address_id = 0;
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString("phone_number") ?? "";
-      phone_number=phone_number.replaceFirst("+", "");
-      address_id=perf.getInt("address_id") ?? 1;
+      phone_number = phone_number.replaceFirst("+", "");
+      address_id = perf.getInt("address_id") ?? 1;
     });
-    try{
-      final response = await http.get(Uri.parse("http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/$address_id/"));
-      if(response.statusCode==200){
-        Map<String,dynamic> jsonResponse = jsonDecode(response.body);
+    try {
+      final response = await http.get(Uri.parse(
+          "http://$ip:8000/medicine_pur/get_specific_user_specific_address/$phone_number/$address_id/"));
+      if (response.statusCode == 200) {
+        Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
           patients_address = patient_address.fromJson(jsonResponse);
           isChecked = true;
         });
       }
-      else{
+      else {
         print("error in the program");
-        isChecked=true;
+        isChecked = true;
       }
-    }catch(e){
+    } catch (e) {
       print("${e.toString()}");
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,8 +192,8 @@ class _place_orderState extends State<place_order> {
         ),
       ),
       body: isChecked
-      ?Padding(
-        padding:  EdgeInsets.all(15.0),
+          ? Padding(
+        padding: EdgeInsets.all(15.0),
         child: ListView(
           children: [
             Padding(
@@ -214,7 +223,13 @@ class _place_orderState extends State<place_order> {
                             children: [
                               Flexible(
                                   child: Text(
-                                    "${patients_address!.flatHouseName},\n${patients_address!.areaBuildingName},\n${patients_address!.townCity} ${patients_address!.pincode},\n${patients_address!.stateName},\n${patients_address!.secPhoneNumber}",
+                                    "${patients_address!
+                                        .flatHouseName},\n${patients_address!
+                                        .areaBuildingName},\n${patients_address!
+                                        .townCity} ${patients_address!
+                                        .pincode},\n${patients_address!
+                                        .stateName},\n${patients_address!
+                                        .secPhoneNumber}",
                                     style: TextStyle(
                                         color: Colors.black,
                                         fontWeight: FontWeight.bold,
@@ -225,15 +240,20 @@ class _place_orderState extends State<place_order> {
                                     showModalBottomSheet(context: context,
                                         isScrollControlled: true,
                                         builder: (context) {
-                                          return change_address( getpatiadd: get_patients_address);
+                                          return change_address(
+                                              getpatiadd: get_patients_address);
                                         });
-                                  }, child: Text("change",style: TextStyle(color: Colors.blueAccent,fontSize: 20),))
+                                  },
+                                  child: Text("change", style: TextStyle(
+                                      color: Colors.blueAccent, fontSize: 20),))
                             ],
                           ),
                           TextButton(
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>another_address()));
-                              }, child: Text("add address",style: TextStyle(color: Colors.blueAccent,fontSize: 20),))
+                                Navigator.push(context, MaterialPageRoute(
+                                    builder: (context) => another_address()));
+                              }, child: Text("add address", style: TextStyle(
+                              color: Colors.blueAccent, fontSize: 20),))
                         ],
                       ),
                     ),
@@ -250,12 +270,20 @@ class _place_orderState extends State<place_order> {
                                 color: Colors.grey,
                                 fontWeight: FontWeight.bold),
                           ),
-                          _buildPaymentOption("Cash on delivery", selectedPaymentMethod == "Cash on delivery", _onCashOnDelivery),
-                          _buildPaymentOption("VISA ....6766", selectedPaymentMethod == "VISA ....6766", _onVisaPayment),
-                          _buildPaymentOption("G Pay", selectedPaymentMethod == "G Pay", _onGPay),
+                          _buildPaymentOption(
+                              "Cash on delivery", selectedPaymentMethod ==
+                              "Cash on delivery", _onCashOnDelivery),
+                          _buildPaymentOption(
+                              "VISA ....6766", selectedPaymentMethod ==
+                              "VISA ....6766", _onVisaPayment),
+                          _buildPaymentOption("G Pay", selectedPaymentMethod ==
+                              "G Pay", _onGPay),
 
                           SizedBox(height: 20),
-                          Text("Arriving $delivery_date", style: TextStyle(fontSize: 18, color: Colors.black,fontWeight: FontWeight.bold)),
+                          Text("Arriving $delivery_date", style: TextStyle(
+                              fontSize: 18,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -274,15 +302,17 @@ class _place_orderState extends State<place_order> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
-                                    width:150,
+                                    width: 150,
                                     child: Image(
                                         image: NetworkImage(
-                                            // scale: 3,
-                                            "http://$ip:8000${specific_products!.productImage}")),
+                                          // scale: 3,
+                                            "http://$ip:8000${specific_products!
+                                                .productImage}")),
                                   ),
                                   Padding(
-                                    padding:  EdgeInsets.all(8.0),
-                                    child: Text("delivery time: $formattedseven"),
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                        "delivery time: $formattedseven"),
                                   ),
                                 ],
                               ),
@@ -292,8 +322,10 @@ class _place_orderState extends State<place_order> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text("${specific_products!.productName}",overflow: TextOverflow.ellipsis,),
-                                  Text("${specific_products!.aboutProduct}",overflow: TextOverflow.ellipsis,),
+                                  Text("${specific_products!.productName}",
+                                    overflow: TextOverflow.ellipsis,),
+                                  Text("${specific_products!.aboutProduct}",
+                                    overflow: TextOverflow.ellipsis,),
                                   Text("${specific_products!.cureDisases}"),
                                   Text("₹ ${specific_products!.price}")
                                 ],
@@ -304,7 +336,7 @@ class _place_orderState extends State<place_order> {
                       ),
                     ),
                     Padding(
-                      padding:  EdgeInsets.only(top: 15.0),
+                      padding: EdgeInsets.only(top: 15.0),
                       child: Container(
                         child: Column(
                           children: [
@@ -314,19 +346,19 @@ class _place_orderState extends State<place_order> {
                                 Text("Quantity"),
                                 Text("${quantity}")
                               ],
-                            ),Row(
+                            ), Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Total price"),
                                 Text("₹ ${total_price}")
                               ],
-                            ),Row(
+                            ), Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Devlivery Cost"),
                                 Text("- ₹ 0.00")
                               ],
-                            ),Row(
+                            ), Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Discount"),
@@ -361,7 +393,6 @@ class _place_orderState extends State<place_order> {
                                   side: BorderSide(
                                       color: Colors.blueAccent, width: 2)),
                               onPressed: () {
-
                                 _create_order_details_patient();
                               },
                               child: Text(
@@ -383,7 +414,7 @@ class _place_orderState extends State<place_order> {
             )
           ],
         ),
-      ):Center(child: CircularProgressIndicator(),),
+      ) : Center(child: CircularProgressIndicator(),),
     );
   }
 }
@@ -397,7 +428,7 @@ Widget _buildPaymentOption(String method, bool isSelected, VoidCallback onTap) {
       decoration: BoxDecoration(
         // color: isSelected ? Colors.blue.shade100 : Colors.,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.black,width: 1)
+          border: Border.all(color: Colors.black, width: 1)
       ),
       child: Row(
         children: [
@@ -414,31 +445,34 @@ Widget _buildPaymentOption(String method, bool isSelected, VoidCallback onTap) {
 
 class change_address extends StatefulWidget {
   final Function getpatiadd;
-  change_address({super.key,required this.getpatiadd});
+
+  change_address({super.key, required this.getpatiadd});
 
   @override
   State<change_address> createState() => _change_addressState();
 }
 
 class _change_addressState extends State<change_address> {
-  List<patient_address> patients_address=[];
+  List<patient_address> patients_address = [];
   bool isloading = false;
-  String err ="";
+  String err = "";
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _get_user_addresss();
   }
-  Future<void> _get_user_addresss() async{
-    String phone_number ="";
+
+  Future<void> _get_user_addresss() async {
+    String phone_number = "";
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
       phone_number = perf.getString("phone_number") ?? "";
-      phone_number=phone_number.replaceFirst("+", "");
+      phone_number = phone_number.replaceFirst("+", "");
     });
 
-    try{
+    try {
       final response = await http.get(Uri.parse(
           "http://$ip:8000/medicine_pur/get_specific_user_address/$phone_number/"));
       if (response.statusCode == 200) {
@@ -451,11 +485,11 @@ class _change_addressState extends State<change_address> {
         });
       }
       else {
-        err ="err in the program ${response.body}";
+        err = "err in the program ${response.body}";
         print("$err");
       }
-    }catch(e){
-      err=e.toString();
+    } catch (e) {
+      err = e.toString();
       print("$err");
     }
   }
@@ -463,11 +497,11 @@ class _change_addressState extends State<change_address> {
   @override
   Widget build(BuildContext context) {
     return isloading
-      ?SingleChildScrollView(
+        ? SingleChildScrollView(
       child: Container(
         clipBehavior: Clip.hardEdge,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(40))
+            borderRadius: BorderRadius.vertical(top: Radius.circular(40))
         ),
         height: 500,
         child: Column(
@@ -475,71 +509,89 @@ class _change_addressState extends State<change_address> {
             AppBar(
               leading: Text(""),
               centerTitle: true,
-              title: Text("Change Address",style: TextStyle(color: Colors.blueAccent,fontWeight: FontWeight.bold,fontSize: 20),),
+              title: Text("Change Address", style: TextStyle(
+                  color: Colors.blueAccent,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20),),
               actions: [
-                IconButton(onPressed: (){
+                IconButton(onPressed: () {
                   Navigator.pop(context);
                 }, icon: Icon(Icons.close))
               ],
             ),
             ListView.builder(
-              shrinkWrap: true,
-              physics: BouncingScrollPhysics(),
-              itemCount: patients_address.length,
-                itemBuilder: (context,index){
-                var user_add = patients_address[index];
-              return AnimationConfiguration.staggeredList(
-                position: index,
-                duration: const Duration(milliseconds: 500),
-                child: SlideAnimation(
-                    horizontalOffset: 500.0,
-                    child: FadeInAnimation(
-                    child: Padding(
-                      padding: EdgeInsets.all( 15.0),
-                      child: GestureDetector(
-                        onTap: ()async{
-                          SharedPreferences pref = await SharedPreferences.getInstance();
-                          pref.setInt("address_id", user_add.sequenceNumber ?? 1);
-                          widget.getpatiadd();
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white54,
-                              borderRadius: BorderRadius.circular(10),
-                              border:
-                              Border.all(color:
-                              Colors.black, width: 1)),
-                          child: ListTile(
-                            title: Text("${user_add.fullName}",style: TextStyle(fontWeight: FontWeight.bold),),
-                            subtitle: Padding(
-                              padding: EdgeInsets.only(top: 10.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                itemCount: patients_address.length,
+                itemBuilder: (context, index) {
+                  var user_add = patients_address[index];
+                  return AnimationConfiguration.staggeredList(
+                      position: index,
+                      duration: const Duration(milliseconds: 500),
+                      child: SlideAnimation(
+                          horizontalOffset: 500.0,
+                          child: FadeInAnimation(
+                              child: Padding(
+                                padding: EdgeInsets.all(15.0),
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    SharedPreferences pref = await SharedPreferences
+                                        .getInstance();
+                                    pref.setInt("address_id",
+                                        user_add.sequenceNumber ?? 1);
+                                    widget.getpatiadd();
+                                    Navigator.pop(context);
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.white54,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border:
+                                        Border.all(color:
+                                        Colors.black, width: 1)),
+                                    child: ListTile(
+                                      title: Text("${user_add.fullName}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold),),
+                                      subtitle: Padding(
+                                        padding: EdgeInsets.only(top: 10.0),
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment
+                                              .start,
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start,
+                                          children: [
 
-                                  Text(
-                                      "${user_add.flatHouseName},${user_add.areaBuildingName},${user_add.townCity}"),
-                                  Text(
-                                      "${user_add.areaBuildingName},${user_add.townCity}"),
-                                  Text("${user_add.pincode}"),
-                                  Text(
-                                      "Phone number: ${user_add.secPhoneNumber}")
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    )
-                    )));
-
-            })
+                                            Text(
+                                                "${user_add
+                                                    .flatHouseName},${user_add
+                                                    .areaBuildingName},${user_add
+                                                    .townCity}"),
+                                            Text(
+                                                "${user_add
+                                                    .areaBuildingName},${user_add
+                                                    .townCity}"),
+                                            Text("${user_add.pincode}"),
+                                            Text(
+                                                "Phone number: ${user_add
+                                                    .secPhoneNumber}")
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                          )
+                      )
+                  );
+                }
+            )
           ],
         ),
       ),
-    ):Container(height:500,child: Center(child: CircularProgressIndicator(),));
+    ) : Container(
+        height: 500, child: Center(child: CircularProgressIndicator(),));
   }
 }
 

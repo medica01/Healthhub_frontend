@@ -75,114 +75,38 @@ class _doc_bioState extends State<doc_bio> {
   }
 
   Future<void> _sensation_doc_details() async {
-    String doc_first_name = "";
-    String doc_last_name = "";
-    String doc_age = "";
-    String doc_email = "";
-    String doc_language = "";
-    String doc_location = "";
-    String doc_gender = "";
     SharedPreferences perf = await SharedPreferences.getInstance();
-    await perf.setBool('doc_login', true);
-    setState(() {
-      doc_phone_no = perf.getString("doctor_phone_no") ?? "";
-      doc_phone_no = doc_phone_no.replaceFirst("+", "");
-      doc_first_name = perf.getString("doc_first_name") ?? "";
-      doc_last_name = perf.getString("doc_last_name") ?? "";
-      doc_age = perf.getString("doc_age") ?? "";
-      doc_email = perf.getString("doc_email") ?? "";
-      doc_language = perf.getString("doc_language") ?? "";
-      doc_location = perf.getString("doc_location") ?? "";
-      doc_gender = perf.getString("doc_gender") ?? "";
-    });
-    try {
-      final response = await http.post(
-          Uri.parse("http://$ip:8000/doctor_details/doctor_addetails/"),
-          headers: {"Content-Type": "application/json"},
-          body: jsonEncode({
-            "doctor_name": "${doc_first_name}${doc_last_name}",
-            "doctor_phone_no": doc_phone_no,
-            "doctor_email": doc_email,
-            "age": doc_age,
-            "gender": doc_gender,
-            "language": doc_language,
-            "doctor_location": doc_location,
-            "specialty": specialty.text,
-            "service": service.text,
-            "qualification": qualification.text,
-            "bio": bio.text,
-            "reg_no": reg_on.text
-          }));
-      if (response.statusCode == 201) {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text(
-                    "Notice",
-                    style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  content: Text(
-                    "Please check all the details or correct ?",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  actions: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text(
-                              "Cancel",
-                              style: TextStyle(color: Colors.red),
-                            )),
-                        TextButton(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => doc_bio_photo()));
-                            },
-                            child: Text(
-                              "Ok",
-                              style: TextStyle(color: Colors.green),
-                            )),
-                      ],
-                    )
-                  ],
-                ));
-        NotificationService().showNotification(id: 0, title: "Health Hub", body: "thanking doctor for Joining Health hub");
-      } else {
-        showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-                  title: Text(
-                    "Update error",
-                    style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  content: Text(
-                    "Could not reach the server",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  actions: [
-                    TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text("ok"))
-                  ],
-                ));
-      }
-    } catch (e) {
-      print("$e");
-    }
+    perf.setString("speciality", specialty.text);
+    perf.setString("service", service.text);
+    perf.setString("qualification", qualification.text);
+    perf.setString("bio", bio.text);
+    perf.setString("reg_on", reg_on.text);
+    showDialog(context: context, builder: (context)=>AlertDialog(
+      title: Text("Notice!",style: TextStyle(color: Colors.green,fontWeight: FontWeight.bold,fontSize: 25),),
+      content: Text("Check your details correctly , can't change after create a account",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TextButton(onPressed: (){
+              Navigator.pop(context);
+            }, child: Text("Cancel",style: TextStyle(color: Colors.red),)),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close the dialog
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => doc_bio_photo()),
+                );
+              },
+
+              child: Text("Ok", style: TextStyle(color: Colors.green)),
+            ),
+
+          ],
+        )
+      ],
+    ));
   }
 
   @override
@@ -213,7 +137,7 @@ class _doc_bioState extends State<doc_bio> {
               doc_form_field("enter service", service, TextInputType.number),
               doc_form_field(
                   "enter qualification", qualification, TextInputType.text),
-              doc_form_field("reg_no", reg_on, TextInputType.text),
+              doc_form_field("reg_no", reg_on, TextInputType.number),
               Padding(
                 padding:
                     EdgeInsets.only(top: 8.0, bottom: 8, left: 13, right: 13),

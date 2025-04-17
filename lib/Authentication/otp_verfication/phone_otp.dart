@@ -442,8 +442,7 @@ class _OtpPageState extends State<OtpPage> {
         await perf.setString('phone_number', check_number);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("user already exist")));
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
         NotificationService().showNotification(id: 0, title: "Health Hub", body: "Welcome to the health hub");
       } else if (response.statusCode == 404){
         await _user_profile();
@@ -473,15 +472,16 @@ class _OtpPageState extends State<OtpPage> {
         await perf.setString('phone_number', save_phone_number);
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("phone number add successfully")));
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => HomePage()));
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>HomePage()), (route)=>false);
         NotificationService().showNotification(id: 0, title: "Health Hub", body: "Thanking for Install health hub");
       } else {
         print('add phone number failed:${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text("add phone number failed: ${response.body}")));
       }
-    } catch (e) {}
+    } catch (e) {
+      print("${e.toString()}");
+    }
   }
 
   Future<void> _verifyOtp() async {
@@ -495,7 +495,6 @@ class _OtpPageState extends State<OtpPage> {
 
       await _auth.signInWithCredential(credential);
        await _chech_phone_number();
-      // Navigator.push(context, MaterialPageRoute(builder: (context)=>home_page()));
 
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -150,193 +150,191 @@ class _doc_det_collectState extends State<doc_det_collect> {
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
     return SingleChildScrollView(
-      child: Flexible(
-        child: Container(
-          height: screen.height * 0.89,
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.all(40.0),
-              child: Container(
-                clipBehavior: Clip.hardEdge,
-                width: 300,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(40),
-                  border: Border.all(color: Colors.black, width: 2),
-                  // color: Colors.red,
-                ),
-                child: Form(
-                  child: ListView(
-                    // crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          child: Center(
-                            child: Text(
-                              "fill the details",
-                              style: TextStyle(
-                                  color: Color(0xff1f8acc),
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 25),
-                            ),
+      child: Container(
+        height: screen.height * 0.89,
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.all(40.0),
+            child: Container(
+              clipBehavior: Clip.hardEdge,
+              width: 300,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(40),
+                border: Border.all(color: Colors.black, width: 2),
+                // color: Colors.red,
+              ),
+              child: Form(
+                child: ListView(
+                  // crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        child: Center(
+                          child: Text(
+                            "fill the details",
+                            style: TextStyle(
+                                color: Color(0xff1f8acc),
+                                fontWeight: FontWeight.bold,
+                                fontSize: 25),
                           ),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          doc_form_field("First name", first_name,TextInputType.text),
-                          doc_form_field("Last name", last_name,TextInputType.text),
-                          doc_form_field("Email", email,TextInputType.emailAddress),
-                          doc_form_field("Age", age,TextInputType.number),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 15, bottom: 10),
-                            child: Text(
-                              "Gender:",
-                              style: TextStyle(
-                                  color: Color(0xff1f8acc), fontSize: 20,fontWeight: FontWeight.bold),
-                            ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        doc_form_field("First name", first_name,TextInputType.text),
+                        doc_form_field("Last name", last_name,TextInputType.text),
+                        doc_form_field("Email", email,TextInputType.emailAddress),
+                        doc_form_field("Age", age,TextInputType.number),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 15, bottom: 10),
+                          child: Text(
+                            "Gender:",
+                            style: TextStyle(
+                                color: Color(0xff1f8acc), fontSize: 20,fontWeight: FontWeight.bold),
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                                gender.length,
-                                    (index) => GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectgender = index;
-                                    });
-                                  },
-                                  child: Padding(
-                                    padding: EdgeInsets.only(bottom: 8.0),
-                                    child: Container(
-                                      height: 50,
-                                      width: 75,
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 10),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 8),
-                                      decoration: BoxDecoration(
-                                          color: selectgender == index
-                                              ? Color(0xff1f8acc)
-                                              : Colors.transparent,
-                                          border: Border.all(
-                                              color: Color(0xff1f8acc),
-                                              width: 1.5),
-                                          borderRadius:
-                                          BorderRadius.circular(8)),
-                                      child: Center(
-                                        child: Text(
-                                          gender[index],
-                                          style: TextStyle(
-                                              color: selectgender == index
-                                                  ? Colors.white
-                                                  : Color(0xff1f8acc),
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 11),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                )),
-                          ),
-                          doc_form_field("Known Language", language,TextInputType.text),
-                          Padding(
-                            padding: EdgeInsets.only(
-                                top: 8.0, bottom: 8, left: 13, right: 13),
-                            child: TextField(
-                              cursorColor: Color(0xff1f8acc),
-                              style: TextStyle(
-                                  color: Color(0xff1f8acc),
-                                  fontWeight: FontWeight.bold),
-                              controller: location,
-                              maxLines: 2,
-                              textCapitalization: TextCapitalization.sentences,
-                              decoration: InputDecoration(
-                                focusColor: Color(0xff1f8acc),
-                                counterText: '',
-                                alignLabelWithHint: true,
-                                hintText: 'Location',
-                                hintStyle: TextStyle(
-                                  color: Color(0xff1f8acc),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(
-                                      color: Colors.black,
-                                      width: 2.0), // Focused border color
-                                ),
-                                border: const OutlineInputBorder(),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            top: 8.0, bottom: 8, left: 13, right: 13),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            OutlinedButton(
-                                onPressed: () {
-                                  first_name.clear();
-                                  last_name.clear();
-                                  age.clear();
-                                  email.clear();
-                                  language.clear();
-                                  location.clear();
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                              gender.length,
+                                  (index) => GestureDetector(
+                                onTap: () {
                                   setState(() {
-                                    selectgender =-1;
+                                    selectgender = index;
                                   });
                                 },
-                                style: OutlinedButton.styleFrom(
-                                  side: BorderSide(color: Color(0xff1f8acc)),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40),
-                                  ),
-                                ),
-                                child: SizedBox(
-                                  width: 80,
-                                  height: 40,
-                                  child: Center(
-                                    child: Text(
-                                      "Cancel",
-                                      style: TextStyle(
-                                        color: Color(0xff1f8acc),
+                                child: Padding(
+                                  padding: EdgeInsets.only(bottom: 8.0),
+                                  child: Container(
+                                    height: 50,
+                                    width: 75,
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                        color: selectgender == index
+                                            ? Color(0xff1f8acc)
+                                            : Colors.transparent,
+                                        border: Border.all(
+                                            color: Color(0xff1f8acc),
+                                            width: 1.5),
+                                        borderRadius:
+                                        BorderRadius.circular(8)),
+                                    child: Center(
+                                      child: Text(
+                                        gender[index],
+                                        style: TextStyle(
+                                            color: selectgender == index
+                                                ? Colors.white
+                                                : Color(0xff1f8acc),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 11),
                                       ),
                                     ),
                                   ),
-                                )),
-                            OutlinedButton(
-                                onPressed: ()=>
-                                    _validateandsave(),
-
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Color(0xff1f8acc),
-                                  side: BorderSide(color: Color(0xff1f8acc)),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(40),
-                                  ),
                                 ),
-                                child: SizedBox(
-                                  width: 80,
-                                  height: 40,
-                                  child: Center(
-                                    child: Text(
-                                      "Save",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ))
-                          ],
+                              )),
                         ),
-                      )
-                    ],
-                  ),
+                        doc_form_field("Known Language", language,TextInputType.text),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              top: 8.0, bottom: 8, left: 13, right: 13),
+                          child: TextField(
+                            cursorColor: Color(0xff1f8acc),
+                            style: TextStyle(
+                                color: Color(0xff1f8acc),
+                                fontWeight: FontWeight.bold),
+                            controller: location,
+                            maxLines: 2,
+                            textCapitalization: TextCapitalization.sentences,
+                            decoration: InputDecoration(
+                              focusColor: Color(0xff1f8acc),
+                              counterText: '',
+                              alignLabelWithHint: true,
+                              hintText: 'Location',
+                              hintStyle: TextStyle(
+                                color: Color(0xff1f8acc),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide(
+                                    color: Colors.black,
+                                    width: 2.0), // Focused border color
+                              ),
+                              border: const OutlineInputBorder(),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                          top: 8.0, bottom: 8, left: 13, right: 13),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          OutlinedButton(
+                              onPressed: () {
+                                first_name.clear();
+                                last_name.clear();
+                                age.clear();
+                                email.clear();
+                                language.clear();
+                                location.clear();
+                                setState(() {
+                                  selectgender =-1;
+                                });
+                              },
+                              style: OutlinedButton.styleFrom(
+                                side: BorderSide(color: Color(0xff1f8acc)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                              ),
+                              child: SizedBox(
+                                width: 80,
+                                height: 40,
+                                child: Center(
+                                  child: Text(
+                                    "Cancel",
+                                    style: TextStyle(
+                                      color: Color(0xff1f8acc),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                          OutlinedButton(
+                              onPressed: ()=>
+                                  _validateandsave(),
+
+                              style: OutlinedButton.styleFrom(
+                                backgroundColor: Color(0xff1f8acc),
+                                side: BorderSide(color: Color(0xff1f8acc)),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(40),
+                                ),
+                              ),
+                              child: SizedBox(
+                                width: 80,
+                                height: 40,
+                                child: Center(
+                                  child: Text(
+                                    "Save",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ))
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),
