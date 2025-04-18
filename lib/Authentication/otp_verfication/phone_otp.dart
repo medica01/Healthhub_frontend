@@ -160,63 +160,6 @@ class _PhoneEntryPageState extends State<PhoneEntryPage> {
     }
   }
 
-  // Future<void> signOut() async {
-  //   await _auth.signOut();
-  //   if (!kIsWeb) {
-  //     await GoogleSignIn().signOut(); // Only needed for mobile
-  //   }
-  // }
-
-
-
-  // google login for web
-  // Future<User?> signInWithGoogle() async {
-  //   try {
-  //     GoogleAuthProvider googleProvider = GoogleAuthProvider();
-  //     googleProvider.setCustomParameters({'prompt': 'select_account'});
-  //
-  //     // Web-specific sign-in method
-  //     UserCredential userCredential =
-  //     await FirebaseAuth.instance.signInWithPopup(googleProvider);
-  //
-  //     User? user = userCredential.user;
-  //
-  //     if (user != null) {
-  //       print("User Email: ${user.email}");
-  //     }
-  //
-  //     return user;
-  //   } catch (e) {
-  //     print("Google Sign-In Error: $e");
-  //     return null;
-  //   }
-  // }
-
-
-  // Future<User?> signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //     final GoogleSignInAuthentication? googleAuth =
-  //         await googleUser?.authentication;
-  //
-  //     final credential = GoogleAuthProvider.credential(
-  //       accessToken: googleAuth?.accessToken,
-  //       idToken: googleAuth?.idToken,
-  //     );
-  //
-  //     final userCredential =
-  //         await FirebaseAuth.instance.signInWithCredential(credential);
-  //
-  //     // Save user data to Firestore
-  //     await saveUserData(userCredential.user);
-  //
-  //     return userCredential.user;
-  //   } catch (e) {
-  //     print('Exception -> $e');
-  //     return null;
-  //   }
-  // }
-
   Future<void> saveUserData(User? user) async {
     if (user != null) {
       SharedPreferences pref = await SharedPreferences.getInstance();

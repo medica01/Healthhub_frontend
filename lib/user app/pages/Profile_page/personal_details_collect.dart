@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:io' as io;
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:health_hub/Notification_services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
@@ -31,19 +34,20 @@ class _SaveDetailsState extends State<SaveDetails> {
   final TextEditingController agecontroller = TextEditingController();
   final TextEditingController emailcontroller = TextEditingController();
   String phone_number = "";
+  String email ="";
 
   Future<void> updateuser(BuildContext context) async {
     String first_name = firstnamecontroller.text;
     String last_name = lastnamecontroller.text;
     String age = agecontroller.text;
     String gender = genders[selectedGenderIndex];
-    String email = emailcontroller.text;
+
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString("first_name", first_name);
     pref.setString("last_name", last_name);
     pref.setString("age", age);
     pref.setString("gender", gender);
-    pref.setString("email", email);
+    // pref.setString("email", email);
     print("user data save successfully");
     Navigator.pop(context);
     showModalBottomSheet(
@@ -65,7 +69,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     if (agecontroller.text.isEmpty|| int.parse(agecontroller.text)<3|| int.parse(agecontroller.text) > 100) {
       missingfields.add("enter age correctly");
     }
-    if (emailcontroller.text.isEmpty) {
+    if (email=="") {
       missingfields.add("enter email id");
     }
     if (selectedGenderIndex == -1) {
@@ -101,12 +105,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     }
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // Lock orientation to portrait mode for this page
-    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  }
+
 
   @override
   void dispose() {
@@ -121,6 +120,91 @@ class _SaveDetailsState extends State<SaveDetails> {
     agecontroller.dispose();
     emailcontroller.dispose();
     super.dispose();
+  }
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+    // Load email from SharedPreferences when the widget is initialized
+    // _loadEmail();
+  }
+
+  // Load email from SharedPreferences
+  Future<void> _loadEmail() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    setState(() {
+      email = pref.getString("email") ?? "";
+    });
+  }
+
+  Future<User?> signInWithGoogle() async {
+    try {
+      if (kIsWeb) {
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        googleProvider.setCustomParameters({'prompt': 'select_account'});
+
+        // Web-specific sign-in method
+        UserCredential userCredential =
+        await FirebaseAuth.instance.signInWithPopup(googleProvider);
+
+        await saveUserData(userCredential.user);
+
+        return userCredential.user;
+      } else {
+        // Android-specific sign-in method
+        final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+        final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+
+        final userCredential =
+        await FirebaseAuth.instance.signInWithCredential(credential);
+
+        // Save user data to Firestore
+        await saveUserData(userCredential.user);
+
+        return userCredential.user;
+      }
+    } catch (e) {
+      print("Google Sign-In Error: $e");
+      return null;
+    }
+  }
+
+  Future<void> saveUserData(User? user) async {
+    if (user != null && user.email != null) {
+      SharedPreferences pref = await SharedPreferences.getInstance();
+      await pref.setString("email", user.email!);
+      // Update the local state to trigger UI rebuild
+      setState(() {
+
+        email = user.email!;
+      });
+    }
+  }
+
+  Future<void> signOutFromGoogle() async {
+    try {
+      if (kIsWeb) {
+        // Web-specific sign-out
+        await FirebaseAuth.instance.signOut();
+      } else {
+        // Android-specific sign-out
+        await GoogleSignIn().signOut();
+        await FirebaseAuth.instance.signOut();
+      }
+      // Clear email from SharedPreferences and update UI
+
+    } catch (e) {
+      print("Google Sign-Out Error: $e");
+    }
   }
 
   @override
@@ -147,6 +231,7 @@ class _SaveDetailsState extends State<SaveDetails> {
         child: Form(
           key: _form,
           child: Column(
+
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Padding(
@@ -186,8 +271,8 @@ class _SaveDetailsState extends State<SaveDetails> {
               // First Name Field
               Flexible(
                 child: textfielld2(
-                  Colors.grey.withOpacity(0.2),
-                  Colors.grey.withOpacity(0.6),
+                  Colors.white,
+                  Colors.blueAccent,
                   const Color(0xff1f8acc),
                   BorderRadius.circular(30),
                   const EdgeInsets.all(20),
@@ -201,8 +286,8 @@ class _SaveDetailsState extends State<SaveDetails> {
                 child: Padding(
                   padding: EdgeInsets.only(bottom: 8.0),
                   child: textfielld2(
-                      Colors.grey.withOpacity(0.2),
-                      Colors.grey.withOpacity(0.6),
+                      Colors.white,
+                      Colors.blueAccent,
                       const Color(0xff1f8acc),
                       BorderRadius.circular(30),
                       const EdgeInsets.all(20),
@@ -235,7 +320,8 @@ class _SaveDetailsState extends State<SaveDetails> {
                           vertical: 10,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.2),
+                          border: Border.all(color: Colors.black,width: 1),
+                          // color: Colors.grey.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: TextFormField(
@@ -252,7 +338,7 @@ class _SaveDetailsState extends State<SaveDetails> {
                             counterText: "",
                             hintText: "Enter the age",
                             hintStyle: TextStyle(
-                              color: Colors.grey.withOpacity(0.6),
+                              color: Colors.blueAccent,
                             ),
                             contentPadding: const EdgeInsets.all(20),
                             border: OutlineInputBorder(
@@ -286,7 +372,7 @@ class _SaveDetailsState extends State<SaveDetails> {
                         });
                       },
                       child: Container(
-                        height: 50,
+                        height: 60,
                         width: 100,
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                         padding: const EdgeInsets.symmetric(
@@ -317,23 +403,46 @@ class _SaveDetailsState extends State<SaveDetails> {
                   ),
                 ),
               ),
-              Flexible(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 8.0),
-                  child: textfielld2(
-                      Colors.grey.withOpacity(0.2),
-                      Colors.grey.withOpacity(0.6),
-                      const Color(0xff1f8acc),
-                      BorderRadius.circular(30),
-                      const EdgeInsets.all(20),
-                      30,
-                      10,
-                      "Enter your Email",
-                      emailcontroller),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 28),
+                child: GestureDetector(
+                  onLongPress: (){
+                    signOutFromGoogle();
+                  },
+                  onTap: () async {
+                    try {
+                      // Sign in with Google
+                      await signInWithGoogle();
+                      // Wait for 5 seconds
+                      await Future.delayed(Duration(milliseconds: 100));
+
+                      // Sign out from Google
+                      await signOutFromGoogle();
+                    } catch (e) {
+                      print("Error during sign-in/sign-out: $e");
+                    }
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(40),
+                        border: Border.all(color: Colors.black,width: 1),
+                        // color: Colors.grey.withOpacity(0.2)
+                    ),
+                    width: 350,
+                    height: 60,
+                    child: Align(alignment:Alignment.centerLeft,child: email==""?Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text("enter the email",style: TextStyle(color: Colors.blueAccent),),
+                    )
+                    :Align( alignment:Alignment.centerLeft,child: Padding(
+                      padding: const EdgeInsets.only(left: 15.0),
+                      child: Text("$email",style: TextStyle(color: Colors.blueAccent,fontSize: 16),),
+                    )),),
+                  ),
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 28.0, bottom: 20),
+                padding: EdgeInsets.only(left: 28.0, bottom: 20,top: 5),
                 child: Container(
                   width: 335,
                   child: Row(
@@ -359,7 +468,7 @@ class _SaveDetailsState extends State<SaveDetails> {
                           ),
                           child: SizedBox(
                             width: 100,
-                            height: 40, // Set the desired width
+                            height: 50, // Set the desired width
                             child: Center(
                               child: Text(
                                 "Cancel",
@@ -380,7 +489,7 @@ class _SaveDetailsState extends State<SaveDetails> {
                                 borderRadius: BorderRadius.circular(40)),
                             child: SizedBox(
                               width: 150,
-                              height: 40, // Set the desired width
+                              height: 50, // Set the desired width
                               child: Center(
                                 child: Text(
                                   "Save",
@@ -472,7 +581,7 @@ class _user_photoState extends State<user_photo> {
       age=pref.getString("age")??"";
       gender=pref.getString("gender")??"";
       email=pref.getString("email")??"";
-      print("$email");
+      print("email: $email");
     });
   }
 
@@ -550,6 +659,9 @@ class _user_photoState extends State<user_photo> {
       print("${e.toString()}");
     }
   }
+
+
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -562,7 +674,7 @@ class _user_photoState extends State<user_photo> {
           children: [
             Padding(
               padding:  EdgeInsets.only(right: 8.0),
-              child: Text("hello! $first_name $last_name",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+              child: Text("hello! $first_name $last_name ",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
             ),
             Center(
               child: Stack(

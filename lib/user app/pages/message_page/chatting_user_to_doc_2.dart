@@ -263,7 +263,9 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
         titleSpacing: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,

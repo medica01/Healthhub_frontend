@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/personal_details_2.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/personal_details_collect.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/personal_details_collect.dart';
+import 'package:health_hub/user%20app/pages/Profile_page/profile_photo_2.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -121,6 +122,7 @@ class _profile_pageState extends State<profile_page> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home:Scaffold(
+          backgroundColor: Colors.white54,
       appBar: AppBar(
         backgroundColor: Color(0xfffdfdfd),
         title: text("Profile", Colors.black, 30, FontWeight.bold),
@@ -165,8 +167,6 @@ class _profileState extends State<profile> {
   bool isloading = true;
   String? errormessage;
   Uint8List? webImage; // For storing image on Web
-  io.File? img;
-  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -174,116 +174,7 @@ class _profileState extends State<profile> {
     super.initState();
     user();
 
-    _loadimg();
-  }
 
-  // Future<void> _pickImage() async {
-  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //
-  //   if (image != null) {
-  //     if (kIsWeb) {
-  //       // Web: Convert XFile to Uint8List
-  //       final bytes = await image.readAsBytes();
-  //       setState(() {
-  //         webImage = bytes;
-  //         // print("$webImage");// Save bytes instead of File
-  //       });
-  //       await _updateuserphoto();
-  //       // _saveimg(webImage.path);
-  //     } else {
-  //       // Mobile: Use File
-  //       setState(() {
-  //         img = File(image.path);
-  //       });
-  //       _saveimg(image.path); // Save path only for mobile
-  //     }
-  //   }
-  // }
-
-  Future<void> _pickImage() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      if (kIsWeb) {
-        // For Web
-        final bytes = await pickedFile.readAsBytes();
-        setState(() {
-          webImage = bytes;
-        });
-        // _saveimg(webImage as String);
-        await _updateuserphoto();
-      } else {
-        // For Mobile
-        setState(() {
-          img = io.File(pickedFile.path);
-        });
-        // _saveimg(img as String);
-        await _updateuserphoto();
-      }
-    } else {
-      print('No image selected.');
-    }
-  }
-
-  Future<void> _saveimg(String imag) async {
-    SharedPreferences prg = await SharedPreferences.getInstance();
-    await prg.setString("image_path", imag);
-  }
-
-  Future<void> _loadimg() async {
-    SharedPreferences perff = await SharedPreferences.getInstance();
-    String? imagepath = perff.getString("image_path");
-    if (imagepath != null) {
-      setState(() {
-        img = File(imagepath);
-      });
-    }
-  }
-
-  Future<void> _updateuserphoto() async {
-    // String? web_img = webImage as String?;
-    SharedPreferences pref = await SharedPreferences.getInstance();
-    setState(() {
-      phone_number = pref.getString('phone_number') ?? "917845711277";
-      phone_number = phone_number.replaceFirst('+', '');
-    });
-    final String uploadUrl =
-        'http://$ip:8000/user_profile/user_edit/$phone_number/';
-    if (kIsWeb && webImage != null) {
-      // Web upload
-      var request = http.MultipartRequest('PUT', Uri.parse(uploadUrl));
-      request.files.add(http.MultipartFile.fromBytes(
-        'user_photo',
-        webImage!,
-        filename: 'upload.png', // Adjust the filename as needed
-      ));
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        print('Image uploaded successfully.');
-      } else {
-        print('Image upload failed with status: ${response.statusCode}.');
-      }
-    } else if (!kIsWeb && img != null) {
-      // Mobile upload
-      var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
-      request.files.add(await http.MultipartFile.fromPath(
-        'user_photo',
-        img!.path,
-        filename: basename(img!.path),
-      ));
-
-      var response = await request.send();
-
-      if (response.statusCode == 200) {
-        print('Image uploaded successfully.');
-      } else {
-        print('Image upload failed with status: ${response.statusCode}.');
-      }
-    } else {
-      print('No image to upload.');
-    }
   }
 
   Future<void> user() async {
@@ -376,14 +267,13 @@ class _profileState extends State<profile> {
                       ),
                     )
                   : SizedBox(
-                      height: 2,
                     ),
-              Divider(
-                color: Colors.grey,
-                thickness: 1,
-                indent: 5,
-                endIndent: 5,
-              ),
+              // Divider(
+              //   color: Colors.grey,
+              //   thickness: 1,
+              //   indent: 5,
+              //   endIndent: 5,
+              // ),
               Center(
                 child: Stack(
                   children: [ 
@@ -395,34 +285,12 @@ class _profileState extends State<profile> {
                               left: 20.0, right: 20, top: 10, bottom: 20),
                           child: GestureDetector(
                               onTap: () {
-                                // Navigator.push(
-                                //     context,
-                                //     MaterialPageRoute(
-                                //         builder: (context) => photo()));
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => pati_view(pati_views: userprofile!.userPhoto,)));
                               },
                               child:
-                              // Container(
-                              //   width: 130,
-                              //   height: 130,
-                              //   decoration: BoxDecoration(
-                              //     boxShadow: [
-                              //       BoxShadow(
-                              //           color: Colors.grey,
-                              //           offset: Offset(0, 2),
-                              //           blurRadius: 12)
-                              //     ],
-                              //     shape: BoxShape.circle,
-                              //     image: DecorationImage(
-                              //       image: img != null
-                              //           ? FileImage(img!) // For Mobile (File)
-                              //           : webImage != null
-                              //               ? MemoryImage(
-                              //                   webImage!) // For Web (Uint8List)
-                              //               : AssetImage("assetName"),
-                              //       fit: BoxFit.cover,
-                              //     ),
-                              //   ),
-                              // ),
                               CircleAvatar(
                                 radius: 50,
                                 backgroundImage:
@@ -434,22 +302,6 @@ class _profileState extends State<profile> {
                               ) ,
                           )),
                     ),
-                    // Positioned(
-                    //   right: 13,
-                    //   bottom: 20,
-                    //   child: Container(
-                    //     height: 40,
-                    //     width: 40,
-                    //     decoration: BoxDecoration(
-                    //         color: Colors.white.withOpacity(0.65),
-                    //         shape: BoxShape.circle),
-                    //     child: IconButton(
-                    //         onPressed: _pickImage,
-                    //         icon: Icon(
-                    //           Icons.camera_alt,
-                    //         )),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
@@ -474,7 +326,7 @@ class _profileState extends State<profile> {
               menu_item('Personal details', CupertinoIcons.profile_circled, () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => personal_details()),
+                  MaterialPageRoute(builder: (context) => ProfileScreen()),
                 );
               }),
               menu_item('Settings', Icons.settings, () {

@@ -70,6 +70,7 @@ class _doc_bio_photoState extends State<doc_bio_photo> {
       reg_on= perf.getString("reg_on") ?? "";
       print("$doc_gender");
       print("$qualification");
+      print("$doc_email");
     });
   }
 

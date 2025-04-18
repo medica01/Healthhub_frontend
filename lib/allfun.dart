@@ -58,6 +58,7 @@ Widget textfielld2(
     margin: EdgeInsets.symmetric(horizontal: hor, vertical: ver),
     decoration: BoxDecoration(
       borderRadius: br,
+      border: Border.all(color: Colors.black,width: 1),
       color: c1,
     ),
     child: TextFormField(

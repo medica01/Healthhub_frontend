@@ -9,6 +9,8 @@ import 'package:http/http.dart' as http;
 import '../../../Authentication/doc_otp_verfication/doc_otp_verify.dart';
 import '../../../Authentication/doc_otp_verfication/doctor_details_collect_2.dart';
 import '../../../allfun.dart';
+import 'doc_personal_detials2.dart';
+import 'doc_photo_view.dart';
 
 class doc_profiles extends StatefulWidget {
   const doc_profiles({super.key});
@@ -63,6 +65,7 @@ class _doc_profilesState extends State<doc_profiles> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xfffdfdfd),
         appBar: AppBar(
           backgroundColor: Color(0xfffdfdfd),
           title: text("Profile", Colors.black, 30, FontWeight.bold),
@@ -156,14 +159,21 @@ class _doc_profile_pageState extends State<doc_profile_page> {
     return ListView(
       children: [
         Center(
-          child: CircleAvatar(
-            radius: 50,
-            backgroundImage:
-            _get_doc_details != null && _get_doc_details!.doctorImage != null
-                ? NetworkImage(
-                "http://$ip:8000${_get_doc_details!.doctorImage}")
-                : AssetImage('assets/default_avatar.png')
-            as ImageProvider, // Use a default image
+          child: GestureDetector(
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_view(
+                doc_photo: _get_doc_details!.doctorImage
+              )));
+            },
+            child: CircleAvatar(
+              radius: 50,
+              backgroundImage:
+              _get_doc_details != null && _get_doc_details!.doctorImage != null
+                  ? NetworkImage(
+                  "http://$ip:8000${_get_doc_details!.doctorImage}")
+                  : NetworkImage('https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
+              as ImageProvider, // Use a default image
+            ),
           )
         ),
         isloading
@@ -188,7 +198,7 @@ class _doc_profile_pageState extends State<doc_profile_page> {
         menu_item('Personal details', CupertinoIcons.profile_circled, () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => doc_bio_photo()),
+            MaterialPageRoute(builder: (context) => doc_personal()),
           );
         }),
         menu_item('Settings', Icons.settings, () {
