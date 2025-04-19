@@ -245,19 +245,12 @@ class _ChatBubbleState extends State<ChatBubble> {
         ),
         Align(
           alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            // margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            // padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            // decoration: BoxDecoration(
-            //   color: isUser ? Colors.blue[100] : Colors.grey[300],
-            //   borderRadius: BorderRadius.only(
-            //     topLeft: Radius.circular(15),
-            //     topRight: Radius.circular(15),
-            //     bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
-            //     bottomRight: isUser ? Radius.zero : Radius.circular(15),
-            //   ),
-            // ),
-            child: Text(chattime, style: TextStyle(fontSize: 10)),
+          child: Padding(
+            padding: EdgeInsets.only(left: 15.0, right: 15),
+            child: Container(
+
+              child: Text(chattime, style: TextStyle(fontSize: 10)),
+            ),
           ),
         ),
       ],

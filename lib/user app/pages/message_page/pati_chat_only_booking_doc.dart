@@ -82,22 +82,10 @@ class _booking_doc_messageState extends State<booking_doc_message> {
           // crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Active Now",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.search_rounded,
-                      color: Colors.blueAccent,
-                    ),
-                  )
-                ],
+              padding: const EdgeInsets.all(10.0),
+              child: Text(
+                "Active Now",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
             Padding(
@@ -106,7 +94,6 @@ class _booking_doc_messageState extends State<booking_doc_message> {
                 scrollDirection: Axis.horizontal,
                 // ✅ Allow horizontal scrolling
                 child: Row(
-
                   children: show_book_doc_chat.map((show_docc) {
                     return show_docc.id != null
                         ? Padding(

@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io' as io;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Notification_services.dart';
+import 'package:health_hub/user%20app/pages/Profile_page/personal_details_collect.dart';
 import 'package:health_hub/user%20app/pages/message_page/search_chat.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,7 +16,9 @@ import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../Backend_information/chat_history_backend.dart';
 import '../../../Backend_information/on_off_backend.dart';
 import '../../../main.dart';
+import '../Profile_page/profile_photo_2.dart';
 import '../home_page/doctor_profile_3.dart';
+import 'package:path/path.dart';
 
 Timer? _chatsRefreshtime;
 
@@ -36,6 +42,10 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
   TextEditingController messageController = TextEditingController();
   TextEditingController searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  String sources = "";
+  final _picker = ImagePicker();
+  Uint8List? webImage;
+  io.File? img;
 
   @override
   void initState() {
@@ -52,6 +62,11 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
     _get_user_doctor_chat_history().then((_) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _scrollToBottom();
+      });
+    });
+    messageController.addListener((){
+      setState(() {
+
       });
     });
   }
@@ -112,7 +127,6 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
             "doctor_phone_number": doc_phone_number
           }));
       if (response.statusCode == 201) {
-
         print("the user successfully add to doctor chat");
       } else {
         print("the user failed to add the doctor chat");
@@ -168,55 +182,125 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _create_chat_two() async {
+  Future<void> _create_chat_two(BuildContext context) async {
     SharedPreferences perf = await SharedPreferences.getInstance();
     setState(() {
-      phone_number = perf.getString("phone_number") ?? "917845711277";
+      phone_number = perf.getString("phone_number") ?? "";
       phone_number = phone_number.replaceFirst("+", "");
     });
 
+    if (phone_number.isEmpty) {
+      print("User phone number not found.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User phone number not found')),
+      );
+      return;
+    }
+
     if (get_doc_number == null) {
       print("Doctor details are not loaded yet.");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Doctor details not loaded')),
+      );
+      return;
+    }
+
+    // Validate input: Ensure either a message or an image is provided
+    if (messageController.text.trim().isEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Send Failed"),
+          content: Text("Empty  message can't send"),
+        ),
+      );
       return;
     }
 
     try {
-      final response = await http.post(
-        Uri.parse("http://$ip:8000/chats/send-message/"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "sender_phone": phone_number,
-          "receiver_phone": get_doc_number!.doctorPhoneNo,
-          "message": messageController.text,
-          "sender_type": sender_type
-          // 'user' or 'doctor' based on role
-        }),
-      );
+      final String uploadUrl = 'http://$ip:8000/chats/send-message/';
+
+      // Prepare the multipart request
+      var request = http.MultipartRequest('POST', Uri.parse(uploadUrl));
+
+      // Add fields
+      request.fields['sender_phone'] = phone_number;
+      request.fields['receiver_phone'] = "${get_doc_number!.doctorPhoneNo}";
+      request.fields['message'] = messageController.text; // Default message if empty
+      request.fields['sender_type'] = sender_type;
+
+      // Add image if available
+      if (kIsWeb && webImage != null) {
+        // Web platform: Add image from Uint8List
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'image',
+            webImage!,
+            filename: 'image.png',
+          ),
+        );
+        print('Added web image to request');
+      } else if (!kIsWeb && img != null) {
+        // Mobile platform: Add image from File
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'image',
+            img!.path,
+            filename: basename(img!.path),
+          ),
+        );
+        print('Added mobile image to request');
+      }
+
+      // Debug request content
+      print('Request fields: ${request.fields}');
+      print('Request files: ${request.files.length}');
+
+      // Send the request
+      var response = await request.send();
+      final responseBody = await response.stream.bytesToString();
+
+      print('Response status: ${response.statusCode}');
+      print('Response body: $responseBody');
 
       if (response.statusCode == 201) {
         await _get_user_doctor_chat_history();
-        NotificationService().showNotification(id: 0, title: "Health hub", body: "you: ${messageController.text}");
+        NotificationService().showNotification(
+          id: 0,
+          title: "Health hub",
+          body:
+              "you: ${messageController.text.isNotEmpty ? messageController.text : 'Image sent'}",
+        );
         messageController.clear();
+        setState(() {
+          img = null; // Clear image after sending
+          webImage = null; // Clear web image
+        });
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _scrollToBottom();
         });
         Future.delayed(Duration(milliseconds: 100), () {
-          print("Delayed check: Current position: ${_scrollController.position.pixels}, Max extent: ${_scrollController.position.maxScrollExtent}");
+          print(
+              "Delayed check: Current position: ${_scrollController.position.pixels}, Max extent: ${_scrollController.position.maxScrollExtent}");
           _scrollToBottom();
         });
-
       } else {
+        print('API error: $responseBody');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text("Send Failed"),
-            content: Text("Message is empty"),
+            content: Text(
+                "Error: ${responseBody.isNotEmpty ? responseBody : 'Unknown error'}"),
           ),
         );
       }
     } catch (e) {
       errormessage = e.toString();
-      print("$errormessage");
+      print("Error: $errormessage");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to send message: $errormessage')),
+      );
     }
   }
 
@@ -246,7 +330,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
       phone_number = phone_number.replaceFirst('+', '');
     });
     final url =
-    Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
+        Uri.parse("http://$ip:8000/user_profile/user_edit/$phone_number/");
     try {
       final response = await http.put(url,
           headers: {"Content-Type": "application/json"},
@@ -259,6 +343,55 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
       print("offline:$e1");
     }
   }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      if (kIsWeb) {
+        // For Web
+        final bytes = await pickedFile.readAsBytes();
+        setState(() {
+          webImage = bytes;
+        });
+      } else {
+        // For Mobile
+        setState(() {
+          img = io.File(pickedFile.path);
+        });
+      }
+    } else {
+      print('No image selected.');
+    }
+  }
+
+  // Function to open Google Maps with source and destination names
+  // Future<void> openGoogleMaps(String source, String destination, BuildContext context) async {
+  //   try {
+  //     // Encode the source and destination to handle spaces and special characters
+  //     final String encodedSource = Uri.encodeComponent(source);
+  //     final String encodedDestination = Uri.encodeComponent(destination);
+  //
+  //     // Construct the Google Maps URL as a Uri object
+  //     final Uri googleMapsUrl = Uri.parse(
+  //         'https://www.google.com/maps/dir/?api=1&origin=$encodedSource&destination=$encodedDestination&travelmode=driving'
+  //     );
+  //
+  //     // Check if the URL can be launched
+  //     if (await canLaunchUrl(googleMapsUrl)) {
+  //       await launchUrl(googleMapsUrl);
+  //       print('Google Maps URL launched: $googleMapsUrl');
+  //     } else {
+  //       throw 'Could not launch $googleMapsUrl';
+  //     }
+  //   } catch (e) {
+  //     // Show error to the user
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Failed to open Google Maps: $e')),
+  //     );
+  //     print('Error launching Google Maps: $e');
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -273,12 +406,13 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundImage:
-              get_doc_number != null && get_doc_number!.doctorImage != null
+              backgroundImage: get_doc_number != null &&
+                      get_doc_number!.doctorImage != null
                   ? NetworkImage(
-                  "http://$ip:8000${get_doc_number!.doctorImage}")
-                  : AssetImage('assets/default_avatar.png')
-              as ImageProvider, // Use a default image
+                      "http://$ip:8000${get_doc_number!.doctorImage}")
+                  : NetworkImage(
+                          'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
+                      as ImageProvider, // Use a default image
             ),
             Column(
               children: [
@@ -286,22 +420,22 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                   padding: EdgeInsets.only(left: 10.0),
                   child: get_doc_number != null
                       ? Text("${get_doc_number!.doctorName ?? "No name"}",
-                      style: TextStyle(fontWeight: FontWeight.bold))
+                          style: TextStyle(fontWeight: FontWeight.bold))
                       : SizedBox(), // Show a loader until data is loaded
                 ),
                 Center(
                   child: get_doc_number != null &&
-                      get_doc_number!.docStatus == false
+                          get_doc_number!.docStatus == false
                       ? Text("Offline",
-                      style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold))
+                          style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold))
                       : Text("Online",
-                      style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold)),
+                          style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold)),
                 )
               ],
             ),
@@ -314,7 +448,12 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
             children: [
               IconButton(
                   onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>doc_profile(data: "${get_doc_number!.id}",)));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => doc_profile(
+                                  data: "${get_doc_number!.id}",
+                                )));
                   },
                   icon: Icon(Icons.calendar_month)),
               IconButton(
@@ -322,9 +461,20 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                     _launchPhoneDialer();
                   },
                   icon: Icon(Icons.call)),
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.assistant_direction_rounded))
+              // IconButton(
+              //     onPressed: (){
+              //       final source = sources;
+              //       final destination = get_doc_number!.doctorLocation!.trim();
+              //       if (source.isNotEmpty && destination.isNotEmpty) {
+              //         openGoogleMaps(source, destination,context);
+              //       } else {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           SnackBar(content: Text('Please enter source and destination')),
+              //         );
+              //       }
+              //     },
+              //     icon: Icon(Icons.assistant_direction_rounded)
+              // )
             ],
           )
         ],
@@ -342,8 +492,8 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                         context,
                         MaterialPageRoute(
                             builder: (context) => search_chat(
-                              data: "${widget.data}",
-                            )));
+                                  data: "${widget.data}",
+                                )));
                     // Navigator.push(context, MaterialPageRoute(builder: (context)=>ChatSearchScreen(
                     // )));
                   },
@@ -372,53 +522,107 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
             child: isloading
                 ? Center(child: CircularProgressIndicator())
                 : ListView.builder(
-              controller: _scrollController,
-              physics: AlwaysScrollableScrollPhysics(),
-              itemCount: get_chat_history.length,
-              itemBuilder: (context, index) {
-                var chat = get_chat_history[index];
-                bool showDate = index == 0 || // First message
-                    get_chat_history[index].datestamp !=
-                        get_chat_history[index - 1].datestamp; // New day
-                return chat.id!= null ||
-                    chat.message != null ||
-                    chat.docPhoneNo != null ||
-                    chat.userPhoneNo != null ||
-                    chat.senderType != null ||
-                    chat.datestamp != null
-                    ? ChatBubble(
-                  text: chat.message,
-                  senderType: chat.senderType,
-                  time: chat.timestamp,
-                  date: chat.datestamp,
-                  showDate: showDate,
-                )
-                    : Text("data");
-              },
-            ),
+                    controller: _scrollController,
+                    physics: AlwaysScrollableScrollPhysics(),
+                    itemCount: get_chat_history.length,
+                    itemBuilder: (context, index) {
+                      var chat = get_chat_history[index];
+                      bool showDate = index == 0 || // First message
+                          get_chat_history[index].datestamp !=
+                              get_chat_history[index - 1].datestamp; // New day
+                      return chat.id != null ||
+                              chat.message != null ||
+                              chat.docPhoneNo != null ||
+                              chat.userPhoneNo != null ||
+                              chat.senderType != null ||
+                              chat.datestamp != null
+                          ? ChatBubble(
+                              text: chat.message,
+                              senderType: chat.senderType,
+                              time: chat.timestamp,
+                              date: chat.datestamp,
+                              image: chat.image,
+                              showDate: showDate,
+                            )
+                          : Text("data");
+                    },
+                  ),
           ),
           Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 8,bottom: 8),
-            child: Row(
+            padding: EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: messageController,
-                    decoration: InputDecoration(
-                      hintText: "Type a message",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                img == null
+                    ? SizedBox()
+                    : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 130,
+                              height: 130,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.black, width: 1),
+                                image: DecorationImage(
+                                  image: img != null
+                                      ? FileImage(img!) // For Mobile (File)
+                                      : webImage != null
+                                          ? MemoryImage(
+                                              webImage!) // For Web (Uint8List)
+                                          : NetworkImage(
+                                                  'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
+                                              as ImageProvider,
+                                  // Placeholder
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                                left: 90,
+                                top: -5,
+                                child: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        img = null;
+                                      });
+                                    },
+                                    icon: Icon(
+                                      Icons.close,
+                                      color: Colors.white,
+                                    )))
+                          ],
+                        ),
+                      ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: messageController,
+                        decoration: InputDecoration(
+                          hintText: "Type a message",
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    IconButton(
+                        onPressed: () {
+                          _pickImage();
+                        },
+                        icon: Icon(Icons.photo)),
+                    (messageController.text.trim().isEmpty && img==null)
+                        ? SizedBox()
+                        : IconButton(
+                            icon: Icon(Icons.send),
+                            onPressed: () {
+                              _create_chat_two(context);
+                              _create_chat_doc_only_user_chat();
+                            }),
+                  ],
                 ),
-                IconButton(
-                    icon: Icon(Icons.send),
-                    onPressed: () {
-                      _create_chat_two();
-                      _create_chat_doc_only_user_chat();
-
-                    }),
               ],
             ),
           ),
@@ -433,15 +637,16 @@ class ChatBubble extends StatefulWidget {
   final dynamic senderType;
   final dynamic time;
   final dynamic date;
+  final dynamic image;
   final bool showDate; // New parameter to control date visibility
 
-  ChatBubble({
-    required this.text,
-    required this.senderType,
-    required this.time,
-    required this.date,
-    required this.showDate, // Add this to constructor
-  });
+  ChatBubble(
+      {required this.text,
+      required this.senderType,
+      required this.time,
+      required this.date,
+      required this.showDate,
+      required this.image});
 
   @override
   State<ChatBubble> createState() => _ChatBubbleState();
@@ -451,7 +656,7 @@ class _ChatBubbleState extends State<ChatBubble> {
   DateTime now = DateTime.now();
   String forr = "";
   String chattime = "";
-  DateTime chatt=DateTime.now();
+  DateTime chatt = DateTime.now();
 
   @override
   void initState() {
@@ -479,76 +684,111 @@ class _ChatBubbleState extends State<ChatBubble> {
     bool isUser = widget.senderType == 'user';
     return widget.text != null
         ? Column(
-      children: [
-        if (widget.showDate) // Only show date if showDate is true
-          widget.date != forr
-              ? (Center(
-            child: Card(
-              child: Container(
-                height: 25,
-                width: 70,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey,
-                ),
-                child: Center(
-                  child: Text(
-                    widget.date,
-                    style: TextStyle(
-                        fontSize: 10, color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-          ))
-              : Center(
-            child: Card(
-              child: Container(
-                height: 25,
-                width: 70,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.grey,
-                ),
-                child: Center(
-                  child: Text(
-                    "Today",
-                    style: TextStyle(
-                        fontSize: 10, color: Colors.white),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        Align(
-          alignment:
-          isUser ? Alignment.centerRight : Alignment.centerLeft,
-          child: Container(
-            margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            decoration: BoxDecoration(
-              color: isUser ? Colors.blue[100] : Colors.grey[300],
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-                bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
-                bottomRight: isUser ? Radius.zero : Radius.circular(15),
-              ),
-            ),
-            child: Text(widget.text, style: TextStyle(fontSize: 16)),
-          ),
-        ),
-        Align(
-          alignment:
-          isUser ? Alignment.centerRight : Alignment.centerLeft,
-          child: Padding(
-            padding:  EdgeInsets.only(left: 15.0,right: 15),
-            child: Text(chattime, style: TextStyle(fontSize: 10)),
-          ),
-        ),
+            children: [
+              if (widget.showDate) // Only show date if showDate is true
+                widget.date != forr
+                    ? (Center(
+                        child: Card(
+                          child: Container(
+                            height: 25,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey,
+                            ),
+                            child: Center(
+                              child: Text(
+                                widget.date,
+                                style: TextStyle(
+                                    fontSize: 10, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ))
+                    : Center(
+                        child: Card(
+                          child: Container(
+                            height: 25,
+                            width: 70,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: Colors.grey,
+                            ),
+                            child: Center(
+                              child: Text(
+                                "Today",
+                                style: TextStyle(
+                                    fontSize: 10, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+              Align(
+                alignment:
+                    isUser ? Alignment.centerRight : Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment:  isUser?CrossAxisAlignment.end :CrossAxisAlignment.start,
+                  children: [
+                    widget.image==null
+                    ?SizedBox()
+                    :Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>pati_view(pati_views: "${widget.image}",)));
+                        },
+                        child: Container(
+                          clipBehavior: Clip.hardEdge,
+                          // height: 200,
+                          width: 200,
+                          decoration: BoxDecoration(
+                             // border: Border.all(color: isUser ? Colors.blue : Colors.grey,width: 2),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                              bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
+                              bottomRight: isUser ? Radius.zero : Radius.circular(15),
+                            ),
+                          ),
+                          child: Image.network(
 
-      ],
-    )
+                            // scale: 1,
+                            fit: BoxFit.cover,
+                              "http://$ip:8000${widget.image}")
+                        ),
+                      ),
+                    ),
+                    widget.text==""||widget.text==null
+                        ?SizedBox()
+                        :Container(
+                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                      decoration: BoxDecoration(
+                        color: isUser ? Colors.blue[100] : Colors.grey[300],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                          bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
+                          bottomRight: isUser ? Radius.zero : Radius.circular(15),
+                        ),
+                      ),
+                      child: Text(widget.text, style: TextStyle(fontSize: 16)),
+                    ),
+                  ],
+                ),
+              ),
+              Align(
+                alignment:
+                    isUser ? Alignment.centerRight : Alignment.centerLeft,
+                child: Padding(
+                  padding: EdgeInsets.only(left: 15.0, right: 15),
+                  child: Text(chattime, style: TextStyle(fontSize: 10)),
+                ),
+              ),
+            ],
+          )
         : Text("No chat, Start chatting!");
   }
 }

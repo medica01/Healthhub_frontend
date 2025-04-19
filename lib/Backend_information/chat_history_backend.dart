@@ -4,6 +4,7 @@ class chat_history {
   int? docPhoneNo;
   String? senderType;
   String? message;
+  String? image;
   String? datestamp;
   String? timestamp;
 
@@ -13,6 +14,7 @@ class chat_history {
         this.docPhoneNo,
         this.senderType,
         this.message,
+        this.image,
         this.datestamp,
         this.timestamp});
 
@@ -22,6 +24,7 @@ class chat_history {
     docPhoneNo = json['doc_phone_no'];
     senderType = json['sender_type'];
     message = json['message'];
+    image = json['image'];
     datestamp = json['datestamp'];
     timestamp = json['timestamp'];
   }
@@ -33,6 +36,7 @@ class chat_history {
     data['doc_phone_no'] = this.docPhoneNo;
     data['sender_type'] = this.senderType;
     data['message'] = this.message;
+    data['image'] = this.image;
     data['datestamp'] = this.datestamp;
     data['timestamp'] = this.timestamp;
     return data;

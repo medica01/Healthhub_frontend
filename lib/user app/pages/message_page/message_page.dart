@@ -35,6 +35,7 @@ class _message_pageState extends State<message_page> {
     super.initState();
     _chatting_doc();
     userpro();
+
   }
 
   Future<void> userpro() async {
@@ -65,6 +66,7 @@ class _message_pageState extends State<message_page> {
       isLoading = false;
     }
   }
+
 
   Future<void> _online() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
