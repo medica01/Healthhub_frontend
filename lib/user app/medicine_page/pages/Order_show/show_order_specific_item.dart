@@ -5,6 +5,7 @@ import 'package:health_hub/Backend_information/medicine_app_backend/medicine_ord
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart%20' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Notification_services.dart';
@@ -48,7 +49,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
         Map<String, dynamic> jsonResponse = jsonDecode(response.body);
         setState(() {
           get_spec_pro = order_placed_details.fromJson(jsonResponse);
-          get_spec_pro!.orderDate = get_spec_pro!.orderDate!.substring(0, 3);
+
           isloading = true;
         });
       } else {
@@ -116,25 +117,19 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Arriving ${get_spec_pro!.orderDate}",
-                              style: TextStyle(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
-                            ),
-                            TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: Text(
-                                  "See all orders",
-                                  style: TextStyle(
-                                      color: Colors.blueAccent,
-                                      fontWeight: FontWeight.bold),
-                                ))
-                          ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Arriving ${get_spec_pro!.orderDate}",
+                                style: TextStyle(
+                                    fontSize: 25, fontWeight: FontWeight.bold),
+                              ),
+
+                            ],
+                          ),
                         ),
                         Container(
                           decoration: BoxDecoration(
@@ -151,10 +146,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                                     "http://$ip:8000${get_spec_pro!.productImage}")),
                           ),
                         ),
-                        Container(
-                          height: 150,
-                          color: Colors.red,
-                        ),
+
                         Padding(
                           padding: EdgeInsets.only(top: 10.0, bottom: 20),
                           child: SingleChildScrollView(
@@ -186,7 +178,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                                         ));
                                       },
                                         child: option("Cancel Order"))),
-                                option("Update delivery \n    Instructions"),
+                                // option("Update delivery \n    Instructions"),
                                 GestureDetector(
                                     onTap: () {
                                       Navigator.push(
@@ -278,32 +270,14 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 10.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Items from your Wish List",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black),
-                        ),
-                        IconButton(
-                            onPressed: () {}, icon: Icon(Icons.more_vert))
-                      ],
-                    ),
-                  ),
                   Container(
-                    height: 100,
+                    height: 50,
                   )
                 ],
               ),
             )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+          : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
     );
   }
 }

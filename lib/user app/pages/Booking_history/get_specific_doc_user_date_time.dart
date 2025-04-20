@@ -243,6 +243,7 @@ import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/pages/home.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vibration/vibration.dart';
@@ -506,7 +507,8 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
               ),
             )
           ],
-        ):Center(child: CircularProgressIndicator(),),
+        ):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+          height: 100,))
       ),
     );
   }

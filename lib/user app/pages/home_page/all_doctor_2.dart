@@ -7,6 +7,7 @@ import 'package:health_hub/user%20app/pages/home_page/doctor_profile_3.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Backend_information/Backend_doctor_details.dart';
@@ -287,7 +288,10 @@ class _all_doctorState extends State<all_doctor> with TickerProviderStateMixin{
           )
         ],
       ),
-      body: ListView(
+      body: isLoading
+      ?Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
+      :ListView(
         children: [
           Padding(
             padding: EdgeInsets.only(top: 10.0),

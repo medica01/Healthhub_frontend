@@ -8,6 +8,7 @@ import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/pages/home_page/all_doctor_2.dart';
 import 'package:health_hub/user%20app/pages/home_page/doctor_profile_3.dart';
 import 'package:health_hub/user%20app/pages/home_page/specific_doctor_4.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -333,15 +334,15 @@ class _home_pageState extends State<home_page> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       text("Categories", Colors.black, 24, FontWeight.bold),
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => cate_doc()));
-                          },
-                          child: text(
-                              "See All", Colors.grey, 20, FontWeight.bold)),
+                      // GestureDetector(
+                      //     onTap: () {
+                      //       Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //               builder: (context) => cate_doc()));
+                      //     },
+                      //     child: text(
+                      //         "See All", Colors.grey, 20, FontWeight.bold)),
                     ],
                   ),
                 ),
@@ -581,6 +582,8 @@ class _home_pageState extends State<home_page> {
               ],
             ),
           )
-        : Center(child: Container(child: CircularProgressIndicator()));
+        : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,)
+    );
   }
 }

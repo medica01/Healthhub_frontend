@@ -5,6 +5,7 @@ import 'package:health_hub/Backend_information/medicine_app_backend/medicine_pur
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Backend_information/medicine_app_backend/patient_address_backend.dart';
 import '../add_address/add_pati_address.dart';
@@ -390,72 +391,7 @@ class _specific_productState extends State<specific_product> {
                 ),
                 Center(
                   child:
-                      // kIsWeb !=true
-                      // ?Padding(
-                      //   padding: const EdgeInsets.all(8.0),
-                      //   child: Center(
-                      //     child: Column(
-                      //       children: [
-                      //         GestureDetector(
-                      //           onTap: () {
-                      //             patients_address == null||
-                      //                     patients_address!.fullName == null ||
-                      //                     patients_address!.areaBuildingName == null ||
-                      //                     patients_address!.flatHouseName == null ||
-                      //                     patients_address!.landmark == null ||
-                      //                     patients_address!.pincode == null ||
-                      //                     patients_address!.pryPhoneNumber == null ||
-                      //                     patients_address!.secPhoneNumber == null ||
-                      //                     patients_address!.townCity == null ||
-                      //                     patients_address!.stateName == null
-                      //                 ? Navigator.push(
-                      //                     context,
-                      //                     MaterialPageRoute(
-                      //                         builder: (context) =>
-                      //                             add_pati_address()))
-                      //                 : Navigator.push(
-                      //                     context,
-                      //                     MaterialPageRoute(
-                      //                         builder: (context) => place_order()));
-                      //           },
-                      //           child: Container(
-                      //             height: 50,
-                      //             width: MediaQuery.of(context).size.width * 0.52,
-                      //             decoration: BoxDecoration(
-                      //               color: Colors.blueAccent,
-                      //               borderRadius: BorderRadius.circular(40),
-                      //             ),
-                      //             child:
-                      //             Center(
-                      //               child: Text(
-                      //                 "Order",
-                      //                 style: TextStyle(
-                      //                     color: Colors.white, fontSize: 16),
-                      //               ),
-                      //             ),
-                      //           ),
-                      //         ),
-                      //         Padding(
-                      //           padding: const EdgeInsets.all(8.0),
-                      //           child: OutlinedButton(
-                      //               style: OutlinedButton.styleFrom(
-                      //                   fixedSize: Size(270, 50),
-                      //                   animationDuration: Duration(seconds: 2),
-                      //                   side: BorderSide(
-                      //                       color: Colors.blueAccent, width: 2)),
-                      //               onPressed: () {
-                      //                 _create_add_to_carts();
-                      //                 // Navigator.push(context, MaterialPageRoute(builder: (context)=>order_success()));
-                      //               },
-                      //               child: Text(
-                      //                 "Add to cart",
-                      //                 style: TextStyle(color: Colors.blueAccent),
-                      //               )),
-                      //         )
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ):
+
                       Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Container(
@@ -539,7 +475,8 @@ class _specific_productState extends State<specific_product> {
                 )
               ],
             )
-          : Center(child: Container(child: CircularProgressIndicator())),
+          : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
     );
   }
 }

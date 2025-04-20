@@ -12,6 +12,7 @@ import 'package:health_hub/Doctor%20app/pages/Doc_message_page/search_chat_doc.d
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Backend_information/on_off_backend.dart';
@@ -22,6 +23,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 
+import '../../../user app/Other_feature/photo_view.dart';
 import '../Doc_profile_page/doc_photo_view.dart';
 import 'chat_photo_only.dart';
 
@@ -318,26 +320,13 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
                   ? NetworkImage("http://$ip:8000${get_user_number!.userPhoto}")
                   : AssetImage('assets/default_avatar.png') as ImageProvider,
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: get_user_number != null
-                      ? Text(
-                      "${get_user_number!.firstName ?? "No name"} ${get_user_number!.lastName}",
-                      style: TextStyle(fontWeight: FontWeight.bold))
-                      : CircularProgressIndicator(),
-                ),
-                Center(
-                  child: get_user_number != null && get_user_number!.userStatus== false
-                      ? Text("Offline",
-                      style: TextStyle(
-                          color: Colors.red, fontSize: 12, fontWeight: FontWeight.bold))
-                      : Text("Online",
-                      style: TextStyle(
-                          color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
-                ),
-              ],
+            Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: get_user_number != null
+                  ? Text(
+                  "${get_user_number!.firstName ?? "No name"} ${get_user_number!.lastName}",
+                  style: TextStyle(fontWeight: FontWeight.bold))
+                  : CircularProgressIndicator(),
             ),
           ],
         ),
@@ -346,7 +335,7 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
             children: [
               IconButton(onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>only_photo(
-                  doc_phone:"${doc_phone_number}", pati_phone:"$user_phone_number")));
+                  doc_phone:"${doc_phone_number}", pati_phone:"$user_phone_number",user_type: "doctor",)));
               }, icon: Icon(Icons.photo)),
               IconButton(
                   onPressed: () {
@@ -397,7 +386,8 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
         children: [
           Expanded(
             child: isloading
-                ? Center(child: CircularProgressIndicator())
+                ? Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+              height: 100,))
                 : ListView.builder(
               controller: _scrollController,
               itemCount: get_chats_history.length,
@@ -435,23 +425,28 @@ class _doc_userState extends State<doc_user> with WidgetsBindingObserver {
                   padding: const EdgeInsets.all(8.0),
                   child: Stack(
                     children: [
-                      Container(
-                        width: 130,
-                        height: 130,
-                        decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Colors.black, width: 1),
-                          image: DecorationImage(
-                            image: img != null
-                                ? FileImage(img!) // For Mobile (File)
-                                : webImage != null
-                                ? MemoryImage(
-                                webImage!) // For Web (Uint8List)
-                                : NetworkImage(
-                                'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
-                            as ImageProvider,
-                            // Placeholder
-                            fit: BoxFit.cover,
+                      GestureDetector(
+                        onTap:(){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>photos_vies(photo_view: img as File,)));
+                        },
+                        child: Container(
+                          width: 130,
+                          height: 130,
+                          decoration: BoxDecoration(
+                            border:
+                            Border.all(color: Colors.black, width: 1),
+                            image: DecorationImage(
+                              image: img != null
+                                  ? FileImage(img!) // For Mobile (File)
+                                  : webImage != null
+                                  ? MemoryImage(
+                                  webImage!) // For Web (Uint8List)
+                                  : NetworkImage(
+                                  'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
+                              as ImageProvider,
+                              // Placeholder
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                       ),

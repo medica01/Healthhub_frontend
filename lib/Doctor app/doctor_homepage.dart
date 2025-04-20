@@ -7,13 +7,14 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_Booking_patient_history/Doc_booking_patient_history.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_Booking_patient_history/specific_patient_details.dart';
-import 'package:health_hub/Doctor%20app/pages/Doc_home_page/Doc_home_page.dart';
+
 import 'package:health_hub/Doctor%20app/pages/Doc_locations_page/doc_location_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_message_page/doc_message_page.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_profile_page/doc_profile_page.dart';
 import 'package:health_hub/Notification_services.dart';
 import 'package:http/http.dart%20' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../Backend_information/Backend_doctor_details.dart';
@@ -610,7 +611,8 @@ class _docHomePageState extends State<docHomePage> {
               ),
             ),
           )
-        : Center(child: Container(child: CircularProgressIndicator()));
+        : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,));
   }
 }
 

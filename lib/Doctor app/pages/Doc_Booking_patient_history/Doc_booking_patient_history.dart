@@ -7,6 +7,7 @@ import 'package:health_hub/Doctor%20app/pages/Doc_Booking_patient_history/search
 import 'package:health_hub/Doctor%20app/pages/Doc_Booking_patient_history/specific_patient_details.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class doc_book_pati extends StatefulWidget {
@@ -127,7 +128,8 @@ class _Doc_see_userState extends State<Doc_see_user> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return !isloading
+      ?ListView(
       children: [
         Padding(
             padding: EdgeInsets.only(top: 10.0),
@@ -247,6 +249,7 @@ class _Doc_see_userState extends State<Doc_see_user> {
                   );
                 }))
       ],
-    );
+    ):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,));
   }
 }

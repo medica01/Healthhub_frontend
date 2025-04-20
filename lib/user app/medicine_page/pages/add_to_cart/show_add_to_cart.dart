@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/main.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../../Backend_information/medicine_app_backend/add_to_cart_backend.dart';
@@ -93,14 +94,6 @@ class _show_to_cartState extends State<show_to_cart> {
             style: TextStyle(color: Colors.blueAccent),
           ),
           centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.search,
-                  color: Colors.blueAccent,
-                ))
-          ],
         ),
         body: loading
             ? (show_add_to_cart_user.isEmpty
@@ -232,7 +225,8 @@ class _show_to_cartState extends State<show_to_cart> {
                     )
                   ],
                 ))
-            : Center(child: CircularProgressIndicator()),
+            : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+          height: 100,))
       ),
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/medicine_page/pages/Order_show/show_order_specific_item.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../../Backend_information/medicine_app_backend/medicine_order_details_backend.dart';
@@ -55,14 +56,12 @@ class _medicine_home_pageState extends State<show_order_placed> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Colors.white54,
+          backgroundColor: Colors.white54,
           appBar: AppBar(
             backgroundColor: Colors.white54,
             title: Text(
@@ -70,92 +69,123 @@ class _medicine_home_pageState extends State<show_order_placed> {
               style: TextStyle(color: Colors.blueAccent),
             ),
             centerTitle: true,
-            actions: [
-              IconButton(
-                  onPressed: () {},
-                  icon: Icon(
-                    Icons.search,
-                    color: Colors.blueAccent,
-                  ))
-            ],
           ),
-          body:loading
-          ?(order_placed_user_details.isNotEmpty
-              ?ListView(
-            children: [
-              ListView.builder(
-                physics: BouncingScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: order_placed_user_details.length,
-                  itemBuilder: (context, index) {
-                  var order_detials= order_placed_user_details[index];
-                  return Builder(
-                    builder: (context) {
-                      return Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: AnimationConfiguration.staggeredList(
-                      position: index,
-                      duration: const Duration(milliseconds: 500),
-                      child: SlideAnimation(
-                      horizontalOffset: 500.0,
-                      child: FadeInAnimation(
-                      child:GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>show_spe_order_pro(
-                            id: "${order_detials.id}",
-                          )));
-                        },
-                        child: Container(
-                          color: Colors.transparent,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              GestureDetector(
-                                onTap:(){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>specific_product(
-                                      product_number : "${order_detials.productNumber}"
-                                  )));
-                                },
-                                child: Container(
-                                  child: Image(
-                                      image: NetworkImage(
-                                          scale: 3,
-                                          "http://$ip:8000${order_detials.productImage}")),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 50,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text("${order_detials.productName}"),
-                                  ),
-                                  Text("Delivery ${order_detials.orderDate}",style: TextStyle(color: Colors.grey,fontSize: 8),)
-                                ],
-                              ),
-
-                              Padding(
-                                padding:  EdgeInsets.only(left: 15.0),
-                                child: Icon(Icons.arrow_forward_ios,color: Colors.black,),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),)))
-
-                      );
-                    }
-                  );
-                  }),
-              Container(
-                height: 100,
-              )
-            ],
-          ):Center(child: Text("No Order Found",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),),)):Center(child: CircularProgressIndicator(),),
-      ),
+          body: loading
+              ? (order_placed_user_details.isNotEmpty
+                  ? ListView(
+                      children: [
+                        ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: order_placed_user_details.length,
+                            itemBuilder: (context, index) {
+                              var order_detials =
+                                  order_placed_user_details[index];
+                              return Builder(builder: (context) {
+                                return Padding(
+                                    padding: const EdgeInsets.all(15.0),
+                                    child: AnimationConfiguration.staggeredList(
+                                        position: index,
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        child: SlideAnimation(
+                                            horizontalOffset: 500.0,
+                                            child: FadeInAnimation(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              show_spe_order_pro(
+                                                                id: "${order_detials.id}",
+                                                              )));
+                                                },
+                                                child: Container(
+                                                  color: Colors.transparent,
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      specific_product(
+                                                                          product_number:
+                                                                              "${order_detials.productNumber}")));
+                                                        },
+                                                        child: Container(
+                                                          child: Image(
+                                                              image: NetworkImage(
+                                                                  scale: 3,
+                                                                  "http://$ip:8000${order_detials.productImage}")),
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: 50,
+                                                      ),
+                                                      Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Text(
+                                                                "${order_detials.productName}"),
+                                                          ),
+                                                          Text(
+                                                            "Delivery ${order_detials.orderDate}",
+                                                            style: TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontSize: 8),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                left: 15.0),
+                                                        child: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          color: Colors.black,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ))));
+                              });
+                            }),
+                        Container(
+                          height: 100,
+                        )
+                      ],
+                    )
+                  : Center(
+                      child: Text(
+                        "No Order Found",
+                        style: TextStyle(
+                            color: Colors.blueAccent,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ))
+              : Center(
+                  child: Lottie.asset(
+                  "assets/lottie/ani.json",
+                  width: 100,
+                  height: 100,
+                ))),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:health_hub/allfun.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/profile_photo_2.dart';
 import 'package:http/http.dart%20' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../main.dart';
@@ -140,9 +141,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ],
             )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+          : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
     );
   }
 

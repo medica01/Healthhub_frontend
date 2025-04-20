@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
@@ -590,8 +591,8 @@ class _change_addressState extends State<change_address> {
           ],
         ),
       ),
-    ) : Container(
-        height: 500, child: Center(child: CircularProgressIndicator(),));
+    ) : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+    height: 100,));
   }
 }
 

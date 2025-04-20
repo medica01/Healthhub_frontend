@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:health_hub/main.dart';
+import 'package:lottie/lottie.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
@@ -340,7 +341,8 @@ class _profileState extends State<profile> {
               menu_item('Help', Icons.help_outline, () {}),
             ],
           )
-        : Center(child: CircularProgressIndicator());
+        : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,));
   }
 }
 

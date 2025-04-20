@@ -5,6 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/Backend_information/Backend_booking_doctor.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/pages/Booking_history/search_booking_history.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -67,9 +68,8 @@ class _booking_history_pageState extends State<booking_history_page> {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.white54,
+            backgroundColor: Colors.white54,
             appBar: AppBar(
-
               backgroundColor: Colors.white54,
               centerTitle: true,
               title: Text(
@@ -114,127 +114,141 @@ class _booking_history_pageState extends State<booking_history_page> {
                                 var show_doc = booking_doc[index];
                                 print("doctor name :${show_doc.doctorName}");
                                 return Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                  child:
-                                  AnimationConfiguration.staggeredList(
-                                    position: index,
-                                    duration: const Duration(milliseconds: 500),
-                                    child: SlideAnimation(
-                                      horizontalOffset: 500.0,
-                                      child: FadeInAnimation(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    get_spec_doc_user_dat_tim(
-                                                      doc_id: "${show_doc.id}",
-                                                    ),
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: AnimationConfiguration.staggeredList(
+                                      position: index,
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      child: SlideAnimation(
+                                        horizontalOffset: 500.0,
+                                        child: FadeInAnimation(
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      get_spec_doc_user_dat_tim(
+                                                    doc_id: "${show_doc.id}",
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            child: Card(
+                                              margin: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 5),
+                                              elevation: 5,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                               ),
-                                            );
-                                          },
-                                          child: Card(
-                                            margin: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            elevation: 5,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                              BorderRadius.circular(10),
-                                            ),
-                                            clipBehavior: Clip.hardEdge,
-                                            shadowColor: Colors.grey,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                              ),
-                                              // height: 190,
-                                              child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 10.0,
-                                                    top: 15,
-                                                    bottom: 15),
-                                                child: Center(
-                                                  child: Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment.center,
-                                                    children: [
-                                                      CircleAvatar(
-                                                        radius: 50,
-                                                        backgroundImage:
-                                                        NetworkImage(
-                                                          show_doc.doctorImage !=
-                                                              null
-                                                              ? "http://$ip:8000${show_doc.doctorImage}"
-                                                              : "no data ",
-                                                        ),
-                                                      ),
-                                                      Padding(
-                                                        padding: EdgeInsets.only(
-                                                            left: 28.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
+                                              clipBehavior: Clip.hardEdge,
+                                              shadowColor: Colors.grey,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                ),
+                                                // height: 190,
+                                                child: Padding(
+                                                  padding: EdgeInsets.only(
+                                                      left: 10.0,
+                                                      top: 15,
+                                                      bottom: 15),
+                                                  child: Center(
+                                                    child: Row(
+                                                      mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .center,
-                                                          crossAxisAlignment:
+                                                      crossAxisAlignment:
                                                           CrossAxisAlignment
-                                                              .start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  "${show_doc.doctorName}",
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontSize: 20),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 5.0),
-                                                              child: Text(
-                                                                "${show_doc.specialty}",
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 5.0),
-                                                              child: Text(
-                                                                "${show_doc.service} years of exp",
-                                                                style: TextStyle(
-                                                                  fontSize: 14,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 5.0),
-                                                              child: Text(
-                                                                  "Date: ${show_doc.bookingDate}"),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                              EdgeInsets.only(
-                                                                  bottom: 5.0),
-                                                              child: Text(
-                                                                  "Time: ${show_doc.bookingTime}"),
-                                                            )
-                                                          ],
+                                                              .center,
+                                                      children: [
+                                                        CircleAvatar(
+                                                          radius: 50,
+                                                          backgroundImage:
+                                                              NetworkImage(
+                                                            show_doc.doctorImage !=
+                                                                    null
+                                                                ? "http://$ip:8000${show_doc.doctorImage}"
+                                                                : "no data ",
+                                                          ),
                                                         ),
-                                                      )
-                                                    ],
+                                                        Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 28.0),
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Text(
+                                                                    "${show_doc.doctorName}",
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            20),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            5.0),
+                                                                child: Text(
+                                                                  "${show_doc.specialty}",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            5.0),
+                                                                child: Text(
+                                                                  "${show_doc.service} years of exp",
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            5.0),
+                                                                child: Text(
+                                                                    "Date: ${show_doc.bookingDate}"),
+                                                              ),
+                                                              Padding(
+                                                                padding: EdgeInsets
+                                                                    .only(
+                                                                        bottom:
+                                                                            5.0),
+                                                                child: Text(
+                                                                    "Time: ${show_doc.bookingTime}"),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -242,10 +256,7 @@ class _booking_history_pageState extends State<booking_history_page> {
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  )
-
-                                );
+                                    ));
                               },
                             ),
                           ),
@@ -253,12 +264,12 @@ class _booking_history_pageState extends State<booking_history_page> {
                             height: 100,
                           )
                         ],
-                      )
-            )
-                : Center(child: CircularProgressIndicator()
-            )
-        )
-    );
+                      ))
+                : Center(
+                    child: Lottie.asset(
+                    "assets/lottie/ani.json",
+                    width: 100,
+                    height: 100,
+                  ))));
   }
 }
-

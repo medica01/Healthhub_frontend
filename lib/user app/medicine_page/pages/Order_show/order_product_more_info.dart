@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/medicine_app_backend/medicine_order_details_backend.dart';
 import 'package:http/http.dart%20' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../main.dart';
@@ -397,31 +398,13 @@ class _view_order_detailsState extends State<view_order_details> {
                 ),
               ),
             ),
-            Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Items from your Wish List",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.more_vert))
-                ],
-              ),
-            ),
             Container(
               height: 100,
             )
           ],
         ),
-      ):Center(child: CircularProgressIndicator(),),
+      ):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
     );
   }
 }

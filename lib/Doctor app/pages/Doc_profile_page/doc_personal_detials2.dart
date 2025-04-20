@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart%20' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Backend_information/Backend_doctor_details.dart';
@@ -116,9 +117,8 @@ class _doc_personalState extends State<doc_personal> {
                 ),
               ],
             )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+          : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
     );
   }
 

@@ -203,7 +203,7 @@ class _show_docState extends State<show_doc> {
                                                 const EdgeInsets.only(left: 28.0),
                                                 child: IconButton(
                                                   onPressed: () {
-                                                    _delete_fav(fav_doc.id as int);
+                                                    _delete_fav(fav_doc.doctor as int);
                                                     setState(() {
                                                       get_fav_doctor.removeAt(index); // Remove the card from the local list
                                                     });

@@ -80,14 +80,15 @@ class _Splash_screenState extends State<Splash_screen> {
       backgroundColor: Color(0xfff5f5f5),
       body: Center(
         child: Container(
-          height: 200,
-          width: 200,
-          child: Image.network(
-              "https://img.freepik.com/free-vector/hospital-logo-design-vector-medical-cross_53876-136743.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_hybrid"),
+          height: 400,
+          width: 400,
+          child: Image.asset("assets/home.png"),
 
         ),
       ),
     );
   }
 }
+
+// https://img.freepik.com/free-vector/hospital-logo-design-vector-medical-cross_53876-136743.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_hybrid
 

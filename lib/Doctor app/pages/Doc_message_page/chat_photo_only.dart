@@ -231,6 +231,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Replace with your actual imports
@@ -241,11 +242,13 @@ import '../Doc_profile_page/doc_photo_view.dart';
 class only_photo extends StatefulWidget {
   final dynamic doc_phone;
   final dynamic pati_phone;
+  final dynamic user_type;
 
   const only_photo({
     super.key,
     required this.doc_phone,
     required this.pati_phone,
+    required this.user_type
   });
 
   @override
@@ -257,12 +260,13 @@ class _only_photoState extends State<only_photo> {
   String doc_phone_number = "";
   bool isloading = true;
   String errormessage = '';
-  String sender_type = "doctor";
+  String sender_type = "";
 
   @override
   void initState() {
     super.initState();
     _get_user_doctor_chat_history();
+    sender_type = widget.user_type;
   }
 
   Future<void> _get_user_doctor_chat_history() async {
@@ -304,34 +308,31 @@ class _only_photoState extends State<only_photo> {
         children: [
           Expanded(
             child: isloading
-                ? Center(child: CircularProgressIndicator())
-                : get_chats_history.isEmpty
-                ? Center(
-              child: Text(
-                "No photos found",
-                style: TextStyle(color: Color(0xff1f8acc)),
-              ),
-            )
+                ? Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+              height: 100,))
                 : ListView.builder(
               itemCount: get_chats_history.length,
               itemBuilder: (context, index) {
                 var chat = get_chats_history[index];
-                bool showDate = index == 0 ||
-                    (index > 0 &&
-                        chat.datestamp !=
-                            get_chats_history[index - 1].datestamp);
-                print(
-                    'Index: $index, Datestamp: ${chat.datestamp}, ShowDate: $showDate'); // Debug
-                return chat.image != null && chat.image!.isNotEmpty
+                bool showDate = index == 0 || // First message
+                    get_chats_history[index].datestamp !=
+                        get_chats_history[index - 1].datestamp; // New day
+                return chat.id != null ||
+                    chat.message != null ||
+                    chat.docPhoneNo != null ||
+                    chat.userPhoneNo != null ||
+                    chat.senderType != null ||
+                    chat.datestamp != null
                     ? ChatBubble(
-                  image: chat.image,
+                  message: chat.message,
                   senderType: chat.senderType,
                   time: chat.timestamp,
-                  message: chat.message,
+                  image: chat.image,
                   date: chat.datestamp,
                   showDate: showDate,
+                    sender_types: sender_type
                 )
-                    : SizedBox();
+                    : Text("data");
               },
             ),
           ),
@@ -349,14 +350,17 @@ class ChatBubble extends StatefulWidget {
   final String? message;
   final String? date;
   final bool showDate;
+  final String sender_types;
 
-  const ChatBubble({
+   ChatBubble({
     this.image,
     this.senderType,
     this.time,
     this.date,
     required this.showDate,
-    this.message
+    this.message,
+     required this.sender_types
+
   });
 
   @override
@@ -385,15 +389,17 @@ class _ChatBubbleState extends State<ChatBubble> {
         chattime = widget.time ?? "";
       }
     }
+    print(" show date: ${widget.showDate}");
+    print("${widget.date}");
   }
 
   @override
   Widget build(BuildContext context) {
-    bool isUser = widget.senderType == 'doctor';
-    return widget.image != null && widget.image!.isNotEmpty && widget.message!=null
+    bool isUser = widget.senderType == widget.sender_types;
+    return widget.image != null && widget.image!.isNotEmpty
         ? Column(
       children: [
-        if (widget.showDate && widget.date != null)
+        if (widget.showDate)
           widget.date != forr
               ? Center(
             child: Card(
@@ -437,6 +443,7 @@ class _ChatBubbleState extends State<ChatBubble> {
               ),
             ),
           ),
+
         Align(
           alignment:
           isUser ? Alignment.centerRight : Alignment.centerLeft,

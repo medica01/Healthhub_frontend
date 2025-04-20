@@ -4,9 +4,11 @@ import 'package:health_hub/allfun.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import '../../../../Backend_information/medicine_app_backend/medicine_purchase_backend.dart';
 import '../../add_medicine_page.dart';
 import 'about_specific_product.dart';
+
 
 class medi_home_page extends StatefulWidget {
   const medi_home_page({super.key});
@@ -19,6 +21,7 @@ class _medi_home_pageState extends State<medi_home_page> {
   List<medicine_purchase> medical_details = [];
   DateTime now = DateTime.now();
   String formattedseven ="";
+  bool isloading=false;
 
   @override
   void initState() {
@@ -44,6 +47,7 @@ class _medi_home_pageState extends State<medi_home_page> {
           medical_details = jsonResponse
               .map((data) => medicine_purchase.fromJson(data))
               .toList();
+          isloading=true;
         });
       }
     } catch (e) {
@@ -71,7 +75,8 @@ class _medi_home_pageState extends State<medi_home_page> {
                 style: TextStyle(color: Colors.blueAccent),
               ),
             ),
-            body: ListView(
+            body: isloading
+            ?ListView(
               physics: BouncingScrollPhysics(),
               children: [
                 ListView.builder(
@@ -150,10 +155,12 @@ class _medi_home_pageState extends State<medi_home_page> {
                                 ),
                               ),
                             )
-                          : CircularProgressIndicator();
+                          :Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+                        height: 100,));
                     }),
               ],
-            ),
+            ):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+              height: 100,)),
             ),
       );
   }

@@ -10,12 +10,15 @@ import 'package:health_hub/user%20app/pages/message_page/search_chat.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../Backend_information/chat_history_backend.dart';
 import '../../../Backend_information/on_off_backend.dart';
+import '../../../Doctor app/pages/Doc_message_page/chat_photo_only.dart';
 import '../../../main.dart';
+import '../../Other_feature/photo_view.dart';
 import '../Profile_page/profile_photo_2.dart';
 import '../home_page/doctor_profile_3.dart';
 import 'package:path/path.dart';
@@ -64,10 +67,8 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
         _scrollToBottom();
       });
     });
-    messageController.addListener((){
-      setState(() {
-
-      });
+    messageController.addListener(() {
+      setState(() {});
     });
   }
 
@@ -189,34 +190,6 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
       phone_number = phone_number.replaceFirst("+", "");
     });
 
-    if (phone_number.isEmpty) {
-      print("User phone number not found.");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User phone number not found')),
-      );
-      return;
-    }
-
-    if (get_doc_number == null) {
-      print("Doctor details are not loaded yet.");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Doctor details not loaded')),
-      );
-      return;
-    }
-
-    // Validate input: Ensure either a message or an image is provided
-    if (messageController.text.trim().isEmpty) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text("Send Failed"),
-          content: Text("Empty  message can't send"),
-        ),
-      );
-      return;
-    }
-
     try {
       final String uploadUrl = 'http://$ip:8000/chats/send-message/';
 
@@ -226,7 +199,8 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
       // Add fields
       request.fields['sender_phone'] = phone_number;
       request.fields['receiver_phone'] = "${get_doc_number!.doctorPhoneNo}";
-      request.fields['message'] = messageController.text; // Default message if empty
+      request.fields['message'] =
+          messageController.text; // Default message if empty
       request.fields['sender_type'] = sender_type;
 
       // Add image if available
@@ -365,34 +339,6 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
     }
   }
 
-  // Function to open Google Maps with source and destination names
-  // Future<void> openGoogleMaps(String source, String destination, BuildContext context) async {
-  //   try {
-  //     // Encode the source and destination to handle spaces and special characters
-  //     final String encodedSource = Uri.encodeComponent(source);
-  //     final String encodedDestination = Uri.encodeComponent(destination);
-  //
-  //     // Construct the Google Maps URL as a Uri object
-  //     final Uri googleMapsUrl = Uri.parse(
-  //         'https://www.google.com/maps/dir/?api=1&origin=$encodedSource&destination=$encodedDestination&travelmode=driving'
-  //     );
-  //
-  //     // Check if the URL can be launched
-  //     if (await canLaunchUrl(googleMapsUrl)) {
-  //       await launchUrl(googleMapsUrl);
-  //       print('Google Maps URL launched: $googleMapsUrl');
-  //     } else {
-  //       throw 'Could not launch $googleMapsUrl';
-  //     }
-  //   } catch (e) {
-  //     // Show error to the user
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Failed to open Google Maps: $e')),
-  //     );
-  //     print('Error launching Google Maps: $e');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -402,7 +348,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
         titleSpacing: 0,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CircleAvatar(
               radius: 20,
@@ -414,69 +360,45 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                           'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
                       as ImageProvider, // Use a default image
             ),
-            Column(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 10.0),
-                  child: get_doc_number != null
-                      ? Text("${get_doc_number!.doctorName ?? "No name"}",
-                          style: TextStyle(fontWeight: FontWeight.bold))
-                      : SizedBox(), // Show a loader until data is loaded
-                ),
-                Center(
-                  child: get_doc_number != null &&
-                          get_doc_number!.docStatus == false
-                      ? Text("Offline",
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold))
-                      : Text("Online",
-                          style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold)),
-                )
-              ],
+            Padding(
+              padding: EdgeInsets.only(left: 10.0),
+              child: get_doc_number != null
+                  ? Text("${get_doc_number!.doctorName ?? "No name"}",
+                      style: TextStyle(fontWeight: FontWeight.bold))
+                  : SizedBox(), // Show a loader until data is loaded
             ),
             // Text("Online", style: TextStyle(
             //     color: Colors.green, fontWeight: FontWeight.bold),)
           ],
         ),
         actions: [
-          Row(
-            children: [
-              IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => doc_profile(
-                                  data: "${get_doc_number!.id}",
-                                )));
-                  },
-                  icon: Icon(Icons.calendar_month)),
-              IconButton(
-                  onPressed: () {
-                    _launchPhoneDialer();
-                  },
-                  icon: Icon(Icons.call)),
-              // IconButton(
-              //     onPressed: (){
-              //       final source = sources;
-              //       final destination = get_doc_number!.doctorLocation!.trim();
-              //       if (source.isNotEmpty && destination.isNotEmpty) {
-              //         openGoogleMaps(source, destination,context);
-              //       } else {
-              //         ScaffoldMessenger.of(context).showSnackBar(
-              //           SnackBar(content: Text('Please enter source and destination')),
-              //         );
-              //       }
-              //     },
-              //     icon: Icon(Icons.assistant_direction_rounded)
-              // )
-            ],
-          )
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => only_photo(
+                              doc_phone: "${get_doc_number!.doctorPhoneNo}",
+                              pati_phone: phone_number,
+                              user_type: "user",
+                            )));
+              },
+              icon: Icon(Icons.photo)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => doc_profile(
+                              data: "${get_doc_number!.id}",
+                            )));
+              },
+              icon: Icon(Icons.calendar_month)),
+          IconButton(
+              onPressed: () {
+                _launchPhoneDialer();
+              },
+              icon: Icon(Icons.call))
         ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(60),
@@ -520,7 +442,8 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
         children: [
           Expanded(
             child: isloading
-                ? Center(child: CircularProgressIndicator())
+                ? Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+              height: 100,))
                 : ListView.builder(
                     controller: _scrollController,
                     physics: AlwaysScrollableScrollPhysics(),
@@ -559,23 +482,33 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                         padding: const EdgeInsets.all(8.0),
                         child: Stack(
                           children: [
-                            Container(
-                              width: 130,
-                              height: 130,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.black, width: 1),
-                                image: DecorationImage(
-                                  image: img != null
-                                      ? FileImage(img!) // For Mobile (File)
-                                      : webImage != null
-                                          ? MemoryImage(
-                                              webImage!) // For Web (Uint8List)
-                                          : NetworkImage(
-                                                  'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
-                                              as ImageProvider,
-                                  // Placeholder
-                                  fit: BoxFit.cover,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => photos_vies(
+                                              photo_view: img as io.File,
+                                            )));
+                              },
+                              child: Container(
+                                width: 130,
+                                height: 130,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.black, width: 1),
+                                  image: DecorationImage(
+                                    image: img != null
+                                        ? FileImage(img!) // For Mobile (File)
+                                        : webImage != null
+                                            ? MemoryImage(
+                                                webImage!) // For Web (Uint8List)
+                                            : NetworkImage(
+                                                    'https://cdn.pixabay.com/photo/2018/11/13/21/43/avatar-3814049_1280.png')
+                                                as ImageProvider,
+                                    // Placeholder
+                                    fit: BoxFit.cover,
+                                  ),
                                 ),
                               ),
                             ),
@@ -613,7 +546,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                           _pickImage();
                         },
                         icon: Icon(Icons.photo)),
-                    (messageController.text.trim().isEmpty && img==null)
+                    (messageController.text.trim().isEmpty && img == null)
                         ? SizedBox()
                         : IconButton(
                             icon: Icon(Icons.send),
@@ -729,53 +662,69 @@ class _ChatBubbleState extends State<ChatBubble> {
                 alignment:
                     isUser ? Alignment.centerRight : Alignment.centerLeft,
                 child: Column(
-                  crossAxisAlignment:  isUser?CrossAxisAlignment.end :CrossAxisAlignment.start,
+                  crossAxisAlignment: isUser
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   children: [
-                    widget.image==null
-                    ?SizedBox()
-                    :Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>pati_view(pati_views: "${widget.image}",)));
-                        },
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          // height: 200,
-                          width: 200,
-                          decoration: BoxDecoration(
-                             // border: Border.all(color: isUser ? Colors.blue : Colors.grey,width: 2),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
-                              bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
-                              bottomRight: isUser ? Radius.zero : Radius.circular(15),
+                    widget.image == null
+                        ? SizedBox()
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => pati_view(
+                                              pati_views: "${widget.image}",
+                                            )));
+                              },
+                              child: Container(
+                                  clipBehavior: Clip.hardEdge,
+                                  // height: 200,
+                                  width: 200,
+                                  decoration: BoxDecoration(
+                                    // border: Border.all(color: isUser ? Colors.blue : Colors.grey,width: 2),
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(15),
+                                      topRight: Radius.circular(15),
+                                      bottomLeft: isUser
+                                          ? Radius.circular(15)
+                                          : Radius.zero,
+                                      bottomRight: isUser
+                                          ? Radius.zero
+                                          : Radius.circular(15),
+                                    ),
+                                  ),
+                                  child: Image.network(
+
+                                      // scale: 1,
+                                      fit: BoxFit.cover,
+                                      "http://$ip:8000${widget.image}")),
                             ),
                           ),
-                          child: Image.network(
-
-                            // scale: 1,
-                            fit: BoxFit.cover,
-                              "http://$ip:8000${widget.image}")
-                        ),
-                      ),
-                    ),
-                    widget.text==""||widget.text==null
-                        ?SizedBox()
-                        :Container(
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                      decoration: BoxDecoration(
-                        color: isUser ? Colors.blue[100] : Colors.grey[300],
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                          bottomLeft: isUser ? Radius.circular(15) : Radius.zero,
-                          bottomRight: isUser ? Radius.zero : Radius.circular(15),
-                        ),
-                      ),
-                      child: Text(widget.text, style: TextStyle(fontSize: 16)),
-                    ),
+                    widget.text == "" || widget.text == null
+                        ? SizedBox()
+                        : Container(
+                            margin: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 10),
+                            padding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                            decoration: BoxDecoration(
+                              color:
+                                  isUser ? Colors.blue[100] : Colors.grey[300],
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15),
+                                bottomLeft:
+                                    isUser ? Radius.circular(15) : Radius.zero,
+                                bottomRight:
+                                    isUser ? Radius.zero : Radius.circular(15),
+                              ),
+                            ),
+                            child: Text(widget.text,
+                                style: TextStyle(fontSize: 16)),
+                          ),
                   ],
                 ),
               ),

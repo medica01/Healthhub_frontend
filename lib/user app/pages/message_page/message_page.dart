@@ -6,6 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:health_hub/Backend_information/Backend_doctor_details.dart';
 import 'package:health_hub/user%20app/pages/message_page/search_doc_message_page.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;
@@ -120,9 +121,8 @@ class _message_pageState extends State<message_page> {
   @override
   Widget build(BuildContext context) {
     return isLoading
-        ? Center(
-            child: CircularProgressIndicator(),
-          )
+        ? Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,))
         : Scaffold(
             backgroundColor: Colors.white,
             body: ListView(

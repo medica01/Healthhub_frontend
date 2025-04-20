@@ -20,6 +20,7 @@ class _doc_messageState extends State<doc_message> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           centerTitle: true,
