@@ -309,65 +309,58 @@ class _docHomePageState extends State<docHomePage> {
   Widget build(BuildContext context) {
     return get_doc_details != null
         ? Scaffold(
-      backgroundColor: Colors.white,
+            backgroundColor: Colors.white,
             appBar: AppBar(
               leadingWidth: 1000,
-              leading: Builder(builder: (context) {
-                return GestureDetector(
-                  onTap: () {
-                    Scaffold.of(context).openDrawer();
-                  },
-                  child: Row(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 8.0),
-                        child: CircleAvatar(
-                          radius: 22.0,
-                          backgroundImage: get_doc_details!.doctorImage != null
-                              ? NetworkImage(
-                                  "http://$ip:8000${get_doc_details!.doctorImage}")
-                              : NetworkImage(""),
-                        ),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(left: 10.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Hi, Welcome,",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            get_doc_details!.doctorName != null
-                                ? Text(
-                                    "${get_doc_details!.doctorName}",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  )
-                                : Text("Guest",
-                                    style: TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.bold))
-                          ],
-                        ),
-                      ),
-                    ],
+              leading: Row(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 8.0),
+                    child: CircleAvatar(
+                      radius: 22.0,
+                      backgroundImage: get_doc_details!.doctorImage != null
+                          ? NetworkImage(
+                              "http://$ip:8000${get_doc_details!.doctorImage}")
+                          : NetworkImage(""),
+                    ),
                   ),
-                );
-              }),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Hi, Welcome,",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        get_doc_details!.doctorName != null
+                            ? Text(
+                                "${get_doc_details!.doctorName}",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : Text("Guest",
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
+                ],
+              ),
               actions: [
                 IconButton(
                     onPressed: () {}, icon: Icon(Icons.notifications_active))
               ],
             ),
-            drawer: AppDrawer(),
+            // drawer: AppDrawer(),
             body: Padding(
               padding: EdgeInsets.all(8.0),
               child: ListView(
@@ -426,14 +419,39 @@ class _docHomePageState extends State<docHomePage> {
                                   child: one("Appointment",
                                       FontAwesomeIcons.bookmark)),
                               GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                doc_profiles()));
-                                  },
-                                  child: one("Doctor plan", Icons.event_note)),
+                                onTap: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              doc_profiles()));
+                                },
+                                child: Container(
+                                  height: 70,
+                                  width: 100,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 22.0,
+                                        backgroundImage: get_doc_details!
+                                                    .doctorImage !=
+                                                null
+                                            ? NetworkImage(
+                                                "http://$ip:8000${get_doc_details!.doctorImage}")
+                                            : NetworkImage(""),
+                                      ),
+                                      Padding(
+                                        padding: EdgeInsets.only(top: 5.0),
+                                        child: Container(
+                                            child: Text("Doctor Profile")),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
                           Padding(
@@ -603,7 +621,6 @@ class _docHomePageState extends State<docHomePage> {
                       }).toList(), // <-- fix applied here
                     ),
                   ),
-
                   Container(
                     height: 100,
                   )
@@ -611,48 +628,53 @@ class _docHomePageState extends State<docHomePage> {
               ),
             ),
           )
-        : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
-      height: 100,));
+        : Center(
+            child: Lottie.asset(
+            "assets/lottie/ani.json",
+            width: 100,
+            height: 100,
+          ));
   }
 }
 
-class AppDrawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          const DrawerHeader(
-            decoration: BoxDecoration(color: Colors.blue),
-            child: Text(
-              'Welcome Gokul!',
-              style: TextStyle(color: Colors.white, fontSize: 24),
-            ),
-          ),
-          ListTile(
-            leading: const Icon(Icons.home),
-            title: const Text('Home'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('Settings'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout),
-            title: const Text('Logout'),
-            onTap: () {
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
+//
+// class AppDrawer extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Drawer(
+//       child: ListView(
+//         padding: EdgeInsets.zero,
+//         children: [
+//           const DrawerHeader(
+//             decoration: BoxDecoration(color: Colors.blue),
+//             child: Text(
+//               'Welcome Gokul!',
+//               style: TextStyle(color: Colors.white, fontSize: 24),
+//             ),
+//           ),
+//           ListTile(
+//             leading: const Icon(Icons.home),
+//             title: const Text('Home'),
+//             onTap: () {
+//               Navigator.pop(context);
+//             },
+//           ),
+//           ListTile(
+//             leading: const Icon(Icons.settings),
+//             title: const Text('Settings'),
+//             onTap: () {
+//               Navigator.pop(context);
+//             },
+//           ),
+//           ListTile(
+//             leading: const Icon(Icons.logout),
+//             title: const Text('Logout'),
+//             onTap: () {
+//               Navigator.pop(context);
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

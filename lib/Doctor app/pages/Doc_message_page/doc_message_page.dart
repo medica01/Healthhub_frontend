@@ -5,6 +5,7 @@ import 'package:health_hub/Backend_information/user_details_backend.dart';
 import 'package:health_hub/Doctor%20app/pages/Doc_message_page/search_chat_doc_only_user_chat.dart';
 import 'package:health_hub/main.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../Backend_information/chat_doc_only_user_chat_backend.dart';
 import 'chatting_doc_to_user_2.dart';
@@ -229,7 +230,9 @@ class _patient_chat_showState extends State<patient_chat_show> {
                   : Text("data");
             })
       ],
-    ):Center(child: Text("No User Chat",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),))):Center(child: CircularProgressIndicator(),);
+    ):Center(child: Text("No User Chat",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),)))
+        :Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,));
   }
 }
 

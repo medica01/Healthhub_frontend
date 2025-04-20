@@ -4,6 +4,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/Other_feature/search_fav_doc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../Backend_information/get_fav_doc_backend.dart';
@@ -303,6 +304,7 @@ class _show_docState extends State<show_doc> {
           height: 100,
         )
       ],
-    )):Center(child: CircularProgressIndicator(),);
+    )):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,));
   }
 }

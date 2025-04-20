@@ -24,6 +24,9 @@ import '../../../allfun.dart';
 
 import 'dart:typed_data';
 
+import '../../medicine_page/pages/add_address/add_another_address.dart';
+import '../../medicine_page/pages/add_address/change_user_address.dart';
+
 class profile_page extends StatefulWidget {
   const profile_page({super.key});
 
@@ -269,12 +272,7 @@ class _profileState extends State<profile> {
                     )
                   : SizedBox(
                     ),
-              // Divider(
-              //   color: Colors.grey,
-              //   thickness: 1,
-              //   indent: 5,
-              //   endIndent: 5,
-              // ),
+
               Center(
                 child: Stack(
                   children: [ 
@@ -330,14 +328,20 @@ class _profileState extends State<profile> {
                   MaterialPageRoute(builder: (context) => ProfileScreen()),
                 );
               }),
-              menu_item('Settings', Icons.settings, () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //       builder: (context) => const ProfileDetailsPage()),
-                // );
+              menu_item('Add Address', Icons.add, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const another_address()),
+                );
               }),
-              menu_item('About', CupertinoIcons.info, () {}),
+              menu_item('Change Address', CupertinoIcons.cart, () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const change_user_address()),
+                );
+              }),
               menu_item('Help', Icons.help_outline, () {}),
             ],
           )

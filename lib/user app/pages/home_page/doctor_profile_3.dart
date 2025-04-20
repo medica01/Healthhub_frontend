@@ -731,6 +731,7 @@ import '../../../Backend_information/Backend_doctor_details.dart';
 import '../../../Backend_information/get_fav_doc_backend.dart';
 import '../../medicine_page/pages/Med_home_page/order_successfully.dart';
 import '../Profile_page/personal_details_collect.dart';
+import '../Profile_page/profile_page.dart';
 import '../message_page/chatting_user_to_doc_2.dart';
 
 class doc_profile extends StatefulWidget {
@@ -1075,13 +1076,95 @@ class _doc_profileState extends State<doc_profile> {
                               },
                               child: Text("Ok"))
                         ],
-                      ));
+                  ));
             }
           }
         }
       }
     } else {
       _booking_doc();
+    }
+  }
+
+  void vvalid_user() {
+    if (userprofile!.firstName == null) {
+      print("${userprofile!.firstName}");
+      if (userprofile!.lastName == null) {
+        if (userprofile!.age == null) {
+          if (userprofile!.gender == null) {
+            if (userprofile!.email == null) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      "Invalid User",
+                      style: TextStyle(color: Colors.red, fontSize: 25),
+                    ),
+                    content: Text(
+                      "you must create the account for make favorite!",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => profile_page()));
+                          },
+                          child: Text("Ok"))
+                    ],
+                  ));
+            }
+          }
+        }
+      }
+    } else {
+      _favorite_doctor();
+    }
+  }
+
+  void vvvalid_user() {
+    if (userprofile!.firstName == null) {
+      print("${userprofile!.firstName}");
+      if (userprofile!.lastName == null) {
+        if (userprofile!.age == null) {
+          if (userprofile!.gender == null) {
+            if (userprofile!.email == null) {
+              showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text(
+                      "Invalid User",
+                      style: TextStyle(color: Colors.red, fontSize: 25),
+                    ),
+                    content: Text(
+                      "you must create the account for make favorite!",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    actions: [
+                      TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => profile_page()));
+                          },
+                          child: Text("Ok"))
+                    ],
+                  ));
+            }
+          }
+        }
+      }
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  user_doc(data: "${doctor_detail!.doctorPhoneNo}")));
     }
   }
 
@@ -1110,6 +1193,8 @@ class _doc_profileState extends State<doc_profile> {
       }
     });
   }
+
+
 
   Future<void> _favorite_doctor() async {
     String phone_number = "";
@@ -1233,31 +1318,7 @@ class _doc_profileState extends State<doc_profile> {
       }
     } catch (e) {
       errorMessage = e.toString();
-      showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: Text(
-                  "Alert Message",
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 25),
-                ),
-                content: Text(
-                  "$errorMessage",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                actions: [
-                  TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("Ok"))
-                ],
-              ));
+      print("$errorMessage");
     }
   }
 
@@ -1281,16 +1342,12 @@ class _doc_profileState extends State<doc_profile> {
                   ))
               : IconButton(
                   onPressed: () {
-                    _favorite_doctor();
+                    vvalid_user();
                   },
                   icon: Icon(FontAwesomeIcons.heart)),
           IconButton(
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            user_doc(data: "${doctor_detail!.doctorPhoneNo}")));
+                vvvalid_user();
               },
               icon: Icon(Icons.chat))
         ],

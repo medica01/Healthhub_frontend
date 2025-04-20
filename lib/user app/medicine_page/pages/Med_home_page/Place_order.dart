@@ -208,7 +208,8 @@ class _place_orderState extends State<place_order> {
                       style: TextStyle(
                           color: Colors.grey, fontWeight: FontWeight.bold),
                     ),
-                    ListTile(
+                    patients_address!=null
+                    ?ListTile(
                       title: Text(
                         "${patients_address!.fullName}",
                         style: TextStyle(
@@ -257,7 +258,7 @@ class _place_orderState extends State<place_order> {
                               color: Colors.blueAccent, fontSize: 20),))
                         ],
                       ),
-                    ),
+                    ):SizedBox(),
                     Container(
                       width: 400,
                       height: 300,
@@ -288,7 +289,8 @@ class _place_orderState extends State<place_order> {
                         ],
                       ),
                     ),
-                    Padding(
+                    specific_products !=null
+                    ?Padding(
                       padding: EdgeInsets.only(top: 30.0),
                       child: Container(
                         // width: 140,
@@ -335,7 +337,7 @@ class _place_orderState extends State<place_order> {
                           ],
                         ),
                       ),
-                    ),
+                    ):SizedBox(),
                     Padding(
                       padding: EdgeInsets.only(top: 15.0),
                       child: Container(
@@ -375,8 +377,8 @@ class _place_orderState extends State<place_order> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("Total"),
-                                Text("₹ ${total_price}")
+                                Text("Total",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20),),
+                                Text("₹ ${total_price}",style: TextStyle(color: Colors.red,fontSize: 20,fontWeight: FontWeight.bold),)
                               ],
                             ),
                           ],
@@ -415,7 +417,8 @@ class _place_orderState extends State<place_order> {
             )
           ],
         ),
-      ) : Center(child: CircularProgressIndicator(),),
+      ) : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+        height: 100,))
     );
   }
 }

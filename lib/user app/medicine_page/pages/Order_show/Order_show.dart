@@ -119,9 +119,10 @@ class _medicine_home_pageState extends State<show_order_placed> {
                                                                               "${order_detials.productNumber}")));
                                                         },
                                                         child: Container(
+                                                          width: 100,
+                                                          height: 100,
                                                           child: Image(
                                                               image: NetworkImage(
-                                                                  scale: 3,
                                                                   "http://$ip:8000${order_detials.productImage}")),
                                                         ),
                                                       ),

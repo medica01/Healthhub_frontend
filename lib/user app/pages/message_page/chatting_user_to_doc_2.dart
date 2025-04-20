@@ -297,6 +297,8 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
     }
   }
 
+
+
   Future<void> _user_offline() async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     setState(() {
@@ -444,7 +446,8 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
             child: isloading
                 ? Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
               height: 100,))
-                : ListView.builder(
+                : (get_chat_history.isNotEmpty
+                ?ListView.builder(
                     controller: _scrollController,
                     physics: AlwaysScrollableScrollPhysics(),
                     itemCount: get_chat_history.length,
@@ -465,11 +468,12 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
                               time: chat.timestamp,
                               date: chat.datestamp,
                               image: chat.image,
+                              id: chat.id,
                               showDate: showDate,
                             )
                           : Text("data");
                     },
-                  ),
+                  ):Center(child: Text("No chat, Start chatting!",style: TextStyle(color: Colors.blueAccent,fontSize: 20,fontWeight: FontWeight.bold),))),
           ),
           Padding(
             padding: EdgeInsets.only(left: 8.0, right: 8, bottom: 8),
@@ -567,6 +571,7 @@ class _user_docState extends State<user_doc> with WidgetsBindingObserver {
 
 class ChatBubble extends StatefulWidget {
   final dynamic text;
+  final dynamic id;
   final dynamic senderType;
   final dynamic time;
   final dynamic date;
@@ -579,6 +584,7 @@ class ChatBubble extends StatefulWidget {
       required this.time,
       required this.date,
       required this.showDate,
+        required this.id,
       required this.image});
 
   @override
@@ -612,10 +618,21 @@ class _ChatBubbleState extends State<ChatBubble> {
     });
   }
 
+  Future<void> delete_chat_user_doc(int id)async{
+    try{
+      final response= await http.delete(Uri.parse("http://$ip:8000/chats/delete_chat_user_doc/$id/"));
+      if(response.statusCode==200){
+        print("delete successfully");
+      }
+    }catch(e){
+      print("${e.toString()}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isUser = widget.senderType == 'user';
-    return widget.text != null
+    return widget.id!=''||widget.id!=null
         ? Column(
             children: [
               if (widget.showDate) // Only show date if showDate is true
@@ -671,6 +688,52 @@ class _ChatBubbleState extends State<ChatBubble> {
                         : Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
+                              onLongPress: (){
+                                isUser
+                                ?showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text(
+                                        "Notice!",
+                                        style: TextStyle(
+                                            color: Colors.green,
+                                            fontSize: 25,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      content: Text(
+                                        "Did you want to delete this chat!",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                            fontSize: 20),
+                                      ),
+                                      actions: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "Cancel",
+                                                  style: TextStyle(color: Colors.red),
+                                                )),
+                                            TextButton(
+                                                onPressed: () {
+                                                  delete_chat_user_doc(widget.id);
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text(
+                                                  "Delete",
+                                                  style: TextStyle(color: Colors.green),
+                                                )),
+                                          ],
+                                        )
+                                      ],
+                                    )):SizedBox();
+
+                              },
                               onTap: () {
                                 Navigator.push(
                                     context,
@@ -705,26 +768,73 @@ class _ChatBubbleState extends State<ChatBubble> {
                           ),
                     widget.text == "" || widget.text == null
                         ? SizedBox()
-                        : Container(
-                            margin: EdgeInsets.symmetric(
-                                vertical: 5, horizontal: 10),
-                            padding: EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 15),
-                            decoration: BoxDecoration(
-                              color:
-                                  isUser ? Colors.blue[100] : Colors.grey[300],
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                                bottomLeft:
-                                    isUser ? Radius.circular(15) : Radius.zero,
-                                bottomRight:
-                                    isUser ? Radius.zero : Radius.circular(15),
+                        : GestureDetector(
+                      onLongPress: (){
+                        isUser
+                        ?showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text(
+                                "Notice!",
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold),
                               ),
+                              content: Text(
+                                "Did you want to delete this chat!",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 20),
+                              ),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Cancel",
+                                          style: TextStyle(color: Colors.red),
+                                        )),
+                                    TextButton(
+                                        onPressed: () {
+                                          delete_chat_user_doc(widget.id);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text(
+                                          "Delete",
+                                          style: TextStyle(color: Colors.green),
+                                        )),
+                                  ],
+                                )
+                              ],
+                            )):SizedBox();
+                      },
+                          child: Container(
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 5, horizontal: 10),
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 10, horizontal: 15),
+                              decoration: BoxDecoration(
+                                color:
+                                    isUser ? Colors.blue[100] : Colors.grey[300],
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  topRight: Radius.circular(15),
+                                  bottomLeft:
+                                      isUser ? Radius.circular(15) : Radius.zero,
+                                  bottomRight:
+                                      isUser ? Radius.zero : Radius.circular(15),
+                                ),
+                              ),
+                              child: Text(widget.text,
+                                  style: TextStyle(fontSize: 16)),
                             ),
-                            child: Text(widget.text,
-                                style: TextStyle(fontSize: 16)),
-                          ),
+                        ),
                   ],
                 ),
               ),

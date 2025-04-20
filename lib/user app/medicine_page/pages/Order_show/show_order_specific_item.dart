@@ -125,7 +125,7 @@ class _show_spe_order_proState extends State<show_spe_order_pro> {
                               Text(
                                 "Arriving ${get_spec_pro!.orderDate}",
                                 style: TextStyle(
-                                    fontSize: 25, fontWeight: FontWeight.bold),
+                                    fontSize: 20, fontWeight: FontWeight.bold),
                               ),
 
                             ],

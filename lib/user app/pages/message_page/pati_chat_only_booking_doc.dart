@@ -162,6 +162,9 @@ class _booking_doc_messageState extends State<booking_doc_message> {
 
                                             TextButton(onPressed: (){
                                               _delete_doc_user_chat(show_docc.doctorPhoneNo as int);
+                                              setState(() {
+                                                show_book_doc_chat.removeAt(index); // Remove the card from the local list
+                                              });
                                               Navigator.pop(context);
                                             }, child: Text("Ok",style: TextStyle(color: Colors.red),)),
                                           ],

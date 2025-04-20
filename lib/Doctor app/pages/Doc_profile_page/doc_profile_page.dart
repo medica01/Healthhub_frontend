@@ -4,11 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:health_hub/Backend_information/Backend_doctor_details.dart';
 import 'package:health_hub/main.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../../Authentication/doc_otp_verfication/doc_otp_verify.dart';
 import '../../../Authentication/doc_otp_verfication/doctor_details_collect_2.dart';
 import '../../../allfun.dart';
+import '../../../user app/medicine_page/pages/add_address/add_another_address.dart';
+import '../../../user app/medicine_page/pages/add_address/change_user_address.dart';
 import 'doc_personal_detials2.dart';
 import 'doc_photo_view.dart';
 
@@ -130,10 +133,12 @@ class _doc_profile_pageState extends State<doc_profile_page> {
         Map<String,dynamic>jsonResponse = jsonDecode(response.body);
         setState(() {
           _get_doc_details = doctor_details.fromJson(jsonResponse);
-
+          isloading=true;
         });
       }
-    }catch(e){}
+    }catch(e){
+      print("${e.toString()}");
+    }
   }
 
   Widget menu_item(String text, IconData icon, VoidCallback onTap) {
@@ -156,7 +161,8 @@ class _doc_profile_pageState extends State<doc_profile_page> {
   }
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return isloading
+      ?ListView(
       children: [
         Center(
           child: GestureDetector(
@@ -176,8 +182,9 @@ class _doc_profile_pageState extends State<doc_profile_page> {
             ),
           )
         ),
-        isloading
-            ? Center(child: Text("guest"))
+        !isloading
+            ? Center(child: Text("guest",style:
+        TextStyle(fontSize: 23, fontWeight: FontWeight.bold),))
             : _get_doc_details != null
             ? Center(
           child: Text(
@@ -201,16 +208,23 @@ class _doc_profile_pageState extends State<doc_profile_page> {
             MaterialPageRoute(builder: (context) => doc_personal()),
           );
         }),
-        menu_item('Settings', Icons.settings, () {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //       builder: (context) => const ProfileDetailsPage()),
-          // );
+        menu_item('Add Address', Icons.add, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const another_address()),
+          );
         }),
-        menu_item('About', CupertinoIcons.info, () {}),
+        menu_item('Change Address', CupertinoIcons.cart, () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const change_user_address()),
+          );
+        }),
         menu_item('Help', Icons.help_outline, () {}),
       ],
-    );
+    ):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
+      height: 100,));
   }
 }
