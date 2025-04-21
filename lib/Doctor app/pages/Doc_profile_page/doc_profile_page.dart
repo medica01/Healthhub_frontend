@@ -67,33 +67,36 @@ class _doc_profilesState extends State<doc_profiles> {
   }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xfffdfdfd),
-        appBar: AppBar(
-          backgroundColor: Color(0xfffdfdfd),
-          title: text("Profile", Colors.black, 30, FontWeight.bold),
-          actions: [
-            Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: IconButton(
-                  // onPressed: () {
-                  //   if (kIsWeb) {
-                  //     signOutFromGoogleWeb(context);
-                  //   } else {
-                  //     signOutFromGoogleAnd();
-                  //   }
-                  // },
-                  onPressed: ()=>doc_logout(),
-                  icon: Icon(
-                    Icons.logout,
-                    color: Color(0xff1f8acc),
-                    size: 30,
-                  ),
-                )),
-          ],
-        ),
-        body: doc_profile_page(),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home:  Scaffold(
+        backgroundColor: Color(0xfffdfdfd),
+          appBar: AppBar(
+            backgroundColor: Color(0xfffdfdfd),
+            title: text("Profile", Colors.black, 30, FontWeight.bold),
+            actions: [
+              Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    // onPressed: () {
+                    //   if (kIsWeb) {
+                    //     signOutFromGoogleWeb(context);
+                    //   } else {
+                    //     signOutFromGoogleAnd();
+                    //   }
+                    // },
+                    onPressed: ()=>doc_logout(),
+                    icon: Icon(
+                      Icons.logout,
+                      color: Color(0xff1f8acc),
+                      size: 30,
+                    ),
+                  )),
+            ],
+          ),
+          body: doc_profile_page(),
 
+      ),
     );
   }
 }
@@ -222,7 +225,7 @@ class _doc_profile_pageState extends State<doc_profile_page> {
                 builder: (context) => const change_user_address()),
           );
         }),
-        menu_item('Help', Icons.help_outline, () {}),
+
       ],
     ):Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,
       height: 100,));

@@ -32,6 +32,7 @@ class _SaveDetailsState extends State<SaveDetails> {
   final TextEditingController firstnamecontroller = TextEditingController();
   final TextEditingController lastnamecontroller = TextEditingController();
   final TextEditingController agecontroller = TextEditingController();
+  final TextEditingController addresscontroller = TextEditingController();
   final TextEditingController emailcontroller = TextEditingController();
   String phone_number = "";
   String email ="";
@@ -41,13 +42,14 @@ class _SaveDetailsState extends State<SaveDetails> {
     String last_name = lastnamecontroller.text;
     String age = agecontroller.text;
     String gender = genders[selectedGenderIndex];
+    String address = addresscontroller.text;
 
     SharedPreferences pref = await SharedPreferences.getInstance();
     pref.setString("first_name", first_name);
     pref.setString("last_name", last_name);
     pref.setString("age", age);
     pref.setString("gender", gender);
-    // pref.setString("email", email);
+    pref.setString("address", address);
     print("user data save successfully");
     Navigator.pop(context);
     showModalBottomSheet(
@@ -71,6 +73,9 @@ class _SaveDetailsState extends State<SaveDetails> {
     }
     if (email=="") {
       missingfields.add("enter email id");
+    }
+    if (addresscontroller.text=="") {
+      missingfields.add("enter your address");
     }
     if (selectedGenderIndex == -1) {
       missingfields.add("select the gender");
@@ -119,6 +124,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     lastnamecontroller.dispose();
     agecontroller.dispose();
     emailcontroller.dispose();
+
     super.dispose();
   }
 
@@ -213,7 +219,7 @@ class _SaveDetailsState extends State<SaveDetails> {
     return SingleChildScrollView(
       physics: BouncingScrollPhysics(),
       child: Container(
-        height: 650, // Adjusted height to fit the new gender feature
+        height: 720, // Adjusted height to fit the new gender feature
         width: scr.width,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -295,6 +301,20 @@ class _SaveDetailsState extends State<SaveDetails> {
                       10,
                       "Enter the last name",
                       lastnamecontroller),
+                ),
+              ),Flexible(
+                child: Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: textfielld2(
+                      Colors.white,
+                      Colors.blueAccent,
+                      const Color(0xff1f8acc),
+                      BorderRadius.circular(30),
+                      const EdgeInsets.all(20),
+                      30,
+                      10,
+                      "Enter the your address",
+                      addresscontroller),
                 ),
               ),
               // Age Field
@@ -505,6 +525,7 @@ class _SaveDetailsState extends State<SaveDetails> {
                   ),
                 ),
               ),
+
             ],
           ),
         ),
@@ -528,6 +549,7 @@ class _user_photoState extends State<user_photo> {
   String age="";
   String gender="";
   String email="";
+  String address="";
   final _picker = ImagePicker();
 
   @override
@@ -581,6 +603,7 @@ class _user_photoState extends State<user_photo> {
       age=pref.getString("age")??"";
       gender=pref.getString("gender")??"";
       email=pref.getString("email")??"";
+      address=pref.getString("address")??"";
       print("email: $email");
     });
   }
@@ -611,6 +634,7 @@ class _user_photoState extends State<user_photo> {
       request.fields['gender']=gender;
       request.fields['age']=age;
       request.fields['email']=email;
+      request.fields['location']=address;
 
       var response = await request.send();
 
@@ -633,6 +657,7 @@ class _user_photoState extends State<user_photo> {
       request.fields['gender']=gender;
       request.fields['age']=age;
       request.fields['email']=email;
+      request.fields['location']=address;
 
       var response = await request.send();
       print("${response.statusCode}");
@@ -644,6 +669,13 @@ class _user_photoState extends State<user_photo> {
             MaterialPageRoute(builder: (context) => main_home()),
                 (route) => false,
           );
+          SharedPreferences pref=await SharedPreferences.getInstance();
+          await pref.remove('first_name');
+          await pref.remove('last_name');
+          await pref.remove('age');
+          await pref.remove('gender');
+          await pref.remove('email');
+          await pref.remove('address');
           print('Image uploaded successfully.');
         }
         NotificationService().showNotification(id: 0, title: "Health hub", body: "Hi $first_name $last_name all the feature unlocked \nThanking you for Create Account in Health Hub \nAll Is Well");

@@ -251,6 +251,7 @@ import '../../../Backend_information/Backend_booking_doctor.dart';
 import '../../../Notification_services.dart';
 import '../message_page/chatting_user_to_doc_2.dart';
 import 'booking_history_page.dart';
+import 'feedback_user.dart';
 
 class get_spec_doc_user_dat_tim extends StatefulWidget {
   final dynamic doc_id;
@@ -399,6 +400,9 @@ class _get_spec_doc_user_dat_timState extends State<get_spec_doc_user_dat_tim> {
     return Scaffold(
       appBar: AppBar(
         actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>feed_doctor()));
+          }, icon: Icon(Icons.feedback) ),
           IconButton(onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (context)=>user_doc(data:"${doc_book!.docPhoneNumber}")));
           }, icon: Icon(Icons.chat))

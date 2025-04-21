@@ -89,6 +89,7 @@ class _medi_home_pageState extends State<medi_home_page> {
                           ? Padding(
                               padding: const EdgeInsets.only(left: 28.0,right: 28,bottom: 15),
                               child: Card(
+                                color: Colors.white,
                                 elevation: 5,
                                 clipBehavior: Clip.hardEdge,
                                 shadowColor: Colors.grey,
@@ -96,6 +97,7 @@ class _medi_home_pageState extends State<medi_home_page> {
                                   padding:  EdgeInsets.all(8.0),
                                   child: Container(
                                     width: 140,
+                                    color: Colors.white,
                                     // height: 160,
                                     // color: Colors.red,
                                     child: Row(

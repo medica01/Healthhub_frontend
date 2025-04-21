@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/rendering.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:health_hub/Notification_services.dart';
 import 'package:health_hub/main.dart';
 import 'package:health_hub/user%20app/pages/home_page/all_doctor_2.dart';
 import 'package:health_hub/user%20app/pages/home_page/doctor_profile_3.dart';
@@ -60,7 +61,7 @@ class _home_pageState extends State<home_page> {
 
   Future<void> _showdoctor() async {
     final url = Uri.parse(
-        "http://$ip:8000/doctor_details/doctor_editdetails/1/"); // Specific doctor's details
+        "http://$ip:8000/doctor_details/doctor_editdetails/27/"); // Specific doctor's details
     try {
       final response = await http.get(url);
       if (response.statusCode == 200) {
@@ -230,7 +231,9 @@ class _home_pageState extends State<home_page> {
                       size: 30,
                     )),
                 IconButton(
-                    onPressed: () {},
+                    onPressed: () async{
+                      await NotificationService().init();
+                    },
                     icon: Icon(
                       Icons.notifications_active_outlined,
                       size: 30,
@@ -545,23 +548,7 @@ class _home_pageState extends State<home_page> {
                                                               color:
                                                                   Colors.white),
                                                         )),
-                                                    Padding(
-                                                      padding: EdgeInsets.only(
-                                                          left: 38.0),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                            Icons.star,
-                                                            color:
-                                                                Colors.yellow,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                        width: 60,
-                                                        child: Text(
-                                                            "${doctor.regNo ?? 0}")),
+
                                                   ],
                                                 ),
                                               )

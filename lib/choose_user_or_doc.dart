@@ -18,7 +18,9 @@ class _choose_use_docState extends State<choose_use_doc> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       home: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.white,
           centerTitle: true,
           title: Text("Choose User Role",style: TextStyle(color: Color(0xff1f8acc)),),
         ),

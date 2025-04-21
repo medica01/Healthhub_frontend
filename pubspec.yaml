@@ -110,6 +110,7 @@ flutter:
     - assets/home.png
     - assets/heartbeat.gif
     - assets/lottie/ani.json
+    - assets/loog.jpg
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

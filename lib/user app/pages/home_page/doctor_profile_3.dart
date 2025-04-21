@@ -17,6 +17,29 @@ import '../Profile_page/personal_details_collect.dart';
 import '../Profile_page/profile_page.dart';
 import '../message_page/chatting_user_to_doc_2.dart';
 
+class ghghghg {
+  int? id;
+  String? userName;
+  String? feedback;
+
+  ghghghg({this.id, this.userName, this.feedback});
+
+  ghghghg.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    userName = json['user_name'];
+    feedback = json['feedback'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_name'] = this.userName;
+    data['feedback'] = this.feedback;
+    return data;
+  }
+}
+
+
 class doc_profile extends StatefulWidget {
   final dynamic data;
 
@@ -43,6 +66,9 @@ class _doc_profileState extends State<doc_profile> {
   String phone_number = "";
   List<booking_doctor> booking_doc_user = [];
   get_fav_doc? get_fav_doctor;
+
+  List<ghghghg> get_feed=[];
+
 
   Future<void> _booking_doc() async {
     String? doc_id = pk;
@@ -225,9 +251,34 @@ class _doc_profileState extends State<doc_profile> {
     }
   }
 
+  Future<void> getfeed() async {
+
+    try {
+      final response = await http.get(
+          Uri.parse("http://$ip:8000/chats/get_feed/"),
+          headers: {"Content-Type": "application/json"});
+      if (response.statusCode == 200) {
+        List<dynamic> jsonResponse = jsonDecode(response.body);
+        setState(() {
+          get_feed = jsonResponse.map((data)=>ghghghg.fromJson(data)).toList();
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = response.body.toString();
+          isLoading = false;
+        });
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+      isLoading = false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    getfeed();
     pk = widget.data;
 
     // Populate next7Days first
@@ -324,6 +375,8 @@ class _doc_profileState extends State<doc_profile> {
       });
     }
   }
+
+
 
   Future<void> _vibrate() async {
     if (await Vibration.hasVibrator() ?? false) {
@@ -922,6 +975,30 @@ class _doc_profileState extends State<doc_profile> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text("${doctor_detail!.regNo}"),
                   ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 18.0),
+                    child: Text(
+                      "feed back",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: BouncingScrollPhysics(),
+                    shrinkWrap: true,
+                  itemCount: get_feed.length,
+                  itemBuilder: (context,index){
+                      var feed=get_feed[index];
+                    return feed !=null||feed.id!=null
+                      ?Column(
+                      children: [
+                        Text("${feed.userName}"),
+                        Text("${feed.feedback}"),
+                      ],
+                    ):Text("no data");
+                  }),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(

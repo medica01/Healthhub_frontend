@@ -125,7 +125,7 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
   Widget build(BuildContext context) {
     final screen = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: const Color(0xfff5f5f5),
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
           height: screen.height * 1,
@@ -139,8 +139,8 @@ class _doc_otp_verfiyState extends State<doc_otp_verfiy> {
                   Container(
                     height: 200,
                     width: 200,
-                    child: Image.network(
-                      "https://img.freepik.com/free-vector/hospital-logo-design-vector-medical-cross_53876-136743.jpg?uid=R162018176&ga=GA1.1.249085122.1736660184&semt=ais_hybrid",
+                    child: Image.asset(
+                      "assets/loog.jpg",
                     ),
                   ),
                   Text(

@@ -20,37 +20,14 @@ class _SpecificState extends State<Specific> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white54,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.white54,
         centerTitle: true,
         title:  Text(
           "${widget.data} Doctor",
           style:
           TextStyle(color: Color(0xff0a8eac), fontWeight: FontWeight.bold),
-        ),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: Padding(
-            padding: EdgeInsets.only(
-              left: 10.0,
-            ),
-            child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Container(
-                  width: 360,
-                  child: SearchBar(
-                    leading: Icon(Icons.search),
-                    hintText: 'Search a Doctor',
-                    backgroundColor: WidgetStatePropertyAll(Colors.white),
-                    // shadowColor: WidgetStatePropertyAll(Colors.grey),
-                    elevation: WidgetStatePropertyAll(6.0),
-                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20))),
-                    padding: WidgetStatePropertyAll(
-                        EdgeInsets.symmetric(horizontal: 16.0)),
-                  ),
-                )),
-          ),
         ),
       ),
       body: Specif_doc(data : widget.data),
@@ -77,7 +54,6 @@ class _Specif_docState extends State<Specif_doc> {
   void initState() {
     super.initState();
     Spec = widget.data;
-    // _showdoctor1();
     _get_spec_doc_search(widget.data);
   }
 

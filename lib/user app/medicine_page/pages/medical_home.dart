@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -10,6 +9,7 @@ import 'package:health_hub/user%20app/pages/Profile_page/profile_page.dart';
 import 'package:health_hub/user%20app/pages/home_page/hoem_page.dart';
 import 'package:http/http.dart%20' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../Doctor app/pages/Doc_profile_page/doc_profile_page.dart';
 import '../../../main.dart';
 import '../../pages/home.dart';
 import 'Med_home_page/med_home_page.dart';
@@ -35,12 +35,20 @@ class _Medical_main_pageState extends State<Medical_main_page>
   void initState() {
     super.initState();
     _tabController = TabController(length: 5, vsync: this, initialIndex: 2);
+    loading();
   }
 
   @override
   void dispose() {
     _tabController.dispose();
     super.dispose();
+  }
+  Future<void> loading()async{
+    SharedPreferences perf = await SharedPreferences.getInstance();
+    setState(() {
+      doc_or_use = perf.getBool("doc_login") ?? false;
+      use_or_doc = perf.getBool("login") ?? false;
+    });
   }
 
   void _onNavRailTapped(int index) async {
@@ -118,7 +126,7 @@ class _Medical_main_pageState extends State<Medical_main_page>
                 controller: _tabController,
                 children: [
                   SizedBox(),
-                  profile_page(),
+                  doc_or_use ? doc_profiles() : profile_page(),
                   medi_home_page(),
                   show_to_cart(),
                   show_order_placed()
@@ -142,12 +150,14 @@ class BottomNavigationBarWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  State<BottomNavigationBarWidget> createState() => _BottomNavigationBarWidgetState();
+  State<BottomNavigationBarWidget> createState() =>
+      _BottomNavigationBarWidgetState();
 }
 
 class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
   bool doc_or_use = false;
   bool use_or_doc = false;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -176,23 +186,24 @@ class _BottomNavigationBarWidgetState extends State<BottomNavigationBarWidget> {
               unselectedLabelColor: Colors.black,
               indicatorColor: Colors.transparent,
               tabs: [
-
                 GestureDetector(
-                  onTap: () async{
-                    SharedPreferences perf = await SharedPreferences.getInstance();
+                  onTap: () async {
+                    SharedPreferences perf =
+                        await SharedPreferences.getInstance();
                     setState(() {
                       doc_or_use = perf.getBool("doc_login") ?? false;
                       use_or_doc = perf.getBool("login") ?? false;
                     });
                     doc_or_use
-                    ?Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => docHomePage()),
-                    )
-                        :Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                    );
+                        ? Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => docHomePage()),
+                          )
+                        : Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                          );
                   },
                   child: const Icon(Icons.arrow_back),
                 ),

@@ -42,15 +42,13 @@ class _tab_alldoc_bookdocState extends State<tab_alldoc_bookdoc>with SingleTicke
           ]
           ),
         ),
-        body: Expanded(
-          child: TabBarView(
-            physics: const NeverScrollableScrollPhysics(),
-            controller: _tabController,
-            children: [
-              message_page(),
-              booking_doc_message()
-            ],
-          ),
+        body: TabBarView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: _tabController,
+          children: [
+            message_page(),
+            booking_doc_message()
+          ],
         ),
 
     );

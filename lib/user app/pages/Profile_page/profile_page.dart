@@ -6,6 +6,8 @@ import 'package:health_hub/user%20app/pages/Profile_page/personal_details_2.dart
 import 'package:health_hub/user%20app/pages/Profile_page/personal_details_collect.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/personal_details_collect.dart';
 import 'package:health_hub/user%20app/pages/Profile_page/profile_photo_2.dart';
+import 'package:health_hub/user%20app/pages/home.dart';
+import 'package:health_hub/user%20app/pages/home_page/hoem_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -130,20 +132,10 @@ class _profile_pageState extends State<profile_page> {
       appBar: AppBar(
         backgroundColor: Color(0xfffdfdfd),
         title: text("Profile", Colors.black, 30, FontWeight.bold),
-        leading: IconButton(onPressed: (){
-          Navigator.pop(context);
-        }, icon: Icon(Icons.arrow_back,color: Colors.black,)),
         actions: [
           Padding(
               padding: const EdgeInsets.all(8.0),
               child: IconButton(
-                // onPressed: () {
-                //   if (kIsWeb) {
-                //     signOutFromGoogleWeb(context);
-                //   } else {
-                //     signOutFromGoogleAnd();
-                //   }
-                // },
                 onPressed: () => logout(context),
                 icon: Icon(
                   Icons.logout,
@@ -342,7 +334,6 @@ class _profileState extends State<profile> {
                       builder: (context) => const change_user_address()),
                 );
               }),
-              menu_item('Help', Icons.help_outline, () {}),
             ],
           )
         : Center(child: Lottie.asset("assets/lottie/ani.json",width: 100,

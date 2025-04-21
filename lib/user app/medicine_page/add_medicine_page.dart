@@ -48,7 +48,7 @@ class _add_medincineState extends State<add_medincine> {
     if (quantity.text.isEmpty) {
       missingFields.add("Please enter the product quantity");
     }
-    if (price.text.isEmpty|| product_number.text.length != 3) {
+    if (price.text.isEmpty) {
       missingFields.add("Please Enter the Medicine price less than 1000");
     } else {
       try {
